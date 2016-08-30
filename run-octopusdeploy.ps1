@@ -1,21 +1,9 @@
-﻿$version = $env:OctopusVersion
-$msiFileName = "Octopus.$($version)-x64.msi"
-$downloadBaseUrl = "https://download.octopusdeploy.com/octopus/"
-$downloadUrl = $downloadBaseUrl + $msiFileName
-$installBasePath = "C:\Install\"
-$msiPath = $installBasePath + $msiFileName
-$msiLogPath = $installBasePath + $msiFileName + '.log'
-$installerLogPath = $installBasePath + 'Install-OctopusDeploy.ps1.log'
-$port = 81
-$webListenPrefixes = "http://localhost:$port"
-$OFS = "`r`n"
-#$SqlDbConnectionString = "Server=$($env:SQLServer);Database=Octopus-$($version);Trusted_Connection=True"
+﻿$OFS = "`r`n"
 $SqlDbConnectionString="Server=tcp:XXX.database.windows.net,1433;Initial Catalog=XXX;Persist Security Info=False;User ID=XXX;Password=XXX;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 $octopusAdminUsername =$env:OctopusAdminUsername
 $octopusAdminPassword =$env:OctopusAdminPassword
 
-Write-Output "Installing Octopus Deploy version '$version'"
-Write-Output " - downloading from '$downloadUrl'"
+Write-Output "Running Octopus Deploy"
 Write-Output " - using database '$sqlDbConnectionString'"
 Write-Output " - local admin user '$octopusAdminUsername'"
 Write-Output "==============================================="
