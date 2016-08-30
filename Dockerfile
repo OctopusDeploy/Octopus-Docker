@@ -11,4 +11,4 @@ ENV OctopusAdminPassword=Passw0rd123
 
 RUN powershell -File /install-octopusdeploy.ps1
 
-ENTRYPOINT powershell -File /run-octopusdeploy.ps1
+ENTRYPOINT powershell -File /configure-octopusdeploy.ps1

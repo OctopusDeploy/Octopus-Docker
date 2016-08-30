@@ -137,7 +137,7 @@ try
 {
   Configure-OctopusDeploy
 
-  Write-Log "Installation successful."
+  Write-Log "Configuration successful."
   Write-Log ""
 }
 catch
