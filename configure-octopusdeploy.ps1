@@ -1,7 +1,7 @@
 ﻿$OFS = "`r`n"
 $SqlDbConnectionString="Server=tcp:XXX.database.windows.net,1433;Initial Catalog=XXX;Persist Security Info=False;User ID=XXX;Password=XXX;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-$octopusAdminUsername =$env:OctopusAdminUsername
-$octopusAdminPassword =$env:OctopusAdminPassword
+$octopusAdminUsername=$env:OctopusAdminUsername
+$octopusAdminPassword=$env:OctopusAdminPassword
 
 Write-Output "Running Octopus Deploy"
 Write-Output " - using database '$sqlDbConnectionString'"

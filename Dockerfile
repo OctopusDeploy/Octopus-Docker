@@ -5,8 +5,8 @@ ADD configure-octopusdeploy.ps1 /
 
 ARG OctopusVersion=3.4.1
 ENV OctopusVersion ${OctopusVersion}
-ENV OctopusAdminUsername=admin
-ENV OctopusAdminPassword=Passw0rd123
+ENV OctopusAdminUsername admin
+ENV OctopusAdminPassword Passw0rd123
 
 RUN powershell -File /install-octopusdeploy.ps1
 
