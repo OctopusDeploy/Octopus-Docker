@@ -1,11 +1,10 @@
 FROM microsoft/windowsservercore:latest
 
 ADD install-octopusdeploy.ps1 /
-ADD run-octopusdeploy.ps1 /
-ADD source/ /source
+ADD configure-octopusdeploy.ps1 /
 
-ENV OctopusVersion=3.4.1
-ARG SqlServer
+ARG OctopusVersion=3.4.1
+ENV OctopusVersion ${OctopusVersion}
 ENV OctopusAdminUsername=admin
 ENV OctopusAdminPassword=Passw0rd123
 
