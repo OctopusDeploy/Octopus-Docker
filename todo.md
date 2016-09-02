@@ -2,6 +2,9 @@
 DONE * ensure we can select which version in build.cmd
 DONE * allow logs to go out of the container
 DONE * allow artifact storage to go out of the container
+DONE * set the masterkey --> how does one create a masterkey in the first place???
+DONE * figure out how to pass a connection string as environment variable
+* dont create masterkey at build time, create at runtime if not supplied
 * setup automated build
 * publish to docker hub?
 * tag as latest
@@ -9,5 +12,4 @@ DONE * allow artifact storage to go out of the container
 
 
 BLOCKED BY https://github.com/docker/docker/issues/26178
-* set the masterkey --> how does one create a masterkey in the first place???
-DONE * figure out how to pass a connection string as environment variable 
+* fix hacky workaround

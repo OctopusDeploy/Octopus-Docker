@@ -1,6 +1,7 @@
 ﻿@echo off
 
 set sqlDbConnectionString=XXX
+set masterKey=YYY
 
 cls
 if not exist logs mkdir logs
@@ -12,11 +13,14 @@ if not exist tasklogs mkdir tasklogs
 rem hacky way of getting round docker bug https://github.com/docker/docker/issues/26178
 powershell -command $env:sqlDbConnectionString -replace '=', '##equals##' ^| Set-Content -path '.run.tmp'
 set /p sqlDbConnectionString=<.run.tmp
+powershell -command $env:masterKey -replace '=', '##equals##' ^| Set-Content -path '.run.tmp'
+set /p masterKey=<.run.tmp
 
 del .run.tmp
 
 docker run -p 81:81 ^
            -e sqlDbConnectionString="%sqlDbConnectionString%" ^
+           -e masterKey=%masterkey% ^
            -v c:/temp/Octopus/logs:c:/Octopus/Logs ^
            -v c:/temp/Octopus/artifacts:c:/Octopus/aartifacts ^
            -v c:/temp/Octopus/artifacts:c:/Octopus/OctopusServer/aartifacts ^

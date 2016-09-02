@@ -1,6 +1,7 @@
 ﻿$OFS = "`r`n"
 #hack workaround for docker bug https://github.com/docker/docker/issues/26178
 $sqlDbConnectionString=$env:sqlDbConnectionString -replace '##equals##', '='
+$masterKey=$env:masterKey -replace '##equals##', '='
 $octopusAdminUsername=$env:OctopusAdminUsername
 $octopusAdminPassword=$env:OctopusAdminPassword
 
@@ -61,6 +62,10 @@ function Configure-OctopusDeploy
     '--home', 'C:\Octopus',
     '--storageConnectionString', $sqlDbConnectionString
   )
+  if ($masterKey -ne $null -and $masterKey -ne "") {
+    $args += '--masterkey'
+    $args += $masterKey
+  }
   Execute-Command $exe $args
 
   Write-Log "Creating Octopus Deploy database ..."
