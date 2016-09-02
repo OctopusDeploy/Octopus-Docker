@@ -1,5 +1,6 @@
 ﻿$OFS = "`r`n"
-$SqlDbConnectionString="Server=tcp:XXX.database.windows.net,1433;Initial Catalog=XXX;Persist Security Info=False;User ID=XXX;Password=XXX;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+#hack workaround for docker bug https://github.com/docker/docker/issues/26178
+$sqlDbConnectionString=$env:sqlDbConnectionString -replace '##equals##', '='
 $octopusAdminUsername=$env:OctopusAdminUsername
 $octopusAdminPassword=$env:OctopusAdminPassword
 

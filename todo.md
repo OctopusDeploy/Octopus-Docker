@@ -10,4 +10,4 @@ DONE * allow artifact storage to go out of the container
 
 BLOCKED BY https://github.com/docker/docker/issues/26178
 * set the masterkey --> how does one create a masterkey in the first place???
-* figure out how to pass a connection string as environment variable 
+DONE * figure out how to pass a connection string as environment variable 
