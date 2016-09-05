@@ -65,6 +65,20 @@ function Create-InstallLocation
   Write-Log ""
 }
 
+function Delete-InstallLocation
+{
+  Write-Log "Delete Install Location"
+  if (!(Test-Path $installBasePath))
+  {
+    Write-Log "Install location didn't exist - skipping delete"
+  }
+  else
+  {
+    Remove-Item $installBasePath -Recurse -Force
+  }
+  Write-Log ""
+}
+
 function Install-OctopusDeploy
 {
   Write-Log "Install Octopus Deploy"
@@ -160,6 +174,7 @@ try
   Create-InstallLocation
   Install-OctopusDeploy
   Configure-OctopusDeploy
+  Delete-InstallLocation # removes files we dont need to save space in the image
 
   Write-Log "Installation successful."
   Write-Log ""
