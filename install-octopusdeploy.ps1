@@ -10,6 +10,7 @@ $port = 81
 $webListenPrefixes = "http://localhost:$port"
 $OFS = "`r`n"
 
+Write-Output "==============================================="
 Write-Output "Installing Octopus Deploy version '$version'"
 Write-Output " - downloading from '$downloadUrl'"
 Write-Output "==============================================="
@@ -52,9 +53,7 @@ function Write-CommandOutput
 
 function Create-InstallLocation
 {
-  Write-Log "======================================"
-  Write-Log " Create Install Location"
-  Write-Log ""
+  Write-Log "Create Install Location"
 
   if (!(Test-Path $installBasePath))
   {
@@ -72,9 +71,7 @@ function Create-InstallLocation
 
 function Install-OctopusDeploy
 {
-  Write-Log "======================================"
-  Write-Log " Install Octopus Deploy"
-  Write-Log ""
+  Write-Log "Install Octopus Deploy"
 
   if (Test-Path "/source/$msiFileName") {
     Write-Log "Copying Octopus Deploy installer from '/source/$msiFileName' to '$msiPath' ..."
@@ -101,9 +98,7 @@ function Install-OctopusDeploy
 
 function Configure-OctopusDeploy
 {
-  Write-Log "======================================"
-  Write-Log " Configure Octopus Deploy"
-  Write-Log ""
+  Write-Log "Configure Octopus Deploy"
 
   $exe = 'C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe'
 
@@ -158,9 +153,7 @@ function Configure-OctopusDeploy
 
 try
 {
-  Write-Log "======================================"
-  Write-Log " Installing '$msiFileName'"
-  Write-Log "======================================"
+  Write-Log "Installing '$msiFileName'"
   Write-Log ""
 
   Create-InstallLocation
