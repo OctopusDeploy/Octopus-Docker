@@ -1,9 +1,5 @@
 ﻿$OFS = "`r`n"
 
-Write-Output "==============================================="
-Write-Output "Running Octopus Deploy"
-Write-Output "==============================================="
-
 function Write-Log
 {
   param (
@@ -81,6 +77,10 @@ function Run-OctopusDeploy
 
 try
 {
+  Write-Log "==============================================="
+  Write-Log "Running Octopus Deploy"
+  Write-Log "==============================================="
+
   Run-OctopusDeploy
 
   Write-Log "Run successful."
@@ -89,4 +89,5 @@ try
 catch
 {
   Write-Log $_
+  exit 2
 }

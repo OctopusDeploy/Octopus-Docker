@@ -10,10 +10,6 @@ $port = 81
 $webListenPrefixes = "http://localhost:$port"
 $OFS = "`r`n"
 
-Write-Output "==============================================="
-Write-Output "Installing Octopus Deploy version '$version'"
-Write-Output " - downloading from '$downloadUrl'"
-Write-Output "==============================================="
 
 function Write-Log
 {
@@ -153,6 +149,11 @@ function Configure-OctopusDeploy
 
 try
 {
+  Write-Log "==============================================="
+  Write-Log "Installing Octopus Deploy version '$version'"
+  Write-Log " - downloading from '$downloadUrl'"
+  Write-Log "==============================================="
+
   Write-Log "Installing '$msiFileName'"
   Write-Log ""
 
