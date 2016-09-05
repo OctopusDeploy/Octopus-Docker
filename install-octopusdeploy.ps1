@@ -182,4 +182,5 @@ try
 catch
 {
   Write-Log $_
+  exit 2
 }
