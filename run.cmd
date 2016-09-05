@@ -1,4 +1,4 @@
-﻿@echo off
+@echo off
 
 set sqlDbConnectionString=XXX
 set masterKey=YYY
