@@ -48,10 +48,6 @@ function Write-CommandOutput
 
 function Configure-OctopusDeploy
 {
-  Write-Log "======================================"
-  Write-Log " Configure Octopus Deploy"
-  Write-Log ""
-
   $exe = 'C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe'
 
   Write-Log "Configuring Octopus Deploy instance ..."
@@ -104,37 +100,6 @@ function Configure-OctopusDeploy
     '--free'
   )
   Execute-Command $exe $args
-
-  Write-Log "Start Octopus Deploy instance ..."
-  $args = @(
-    'service',
-    '--console',
-    '--instance', 'OctopusServer',
-    '--install',
-    '--reconfigure',
-    '--start'
-  )
-  Execute-Command $exe $args
-
-  try {
-     # sleep-loop indefinitely (until container stop)
-     while (1 -eq 1) {
-         [DateTime]::Now.ToShortTimeString()
-         Start-Sleep -Seconds 1
-     }
-  } 
-  finally {
-      Write-Log "Shutting down Octopus Deploy instance ..."
-      $args = @(
-        'service',
-        '--console',
-        '--instance', 'OctopusServer',
-        '--install',
-        '--reconfigure',
-        '--stop'
-      )
-      Execute-Command $exe $args
-  }
 
   Write-Log ""
 }
