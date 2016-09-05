@@ -5,9 +5,20 @@ $masterKey=$env:masterKey -replace '##equals##', '='
 $octopusAdminUsername=$env:OctopusAdminUsername
 $octopusAdminPassword=$env:OctopusAdminPassword
 
+Write-Output "==============================================="
 Write-Output "Running Octopus Deploy"
 Write-Output " - using database '$sqlDbConnectionString'"
 Write-Output " - local admin user '$octopusAdminUsername'"
+Write-Output " - local admin password '##########'"
+if (($masterKey -eq $null) -or ($masterKey -eq "")) {
+    Write-Output " - masterkey not supplied."
+    Write-Output "   WARNING: this means OctopusDeploy will use the masterkey that was generated when the image was created."
+    Write-Output "            This key is common to all users of this image and therefore provides no security."
+}
+else {
+    Write-Output " - masterkey '##########'"
+}
+
 Write-Output "==============================================="
 
 function Write-Log
@@ -100,6 +111,16 @@ function Configure-OctopusDeploy
     '--free'
   )
   Execute-Command $exe $args
+
+  if (($masterKey -eq $null) -or ($masterKey -eq "")) {
+      Write-Log "Display master key ..."
+      $args = @(
+        'show-master-key',
+        '--console',
+        '--instance', 'OctopusServer'
+      )
+      Execute-Command $exe $args
+  }
 
   Write-Log ""
 }
