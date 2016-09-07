@@ -176,6 +176,8 @@ try
   Configure-OctopusDeploy
   Delete-InstallLocation # removes files we dont need to save space in the image
 
+  "Install complete." | Set-Content "c:\octopus-install.initstate"
+
   Write-Log "Installation successful."
   Write-Log ""
 }

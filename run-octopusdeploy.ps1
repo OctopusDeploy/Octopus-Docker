@@ -51,6 +51,8 @@ function Run-OctopusDeploy
   )
   Execute-Command $exe $args
 
+  "Run started." | Set-Content "c:\octopus-run.initstate"
+
   # try/finally is here to try and stop the server gracefully upon container stop
   try {
      # sleep-loop indefinitely (until container stop)

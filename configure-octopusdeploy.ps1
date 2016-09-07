@@ -128,6 +128,7 @@ try
   Write-Log "==============================================="
 
   Configure-OctopusDeploy
+  "Configuration complete." | Set-Content "c:\octopus-configuration.initstate"
 
   Write-Log "Configuration successful."
   Write-Log ""

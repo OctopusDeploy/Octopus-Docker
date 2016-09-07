@@ -1,26 +1,27 @@
 @echo off
 cls
 
-powershell -command ($(docker inspect OctopusDeploy) ^| ConvertFrom-Json).NetworkSettings.Networks.nat.IpAddress ^| Set-Content -path '.run.tmp'
-set /p OctopusContainerIpAddress=<.run.tmp
-del .run.tmp
+
+echo Checking to make sure OctopusDeploy container is up and running
+powershell -command ($(docker inspect OctopusDeploy) ^| ConvertFrom-Json).State.Health.Status ^| Set-Content -path '.test.tmp'
+set /p OctopusDeployContainerHealth=<.test.tmp
+if exist ".test.tmp" del ".test.tmp"
+
+if "%OctopusDeployContainerHealth%" neq "healthy" (
+  echo  - OctopusDeploy container is not healthy - health status is '%OctopusDeployContainerHealth%'. Aborting.
+  exit 2
+)
+echo  - OctopusDeploy container is healthy
+
+powershell -command ($(docker inspect OctopusDeploy) ^| ConvertFrom-Json).NetworkSettings.Networks.nat.IpAddress ^| Set-Content -path '.test.tmp'
+set /p OctopusContainerIpAddress=<.test.tmp
+if exist ".test.tmp" del ".test.tmp"
 
 if "%OctopusContainerIpAddress%" equ "" (
-    echo OctopusDeploy Container has no ip address.
-    exit 1
+    echo OctopusDeploy Container does not exist. Aborting.
+    exit 3
 )
 
-:checkhealth
-powershell -command ($(docker inspect OctopusDeploy) ^| ConvertFrom-Json).State.Health.Status ^| Set-Content -path '.run.tmp'
-set /p OctopusContainerHealth=<.run.tmp
-del .run.tmp
-echo OctopusDeploy container health state is '%OctopusContainerHealth%'
-
-if "%OctopusContainerHealth%" equ "starting" (
-    echo Sleeping for 5 seconds
-    powershell -command sleep 5
-    goto checkhealth:
-)
 echo Testing basic probe of http://%OctopusContainerIpAddress%:81/app returns 200 OK
 
 docker run --env OctopusContainerIpAddress=%OctopusContainerIpAddress% ^

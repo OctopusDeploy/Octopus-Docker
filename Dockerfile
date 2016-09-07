@@ -1,10 +1,11 @@
 FROM microsoft/windowsservercore:latest
 
-HEALTHCHECK CMD powershell -command "try { $statusCode = (Invoke-WebRequest http://localhost:81 | % {$_.StatusCode}); if ($statusCode -eq 200) { exit 0 }; exit 1 } catch { exit 2 }"
+HEALTHCHECK CMD powershell -file /healthcheck.ps1
 
 ADD install-octopusdeploy.ps1 /
 ADD configure-octopusdeploy.ps1 /
 ADD run-octopusdeploy.ps1 /
+ADD healthcheck.ps1 /
 
 ENV OctopusAdminUsername admin
 ENV OctopusAdminPassword Passw0rd123
