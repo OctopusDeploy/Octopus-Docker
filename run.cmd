@@ -4,11 +4,12 @@ set sqlDbConnectionString=XXX
 set masterKey=YYY
 
 cls
-if not exist logs mkdir logs
-if not exist artifacts mkdir artifacts
-if not exist packagecache mkdir packagecache
-if not exist packages mkdir packages
-if not exist tasklogs mkdir tasklogs
+echo Setting up data folder structure
+if not exist c:\temp\octopus-mapped-volumes\logs mkdir c:\temp\octopus-mapped-volumes\logs
+if not exist c:\temp\octopus-mapped-volumes\artifacts mkdir c:\temp\octopus-mapped-volumes\artifacts
+if not exist c:\temp\octopus-mapped-volumes\packagecache mkdir c:\temp\octopus-mapped-volumes\packagecache
+if not exist c:\temp\octopus-mapped-volumes\packages mkdir c:\temp\octopus-mapped-volumes\packages
+if not exist c:\temp\octopus-mapped-volumes\tasklogs mkdir c:\temp\octopus-mapped-volumes\tasklogs
 
 rem hacky way of getting round docker bug https://github.com/docker/docker/issues/26178
 powershell -command $env:sqlDbConnectionString -replace '=', '##equals##' ^| Set-Content -path '.run.tmp'
@@ -21,9 +22,9 @@ del .run.tmp
 docker run -p 81:81 ^
            -e sqlDbConnectionString="%sqlDbConnectionString%" ^
            -e masterKey=%masterkey% ^
-           -v c:/temp/Octopus/logs:c:/Octopus/Logs ^
-           -v c:/temp/Octopus/artifacts:c:/Octopus/aartifacts ^
-           -v c:/temp/Octopus/artifacts:c:/Octopus/OctopusServer/aartifacts ^
-           -v c:/temp/Octopus/packages:c:/Octopus/ppackages ^
-           -v c:/temp/Octopus/tasklogs:c:/Octopus/TaskLogs ^
+           --v c:/temp/octopus-mapped-volumes/logs:c:/Octopus/Logs ^
+           --v c:/temp/octopus-mapped-volumes/artifacts:c:/Octopus/Artifacts ^
+           --v c:/temp/octopus-mapped-volumes/packagecache:c:/Octopus/OctopusServer/PackageCache ^
+           --v c:/temp/octopus-mapped-volumes/packages:c:/Octopus/Packages ^
+           --v c:/temp/octopus-mapped-volumes/tasklogs:c:/Octopus/TaskLogs ^
            octopusdeploy/octopusdeploy:3.4.2
