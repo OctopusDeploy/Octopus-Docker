@@ -19,12 +19,13 @@ set /p masterKey=<.run.tmp
 
 del .run.tmp
 
-docker run -p 81:81 ^
-           -e sqlDbConnectionString="%sqlDbConnectionString%" ^
-           -e masterKey=%masterkey% ^
-           --v c:/temp/octopus-mapped-volumes/logs:c:/Octopus/Logs ^
-           --v c:/temp/octopus-mapped-volumes/artifacts:c:/Octopus/Artifacts ^
-           --v c:/temp/octopus-mapped-volumes/packagecache:c:/Octopus/OctopusServer/PackageCache ^
-           --v c:/temp/octopus-mapped-volumes/packages:c:/Octopus/Packages ^
-           --v c:/temp/octopus-mapped-volumes/tasklogs:c:/Octopus/TaskLogs ^
+echo Starting Octopus Deploy
+docker run --publish 81:81 ^
+           --env sqlDbConnectionString="%sqlDbConnectionString%" ^
+           --env masterKey=%masterkey% ^
+           --volume c:/temp/octopus-mapped-volumes/logs:c:/Octopus/Logs ^
+           --volume c:/temp/octopus-mapped-volumes/artifacts:c:/Octopus/Artifacts ^
+           --volume c:/temp/octopus-mapped-volumes/packagecache:c:/Octopus/OctopusServer/PackageCache ^
+           --volume c:/temp/octopus-mapped-volumes/packages:c:/Octopus/Packages ^
+           --volume c:/temp/octopus-mapped-volumes/tasklogs:c:/Octopus/TaskLogs ^
            octopusdeploy/octopusdeploy:3.4.2
