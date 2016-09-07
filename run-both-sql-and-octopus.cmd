@@ -38,7 +38,10 @@ set /p sqlDbConnectionString=<.run.tmp
 del .run.tmp
 
 echo Starting OctopusDeploy
-docker run --name=OctopusDeploy ^
+docker run --interactive ^
+           --tty ^
+           --detach ^
+           --name=OctopusDeploy ^
            --publish 81:81 ^
            --env sqlDbConnectionString="%sqlDbConnectionString%" ^
            --env masterKey=%masterkey% ^
@@ -48,4 +51,5 @@ docker run --name=OctopusDeploy ^
            --volume c:/temp/octopus-mapped-volumes/packages:c:/Octopus/Packages ^
            --volume c:/temp/octopus-mapped-volumes/tasklogs:c:/Octopus/TaskLogs ^
            octopusdeploy/octopusdeploy:3.4.2
-           
+
+echo Done. Octopus is available on port 81.
