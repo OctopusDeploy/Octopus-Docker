@@ -20,7 +20,8 @@ set /p masterKey=<.run.tmp
 del .run.tmp
 
 echo Starting Octopus Deploy
-docker run --publish 81:81 ^
+docker run --name OctopusDeploy ^
+           --publish 81:81 ^
            --env sqlDbConnectionString="%sqlDbConnectionString%" ^
            --env masterKey=%masterkey% ^
            --volume c:/temp/octopus-mapped-volumes/logs:c:/Octopus/Logs ^
