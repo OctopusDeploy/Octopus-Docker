@@ -24,7 +24,7 @@ docker run --interactive ^
            microsoft/mssql-server-2014-express-windows
 
 echo Waiting 10 seconds for sql server to start and change SA password
-sleep 10
+powershell -command sleep 10
 
 rem hacky way of getting the container's ip address, as --link doesn't work on windows
 powershell -command ($(docker inspect OctopusDeploySqlServer) ^| ConvertFrom-Json).NetworkSettings.Networks.nat.IpAddress ^| Set-Content -path '.run.tmp'
