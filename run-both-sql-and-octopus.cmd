@@ -55,8 +55,8 @@ rem ########## start: wait until octopus is ready ##########
 set OctopusDeployCheckCount=0
 :octopusdeploycheckhealth
 set /a OctopusDeployCheckCount=%OctopusDeployCheckCount%+1
-if %OctopusDeployCheckCount% gtr 12 (
-  echo Waited 2 minutes for Octopus Deploy to come alive, but it didn't. Aborting.
+if %OctopusDeployCheckCount% gtr 30 (
+  echo Waited 5 minutes for Octopus Deploy to come alive, but it didn't. Aborting.
   exit 4
 )
 
