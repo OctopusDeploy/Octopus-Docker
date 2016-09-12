@@ -161,6 +161,19 @@ function Configure-OctopusDeploy
   Write-Log ""
 }
 
+function Remove-MasterKey
+{
+  $configFile = "C:\Octopus\OctopusServer.config"
+  [xml]$xml = Get-Content $configFile
+
+  $node = $xml.SelectSingleNode("//octopus-settings/set[@key='Octopus.Storage.MasterKey']")
+  if ($node -ne $null) {
+      $node.ParentNode.RemoveChild($node) | Out-Null
+  }
+
+  $xml.save($configFile)
+}
+
 try
 {
   Write-Log "==============================================="
@@ -174,7 +187,8 @@ try
   Create-InstallLocation
   Install-OctopusDeploy
   Configure-OctopusDeploy
-  Delete-InstallLocation # removes files we dont need to save space in the image
+  Remove-MasterKey         # removes the masterkey so that when a new instance is launched, it will get a new key
+  Delete-InstallLocation   # removes files we dont need to save space in the image
 
   "Install complete." | Set-Content "c:\octopus-install.initstate"
 
