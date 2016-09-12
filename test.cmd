@@ -1,6 +1,16 @@
 @echo off
 cls
 
+echo Checking to make sure Sql Server container is up and running
+powershell -command ($(docker inspect OctopusDeploySqlServer) ^| ConvertFrom-Json).State.Health.Status ^| Set-Content -path ".test.tmp"
+set /p OctopusDeploySqlServerContainerHealth=<".test.tmp"
+if exist ".test.tmp" del ".test.tmp"
+
+if "%OctopusDeploySqlServerContainerHealth%" neq "healthy" (
+  echo  - OctopusDeploySqlServer container is not healthy - health status is '%OctopusDeploySqlServerContainerHealth%'. Aborting.
+  exit 1
+)
+echo  - OctopusDeploySqlServer container is healthy
 
 echo Checking to make sure OctopusDeploy container is up and running
 powershell -command ($(docker inspect OctopusDeploy) ^| ConvertFrom-Json).State.Health.Status ^| Set-Content -path '.test.tmp'

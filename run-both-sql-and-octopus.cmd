@@ -14,16 +14,47 @@ powershell -command $env:masterKey -replace '=', '##equals##' ^| Set-Content -pa
 set /p masterKey=<.run.tmp
 
 echo Starting SQL Server
+rem Using custom image, while waiting for https://github.com/Microsoft/sql-server-samples/pull/106
+rem Once the official image - microsoft/mssql-server-2014-express-windows - supports health checks, we should use that
 docker run --interactive ^
            --tty ^
            --detach ^
            --publish 1433:1433 ^
            --name=OctopusDeploySqlServer ^
            --env sa_password=Password1! ^
-           microsoft/mssql-server-2014-express-windows
+           octopusdeploy/mssql-server-2014-express-windows
 
 echo Waiting 60 seconds for sql server to start and change SA password
 powershell -command sleep 60
+
+rem ########## start: wait until sql server is ready ##########
+set CheckCount=0
+:checkhealth
+set /a CheckCount=%CheckCount%+1
+if %checkcount% gtr 30 (
+  echo Waited 5 minutes for SQL Server to come alive, but it didn't. Aborting.
+  exit 1
+)
+
+powershell -command ($(docker inspect OctopusDeploySqlServer) ^| ConvertFrom-Json).State.Health.Status ^| Set-Content -path '.run.tmp'
+set /p OctopusDeploySqlServerContainerHealth=<.run.tmp
+del .run.tmp
+
+if "%OctopusDeploySqlServerContainerHealth%" equ "" (
+  echo SQL Server container does not exist. Aborting.
+  exit 2
+)
+
+echo [Attempt %CheckCount%/12] OctopusDeploySqlServer container health state is '%OctopusDeploySqlServerContainerHealth%'
+if "%OctopusDeploySqlServerContainerHealth%" equ "starting" (
+    echo Sleeping for 10 seconds
+    powershell -command sleep 10
+    goto checkhealth:
+)
+if "%OctopusDeploySqlServerContainerHealth%" neq "healthy" (
+    exit 3
+)
+rem ########## end: wait until sql server is ready ##########
 
 rem hacky way of getting the container's ip address, as --link doesn't work on windows
 powershell -command ($(docker inspect OctopusDeploySqlServer) ^| ConvertFrom-Json).NetworkSettings.Networks.nat.IpAddress ^| Set-Content -path '.run.tmp'
