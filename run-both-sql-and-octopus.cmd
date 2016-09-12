@@ -27,9 +27,6 @@ docker run --interactive ^
            --env sa_password=Password1! ^
            octopusdeploy/mssql-server-2014-express-windows
 
-echo Waiting 60 seconds for sql server to start and change SA password
-powershell -command sleep 60
-
 rem ########## start: wait until sql server is ready ##########
 set CheckCount=0
 :checkhealth
