@@ -1,10 +1,5 @@
 @echo off
 
-if "%masterKey%"=="" (
-  echo Please define an environment variable called MasterKey with a valid encryption key.
-  exit 7
-)
-
 echo Setting up data folder structure
 if not exist c:\temp\octopus-mapped-volumes\logs mkdir c:\temp\octopus-mapped-volumes\logs
 if not exist c:\temp\octopus-mapped-volumes\artifacts mkdir c:\temp\octopus-mapped-volumes\artifacts
