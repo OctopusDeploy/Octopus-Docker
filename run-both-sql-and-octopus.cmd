@@ -47,6 +47,7 @@ if "%OctopusDeploySqlServerContainerHealth%" equ "starting" (
     goto checkhealth:
 )
 if "%OctopusDeploySqlServerContainerHealth%" neq "healthy" (
+    docker inspect OctopusDeploySqlServer
     exit 3
 )
 rem ########## end: wait until sql server is ready ##########
@@ -102,6 +103,7 @@ if "%OctopusDeployContainerHealth%" equ "starting" (
     goto octopusdeploycheckhealth:
 )
 if "%OctopusDeployContainerHealth%" neq "healthy" (
+    docker inspect OctopusDeploy
     exit 6
 )
 
