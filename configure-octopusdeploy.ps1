@@ -117,9 +117,7 @@ try
   Write-Log " - local admin user '$octopusAdminUsername'"
   Write-Output " - local admin password '##########'"
   if (($masterKey -eq $null) -or ($masterKey -eq "")) {
-    Write-Log " - masterkey not supplied."
-    Write-Log "   WARNING: this means OctopusDeploy will use the masterkey that was generated when the image was created."
-    Write-Log "            This key is common to all users of this image and therefore provides no security."
+    Write-Log " - masterkey not supplied. A new key will be generated automatically."
   }
   else {
     Write-Log " - masterkey '##########'"
