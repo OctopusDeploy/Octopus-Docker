@@ -8,6 +8,7 @@ DONE * split configure & run script
 DONE * ensure we can select which version in build.cmd
 DONE * dont create masterkey at build time, create at runtime if not supplied
 DONE * mask sql password
+DONE * cleanup sleep loop
 * setup automated build
 * publish to docker hub?
 * tag as latest

@@ -57,8 +57,8 @@ function Run-OctopusDeploy
   try {
      # sleep-loop indefinitely (until container stop)
      while (1 -eq 1) {
-         [DateTime]::Now.ToShortTimeString()
-         Start-Sleep -Seconds 1
+         "$([DateTime]::Now.ToShortTimeString()) - OctopusDeploy service is '$((Get-Service "OctopusDeploy").status)'."
+         Start-Sleep -Seconds 60
      }
   } 
   finally {
