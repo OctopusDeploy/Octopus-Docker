@@ -7,6 +7,7 @@ DONE * figure out how to pass a connection string as environment variable
 DONE * split configure & run script
 DONE * ensure we can select which version in build.cmd
 DONE * dont create masterkey at build time, create at runtime if not supplied
+DONE * mask sql password
 * setup automated build
 * publish to docker hub?
 * tag as latest

@@ -19,7 +19,7 @@ function Write-Log
 
 function Execute-Command ($exe, $arguments)
 {
-  Write-Log "Executing command '$exe $($arguments -join ' ')'"
+  Write-Log (("Executing command '$exe $($arguments -join ' ')'") -replace "password=.*?;", "password=###########;")
   $output = .$exe $arguments
 
   Write-CommandOutput $output
@@ -120,9 +120,10 @@ function Configure-OctopusDeploy
 
 try
 {
+  $maskedConnectionString = $sqlDbConnectionString -replace "password=.*?;", "password=###########;"
   Write-Log "==============================================="
-  Write-Log "Running Octopus Deploy"
-  Write-Log " - using database '$sqlDbConnectionString'"
+  Write-Log "Configuring Octopus Deploy"
+  Write-Log " - using database '$maskedConnectionString'"
   Write-Log " - local admin user '$octopusAdminUsername'"
   Write-Log " - local admin password '##########'"
   $masterKeySupplied = ($masterKey -ne $null) -and ($masterKey -ne "")
