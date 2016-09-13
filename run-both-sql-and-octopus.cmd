@@ -77,7 +77,6 @@ del .run.tmp
 echo Starting OctopusDeploy
 docker run --interactive ^
            --tty ^
-           --detach ^
            --name=OctopusDeploy ^
            --publish 81:81 ^
            --env sqlDbConnectionString="%sqlDbConnectionString%" ^
