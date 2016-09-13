@@ -1,7 +1,10 @@
 @echo off
 
-set sqlDbConnectionString=XXX
-set masterKey=YYY
+
+if "%sqlDbConnectionString%" equ "" (
+	echo Please set the sqlDbConnectionString environment variable
+	exit 1
+)
 if "%OctopusVersion%" equ "" (
 	set OctopusVersion=3.4.2
 	echo No OctopusVersion environment variable set. Defaulting to %OctopusVersion%.
