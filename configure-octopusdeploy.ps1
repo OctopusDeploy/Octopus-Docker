@@ -5,6 +5,8 @@ $masterKey=$env:masterKey -replace '##equals##', '='
 $octopusAdminUsername=$env:OctopusAdminUsername
 $octopusAdminPassword=$env:OctopusAdminPassword
 
+$configFile = "c:\Octopus\OctopusServer.config"
+
 function Write-Log
 {
   param (
@@ -45,6 +47,13 @@ function Configure-OctopusDeploy
 {
   $exe = 'C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe'
 
+  $configAlreadyExists = Test-Path $configFile
+  $masterKeySupplied = ($masterKey -ne $null) -and ($masterKey -ne "")
+  if (-not($configAlreadyExists)) {
+    # work around https://github.com/docker/docker/issues/20127
+    Copy-item "c:\OctopusServer.config.orig" $configFile
+  }
+
   Write-Log "Configuring Octopus Deploy instance ..."
   $args = @(
     'configure',
@@ -53,7 +62,7 @@ function Configure-OctopusDeploy
     '--home', 'C:\Octopus',
     '--storageConnectionString', $sqlDbConnectionString
   )
-  if ($masterKey -ne $null -and $masterKey -ne "") {
+  if ($masterKeySupplied -and (-not ($configAlreadyExists))) {
     $args += '--masterkey'
     $args += $masterKey
   }
@@ -115,12 +124,19 @@ try
   Write-Log "Running Octopus Deploy"
   Write-Log " - using database '$sqlDbConnectionString'"
   Write-Log " - local admin user '$octopusAdminUsername'"
-  Write-Output " - local admin password '##########'"
-  if (($masterKey -eq $null) -or ($masterKey -eq "")) {
-    Write-Log " - masterkey not supplied. A new key will be generated automatically."
+  Write-Log " - local admin password '##########'"
+  $masterKeySupplied = ($masterKey -ne $null) -and ($masterKey -ne "")
+  if ((Test-Path $configFile) -and $masterKeySupplied) {
+    Write-Log " - masterkey supplied, but server has already been configured - ignoring"
+  }
+  elseif (Test-Path $configFile) {
+    Write-Log " - using previously configured masterkey from $configFile"
+  }
+  elseif ($masterKeySupplied) {
+    Write-Log " - masterkey '##########'"
   }
   else {
-    Write-Log " - masterkey '##########'"
+    Write-Log " - masterkey not supplied. A new key will be generated automatically"
   }
 
   Write-Log "==============================================="

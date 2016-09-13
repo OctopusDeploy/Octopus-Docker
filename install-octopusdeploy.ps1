@@ -174,6 +174,12 @@ function Remove-MasterKey
   $xml.save($configFile)
 }
 
+function Move-ConfigToBackupLocation
+{
+  Copy-Item "c:\Octopus\OctopusServer.config" "c:\OctopusServer.config.orig"
+  Remove-Item "c:\Octopus\OctopusServer.config"
+}
+
 try
 {
   Write-Log "==============================================="
@@ -187,8 +193,9 @@ try
   Create-InstallLocation
   Install-OctopusDeploy
   Configure-OctopusDeploy
-  Remove-MasterKey         # removes the masterkey so that when a new instance is launched, it will get a new key
-  Delete-InstallLocation   # removes files we dont need to save space in the image
+  Remove-MasterKey            # removes the masterkey so that when a new instance is launched, it will get a new key
+  Delete-InstallLocation      # removes files we dont need to save space in the image
+  Move-ConfigToBackupLocation # work around https://github.com/docker/docker/issues/20127
 
   "Install complete." | Set-Content "c:\octopus-install.initstate"
 
