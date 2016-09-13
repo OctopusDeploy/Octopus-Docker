@@ -12,6 +12,8 @@ DONE * cleanup sleep loop
 * setup automated build
 * publish to docker hub?
 * tag as latest
+* build all available versions
+* investigate tailing log instead of sleep loop
 
 
 BLOCKED BY https://github.com/docker/docker/issues/26178
