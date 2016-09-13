@@ -2,10 +2,10 @@ FROM microsoft/windowsservercore:latest
 
 HEALTHCHECK CMD powershell -file /healthcheck.ps1
 
-ADD install-octopusdeploy.ps1 /
-ADD configure-octopusdeploy.ps1 /
-ADD run-octopusdeploy.ps1 /
-ADD healthcheck.ps1 /
+ADD scripts/install-octopusdeploy.ps1 /
+ADD scripts/configure-octopusdeploy.ps1 /
+ADD scripts/run-octopusdeploy.ps1 /
+ADD scripts/healthcheck.ps1 /
 
 ENV OctopusAdminUsername admin
 ENV OctopusAdminPassword Passw0rd123
