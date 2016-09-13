@@ -5,6 +5,7 @@ DONE * allow artifact storage to go out of the container
 DONE * set the masterkey --> how does one create a masterkey in the first place???
 DONE * figure out how to pass a connection string as environment variable
 DONE * split configure & run script
+DONE * ensure we can select which version in build.cmd
 * dont create masterkey at build time, create at runtime if not supplied
 * setup automated build
 * publish to docker hub?

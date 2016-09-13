@@ -2,6 +2,10 @@
 
 set sqlDbConnectionString=XXX
 set masterKey=YYY
+if "%OctopusVersion%" equ "" (
+	set OctopusVersion=3.4.2
+	echo No OctopusVersion environment variable set. Defaulting to %OctopusVersion%.
+)
 
 echo Setting up data folder structure
 if not exist c:\temp\octopus-mapped-volumes\logs mkdir c:\temp\octopus-mapped-volumes\logs
@@ -28,4 +32,4 @@ docker run --name OctopusDeploy ^
            --volume c:/temp/octopus-mapped-volumes/packagecache:c:/Octopus/OctopusServer/PackageCache ^
            --volume c:/temp/octopus-mapped-volumes/packages:c:/Octopus/Packages ^
            --volume c:/temp/octopus-mapped-volumes/tasklogs:c:/Octopus/TaskLogs ^
-           octopusdeploy/octopusdeploy:3.4.2
+           octopusdeploy/octopusdeploy:%OctopusVersion%
