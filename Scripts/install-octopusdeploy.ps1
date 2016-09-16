@@ -83,9 +83,12 @@ function Install-OctopusDeploy
 {
   Write-Log "Install Octopus Deploy"
 
-  if (Test-Path "/source/$msiFileName") {
-    Write-Log "Copying Octopus Deploy installer from '/source/$msiFileName' to '$msiPath' ..."
-    Copy-Item "/source/$msiFileName" $msiPath
+  if (Test-Path "/source/*.msi") {
+    if (Test-Path "/source/Octopus.Tentacle.*.msi") {
+      Remove-Item "/source/Octopus.Tentacle.*.msi"
+    }
+    Write-Log "Copying Octopus Deploy installer from '/source/*.msi' to '$msiPath' ..."
+    Copy-Item "/source/*.msi" $msiPath
     Write-Log "done."
   }
   else {
