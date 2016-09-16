@@ -7,6 +7,8 @@ ADD scripts/configure-octopusdeploy.ps1 /
 ADD scripts/run-octopusdeploy.ps1 /
 ADD scripts/healthcheck.ps1 /
 
+ADD Source /source
+
 ENV OctopusAdminUsername admin
 ENV OctopusAdminPassword Passw0rd123
 ARG OctopusVersion
