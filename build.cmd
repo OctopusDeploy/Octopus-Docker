@@ -5,6 +5,6 @@ if "%OctopusVersion%" equ "" (
   echo No OctopusVersion environment variable set. Defaulting to %OctopusVersion%.
 )
 
-docker build --tag octopusdeploy/octopusdeploy:%OctopusVersion% ^
+docker build --tag octopusdeploy/octopusdeploy-prerelease:%OctopusVersion% ^
              --build-arg OctopusVersion=%OctopusVersion% ^
              .
