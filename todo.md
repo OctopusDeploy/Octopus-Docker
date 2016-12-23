@@ -15,6 +15,3 @@ DONE * cleanup sleep loop
 * build all available versions
 * investigate tailing log instead of sleep loop
 
-
-BLOCKED BY https://github.com/docker/docker/issues/26178
-* fix hacky workaround

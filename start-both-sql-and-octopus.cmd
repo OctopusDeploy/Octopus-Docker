@@ -8,10 +8,6 @@ if "%OctopusVersion%" equ "" (
 echo Setting up data folder structure
 if not exist c:\temp\octopus-with-docker-sql-volume mkdir c:\temp\octopus-with-docker-sql-volume
 
-rem hacky way of getting round docker bug https://github.com/docker/docker/issues/26178
-powershell -command $env:masterKey -replace '=', '##equals##' ^| Set-Content -path '.run.tmp'
-set /p masterKey=<.run.tmp
-
 echo Starting SQL Server
 
 rem rem Using custom image, while waiting for https://github.com/Microsoft/sql-server-samples/pull/106
@@ -21,7 +17,7 @@ rem            --tty ^
 rem            --detach ^
 rem            --publish 1433:1433 ^
 rem            --name=OctopusDeploySqlServer ^
-rem            --env sa_password=Password1! ^
+rem            --env sa_password=Passw0rd123 ^
 rem            octopusdeploy/mssql-server-2014-express-windows
 rem 
 rem rem ########## start: wait until sql server is ready ##########
@@ -58,7 +54,7 @@ docker run --interactive ^
            --tty ^
            --publish 1433:1433 ^
            --name=OctopusDeploySqlServer ^
-           --env sa_password=Password1! ^
+           --env sa_password=Passw0rd123 ^
            microsoft/mssql-server-2014-express-windows
 
 echo "Sleeping for 2 minutes until SQL Server is up and running (hacky)"
@@ -67,13 +63,9 @@ powershell -command "sleep 120"
 rem hacky way of getting the container's ip address, as --link doesn't work on windows
 powershell -command ($(docker inspect OctopusDeploySqlServer) ^| ConvertFrom-Json).NetworkSettings.Networks.nat.IpAddress ^| Set-Content -path '.run.tmp'
 set /p sqlServerContainerIpAddress=<.run.tmp
-
-set sqlDbConnectionString=Server=tcp:%sqlServerContainerIpAddress%,1433;Initial Catalog=Octopus;Persist Security Info=False;User ID=sa;Password=Password1!;MultipleActiveResultSets=False;Connection Timeout=30;
-rem hacky way of getting round docker bug https://github.com/docker/docker/issues/26178
-powershell -command $env:sqlDbConnectionString -replace '=', '##equals##' ^| Set-Content -path '.run.tmp'
-set /p sqlDbConnectionString=<.run.tmp
-
 del .run.tmp
+
+set sqlDbConnectionString=Server=tcp:%sqlServerContainerIpAddress%,1433;Initial Catalog=Octopus;Persist Security Info=False;User ID=sa;Password=Passw0rd123;MultipleActiveResultSets=False;Connection Timeout=30;
 
 echo Starting OctopusDeploy
 docker run --interactive ^

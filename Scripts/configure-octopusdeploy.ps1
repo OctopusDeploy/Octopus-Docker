@@ -1,7 +1,4 @@
 ﻿$OFS = "`r`n"
-#hack workaround for docker bug https://github.com/docker/docker/issues/26178
-$sqlDbConnectionString=$env:sqlDbConnectionString -replace '##equals##', '='
-$masterKey=$env:masterKey -replace '##equals##', '='
 $octopusAdminUsername=$env:OctopusAdminUsername
 $octopusAdminPassword=$env:OctopusAdminPassword
 

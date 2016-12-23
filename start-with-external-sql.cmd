@@ -13,14 +13,6 @@ if "%OctopusVersion%" equ "" (
 echo Setting up data folder structure
 if not exist c:\temp\octopus-with-ext-sql-volume mkdir c:\temp\octopus-with-ext-sql-volume
 
-rem hacky way of getting round docker bug https://github.com/docker/docker/issues/26178
-powershell -command $env:sqlDbConnectionString -replace '=', '##equals##' ^| Set-Content -path '.run.tmp'
-set /p sqlDbConnectionString=<.run.tmp
-powershell -command $env:masterKey -replace '=', '##equals##' ^| Set-Content -path '.run.tmp'
-set /p masterKey=<.run.tmp
-
-del .run.tmp
-
 echo Starting Octopus Deploy
 docker run --name OctopusDeploy ^
            --publish 81:81 ^

@@ -16,14 +16,6 @@ On a Windows Server 2016 TP5 server, with the containers feature installed, run:
 	           octopusdeploy/octopusdeploy
 ```
 
-Unfortunately, due to [a bug](https://github.com/docker/docker/issues/26178) in docker 1.12.0, `=` signs in environment variables dont work, so please replace them with `##equals##`, ie: 
-
-```
-Server##equals##myServerAddress;Database##equals##myDataBase;User Id##equals##myUsername;Password##equals##myPassword
-```
-
-This should be fixed in 1.13.
-
 Once launched, Octopus will be available on http://your-docker-host.example.com:81. Due to networking limitations in Windows Server 2016 TP5, Octopus is not available from the host server, only from containers on that server or other servers.
 
 A [batch file is available](https://github.com/OctopusDeploy/Octopus-Docker/blob/master/start-with-external-sql.cmd) that makes it a bit easier to use and does the escaping.
