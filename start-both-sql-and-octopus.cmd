@@ -1,7 +1,7 @@
 @echo off
 
 if "%OctopusVersion%" equ "" (
-  set OctopusVersion=3.4.2
+  set OctopusVersion=3.7.10
   echo No OctopusVersion environment variable set. Defaulting to %OctopusVersion%.
 )
 
