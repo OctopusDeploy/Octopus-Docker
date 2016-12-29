@@ -10,6 +10,9 @@ docker --version
 echo "docker version"
 docker version
 
+mkdir Source
+powershell -command "invoke-webrequest https://download.octopusdeploy.com/octopus/Octopus.$($env:OctopusVersion)-x64.msi -outfile Source/Octopus.$($env:OctopusVersion)-x64.msi"
+
 docker build --tag octopusdeploy/octopusdeploy-prerelease:%OctopusVersion% ^
              --build-arg OctopusVersion=%OctopusVersion% ^
              .
