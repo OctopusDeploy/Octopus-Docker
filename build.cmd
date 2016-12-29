@@ -10,8 +10,11 @@ docker --version
 echo "docker version"
 docker version
 
-mkdir Source
+IF NOT EXIST Source mkdir Source
+powershell -command "write-host Downloading https://download.octopusdeploy.com/octopus/Octopus.$($env:OctopusVersion)-x64.msi to Source/Octopus.$($env:OctopusVersion)-x64.msi"
 powershell -command "invoke-webrequest https://download.octopusdeploy.com/octopus/Octopus.$($env:OctopusVersion)-x64.msi -outfile Source/Octopus.$($env:OctopusVersion)-x64.msi"
+
+powershell -command "gci -recurse"
 
 docker build --tag octopusdeploy/octopusdeploy-prerelease:%OctopusVersion% ^
              --build-arg OctopusVersion=%OctopusVersion% ^
