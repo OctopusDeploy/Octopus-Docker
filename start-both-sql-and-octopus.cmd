@@ -50,9 +50,7 @@ rem     exit 3
 rem )
 rem rem ########## end: wait until sql server is ready ##########
 
-docker run --interactive ^
-           --tty ^
-           --publish 1433:1433 ^
+docker run --publish 1433:1433 ^
            --name=OctopusDeploySqlServer ^
            --env sa_password=Passw0rd123 ^
            microsoft/mssql-server-2014-express-windows
@@ -68,9 +66,7 @@ del .run.tmp
 set sqlDbConnectionString=Server=tcp:%sqlServerContainerIpAddress%,1433;Initial Catalog=Octopus;Persist Security Info=False;User ID=sa;Password=Passw0rd123;MultipleActiveResultSets=False;Connection Timeout=30;
 
 echo Starting OctopusDeploy
-docker run --interactive ^
-           --tty ^
-           --name=OctopusDeploy ^
+docker run --name=OctopusDeploy ^
            --publish 81:81 ^
            --env sqlDbConnectionString="%sqlDbConnectionString%" ^
            --env masterKey=%masterkey% ^
