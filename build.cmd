@@ -10,16 +10,7 @@ docker --version
 echo "docker version"
 docker version
 
-IF DEFINED BASE_URL GOTO VAR_EXISTS
-SET BASE_URL=https://download.octopusdeploy.com/octopus/
-
-:VAR_EXISTS
-
-IF NOT EXIST Source mkdir Source
-powershell -command "write-host Downloading %BASE_URL%Octopus.$($env:OctopusVersion)-x64.msi to Source/Octopus.$($env:OctopusVersion)-x64.msi"
-powershell -command "invoke-webrequest %BASE_URL%/Octopus.$($env:OctopusVersion)-x64.msi -outfile Source/Octopus.$($env:OctopusVersion)-x64.msi"
-
-powershell -command "gci -recurse"
+rem todo: check to make sure there is an msi in the "source" directory
 
 docker build --tag octopusdeploy/octopusdeploy-prerelease:%OctopusVersion% ^
              --build-arg OctopusVersion=%OctopusVersion% ^
