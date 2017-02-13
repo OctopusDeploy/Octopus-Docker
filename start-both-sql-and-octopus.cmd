@@ -74,7 +74,7 @@ docker run --name=OctopusDeploy ^
            --env masterKey=%masterkey% ^
            --volume c:/temp/octopus-with-docker-sql-volume:c:/Octopus ^
            --detach ^
-           octopusdeploy/octopusdeploy:%OctopusVersion%
+           octopusdeploy/octopusdeploy-prerelease:%OctopusVersion%
 
 rem ########## start: wait until octopus is ready ##########
 set OctopusDeployCheckCount=0
