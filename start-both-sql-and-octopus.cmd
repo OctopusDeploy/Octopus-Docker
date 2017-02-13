@@ -53,6 +53,7 @@ rem rem ########## end: wait until sql server is ready ##########
 docker run --publish 1433:1433 ^
            --name=OctopusDeploySqlServer ^
            --env sa_password=Passw0rd123 ^
+           --env ACCEPT_EULA=Y ^
            microsoft/mssql-server-windows-express
 
 echo "Sleeping for 2 minutes until SQL Server is up and running (hacky)"
