@@ -54,6 +54,7 @@ docker run --publish 1433:1433 ^
            --name=OctopusDeploySqlServer ^
            --env sa_password=Passw0rd123 ^
            --env ACCEPT_EULA=Y ^
+           --detach ^
            microsoft/mssql-server-windows-express
 
 echo "Sleeping for 2 minutes until SQL Server is up and running (hacky)"
@@ -72,6 +73,7 @@ docker run --name=OctopusDeploy ^
            --env sqlDbConnectionString="%sqlDbConnectionString%" ^
            --env masterKey=%masterkey% ^
            --volume c:/temp/octopus-with-docker-sql-volume:c:/Octopus ^
+           --detach ^
            octopusdeploy/octopusdeploy:%OctopusVersion%
 
 rem ########## start: wait until octopus is ready ##########
