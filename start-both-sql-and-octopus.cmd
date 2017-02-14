@@ -1,4 +1,5 @@
 @echo off
+Setlocal EnableDelayedExpansion
 
 if "%OctopusVersion%" equ "" (
   set OctopusVersion=3.7.10
