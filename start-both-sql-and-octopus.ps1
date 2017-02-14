@@ -1,14 +1,14 @@
 param (
-  [string]$OctopusVersion="3.8.9"
+  [Parameter(Mandatory=$true)]
+  [string]$OctopusVersion
 )
-
 
 write-output "Setting up data folder structure"
 if (-not (Test-Path "c:\temp\octopus-with-docker-sql-volume")) {
-  New-Item "c:\temp\octopus-with-docker-sql-volume" -Type Directory
+  New-Item "c:\temp\octopus-with-docker-sql-volume" -Type Directory | out-null
 }
 
-write-output "Starting SQL Server"
+write-output "Starting SQL Server container"
 
 # rem rem Using custom image, while waiting for https://github.com/Microsoft/sql-server-samples/pull/106
 # rem rem Once the official image - microsoft/mssql-server-2014-express-windows - supports health checks, we should use that
@@ -64,12 +64,13 @@ Start-Sleep -seconds 120
 $sqlServerContainerIpAddress = ($(docker inspect OctopusDeploySqlServer) | ConvertFrom-Json).NetworkSettings.Networks.nat.IpAddress
 
 $sqlDbConnectionString = "Server=tcp:$sqlServerContainerIpAddress,1433;Initial Catalog=Octopus;Persist Security Info=False;User ID=sa;Password=Passw0rd123;MultipleActiveResultSets=False;Connection Timeout=30;"
+$masterkey = $env:masterkey
 
-write-output "Starting OctopusDeploy"
+write-output "Starting OctopusDeploy $OctopusVersion container"
 & docker run --name=OctopusDeploy `
            --publish 81:81 `
            --env sqlDbConnectionString="$sqlDbConnectionString" `
-           --env masterKey=$ENV['masterkey'] `
+           --env masterKey="$masterkey" `
            --volume c:/temp/octopus-with-docker-sql-volume:c:/Octopus `
            --interactive `
            octopusdeploy/octopusdeploy-prerelease:$OctopusVersion
