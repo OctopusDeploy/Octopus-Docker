@@ -72,7 +72,7 @@ write-output "Starting OctopusDeploy $OctopusVersion container"
            --env sqlDbConnectionString="$sqlDbConnectionString" `
            --env masterKey="$masterkey" `
            --volume c:/temp/octopus-with-docker-sql-volume:c:/Octopus `
-           --interactive `
+           --detach `
            octopusdeploy/octopusdeploy-prerelease:$OctopusVersion
 
 # ########## start: wait until octopus is ready ##########
