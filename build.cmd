@@ -12,6 +12,7 @@ docker version
 
 rem todo: check to make sure there is an msi in the "source" directory
 
+echo docker build --tag octopusdeploy/octopusdeploy-prerelease:%OctopusVersion% --build-arg OctopusVersion=%OctopusVersion% .
 docker build --tag octopusdeploy/octopusdeploy-prerelease:%OctopusVersion% ^
              --build-arg OctopusVersion=%OctopusVersion% ^
              .
