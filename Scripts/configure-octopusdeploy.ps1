@@ -1,4 +1,6 @@
 ﻿$OFS = "`r`n"
+$sqlDbConnectionString=$env:sqlDbConnectionString
+$masterKey=$env:masterKey
 $octopusAdminUsername=$env:OctopusAdminUsername
 $octopusAdminPassword=$env:OctopusAdminPassword
 
