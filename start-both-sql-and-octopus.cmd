@@ -73,7 +73,7 @@ docker run --name=OctopusDeploy ^
            --env sqlDbConnectionString="%sqlDbConnectionString%" ^
            --env masterKey=%masterkey% ^
            --volume c:/temp/octopus-with-docker-sql-volume:c:/Octopus ^
-           --detach ^
+           --interactive ^
            octopusdeploy/octopusdeploy-prerelease:%OctopusVersion%
 
 rem ########## start: wait until octopus is ready ##########
