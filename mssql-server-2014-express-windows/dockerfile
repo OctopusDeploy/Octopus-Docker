@@ -1,5 +1,5 @@
 # mssql server express image
-FROM microsoft/windowsservercore
+FROM microsoft/windowsservercore:latest
 
 # maintainer for image metadata
 MAINTAINER Perry Skountrianos
