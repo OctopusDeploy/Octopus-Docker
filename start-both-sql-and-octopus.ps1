@@ -51,11 +51,11 @@ write-output "Starting SQL Server container"
 # rem rem ########## end: wait until sql server is ready ##########
 
 & docker run --publish 1433:1433 `
-           --name=OctopusDeploySqlServer `
-           --env sa_password=Passw0rd123 `
-           --env ACCEPT_EULA=Y `
-           --detach `
-           microsoft/mssql-server-windows-express
+             --name=OctopusDeploySqlServer `
+             --env sa_password=Passw0rd123 `
+             --env ACCEPT_EULA=Y `
+             --detach `
+             octopusdeploy/mssql-server-2014-express-windows:latest
 
 write-host "Sleeping for 2 minutes until SQL Server is up and running (hacky)"
 Start-Sleep -seconds 120
@@ -68,12 +68,12 @@ $masterkey = $env:masterkey
 
 write-output "Starting OctopusDeploy $OctopusVersion container"
 & docker run --name=OctopusDeploy `
-           --publish 81:81 `
-           --env sqlDbConnectionString="$sqlDbConnectionString" `
-           --env masterKey="$masterkey" `
-           --volume c:/temp/octopus-with-docker-sql-volume:c:/Octopus `
-           --detach `
-           octopusdeploy/octopusdeploy-prerelease:$OctopusVersion
+             --publish 81:81 `
+             --env sqlDbConnectionString="$sqlDbConnectionString" `
+             --env masterKey="$masterkey" `
+             --volume c:/temp/octopus-with-docker-sql-volume:c:/Octopus `
+             --detach `
+             octopusdeploy/octopusdeploy-prerelease:$OctopusVersion
 
 # ########## start: wait until octopus is ready ##########
 $OctopusDeployCheckCount=1
