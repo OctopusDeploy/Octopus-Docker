@@ -7,7 +7,7 @@ param (
 
 write-host "docker login -u=`"$UserName`" -p=`"#########`""
 & docker login -u="$UserName" -p="$Password"
-if ($$LASTEXITCODE -ne 0) {
+if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 

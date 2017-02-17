@@ -35,7 +35,7 @@ write-host "------------"
 write-host "docker --version"
 write-host "------------"
 & docker --version
-if ($$LASTEXITCODE -ne 0) {
+if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
@@ -43,7 +43,7 @@ write-host "------------"
 write-host "docker version"
 write-host "------------"
 & docker version
-if ($$LASTEXITCODE -ne 0) {
+if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 write-host "------------"
