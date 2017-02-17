@@ -32,7 +32,7 @@ $attemptNumber = 0
 while ($true) {
   $attemptNumber = $attemptNumber + 1
   write-host "Attempt #$attemptNumber to build container..."
-  $result = Execute-Command "docker" "build --tag octopusdeploy/mssql-server-2014-express-windows"
+  $result = Execute-Command "docker" "build --tag octopusdeploy/mssql-server-2014-express-windows ."
   if ($result.stderr -like "*encountered an error during Start: failure in a Windows system call: This operation returned because the timeout period expired. (0x5b4)*")
   {
     if ($attemptNumber -gt $maxAttempts)
