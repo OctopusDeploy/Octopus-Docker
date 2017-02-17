@@ -71,7 +71,7 @@ write-output "Starting OctopusDeploy $OctopusVersion container"
              octopusdeploy/octopusdeploy-prerelease:$OctopusVersion
 
 # ########## start: wait until octopus is ready ##########
-$OctopusDeployCheckCount=1
+$OctopusDeployCheckCount = 0
 
 # push the new version
 write-host "Waiting until octopus is ready"
@@ -82,6 +82,7 @@ $success = $false
 $sleepSeconds = 10
 
 while ($sw.elapsed -lt $timeout) {
+  $OctopusDeployCheckCount = OctopusDeployCheckCount + 1
   $result = ($(docker inspect OctopusDeploy) | ConvertFrom-Json).State.Health.Status
 
   if ($result -eq "") {
