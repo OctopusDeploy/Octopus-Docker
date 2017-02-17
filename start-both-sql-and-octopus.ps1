@@ -3,35 +3,6 @@ param (
   [string]$OctopusVersion
 )
 
-
-function Execute-Command ($commandPath, $commandArguments)
-{
-    Write-Host "Executing '$commandPath $commandArguments'"
-    $pinfo = New-Object System.Diagnostics.ProcessStartInfo
-    $pinfo.FileName = $commandPath
-    $pinfo.RedirectStandardError = $true
-    $pinfo.RedirectStandardOutput = $true
-    $pinfo.UseShellExecute = $false
-    $pinfo.Arguments = $commandArguments
-    $pinfo.WorkingDirectory = $pwd
-    $p = New-Object System.Diagnostics.Process
-    $p.StartInfo = $pinfo
-    $p.Start() | Out-Null
-    $stdout = $p.StandardOutput.ReadToEnd()
-    $stderr = $p.StandardError.ReadToEnd()
-    $p.WaitForExit()
-
-    Write-Host $stdout
-    Write-Host $stderr
-    Write-Host "Process exited with exit code $($p.ExitCode)"
-
-    [pscustomobject]@{
-        stdout = $stdout
-        stderr = $stderr
-        ExitCode = $p.ExitCode
-    }
-}
-
 write-output "Setting up data folder structure"
 if (-not (Test-Path "c:\temp\octopus-with-docker-sql-volume")) {
   New-Item "c:\temp\octopus-with-docker-sql-volume" -Type Directory | out-null
@@ -48,17 +19,13 @@ write-output "Starting SQL Server container"
 # Using custom image, while waiting for https://github.com/Microsoft/sql-server-samples/pull/106
 # Once the official image - microsoft/mssql-server-2014-express-windows - supports health checks, we should use that
 
-while ($true) {
-  $commandArguments = @('--publish', '1433:1433',
-                        '--name=OctopusDeploySqlServer',
-                        '--env' 'sa_password=Passw0rd123',
-                        '--env' 'ACCEPT_EULA=Y',
-                        '--detach',
-                        'octopusdeploy/mssql-server-2014-express-windows:latest')
+& docker run --publish 1433:1433 `
+             --name=OctopusDeploySqlServer `
+             --env sa_password=Passw0rd123 `
+             --env ACCEPT_EULA=Y `
+             --detach `
+             octopusdeploy/mssql-server-2014-express-windows:latest
 
-  $result = Execute-Command "docker" ($commandArguments -join " ")
-  if ($result.stderr -like "*")
-}
 ########## start: wait until sql server is ready ##########
 $checkCount = 0
 $sleepSeconds = 10
