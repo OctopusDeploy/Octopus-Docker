@@ -10,46 +10,8 @@ if (-not (Test-Path "c:\temp\octopus-with-docker-sql-volume")) {
 
 write-output "Starting SQL Server container"
 
-# rem rem Using custom image, while waiting for https://github.com/Microsoft/sql-server-samples/pull/106
-# rem rem Once the official image - microsoft/mssql-server-2014-express-windows - supports health checks, we should use that
-# rem docker run --interactive ^
-# rem            --tty ^
-# rem            --detach ^
-# rem            --publish 1433:1433 ^
-# rem            --name=OctopusDeploySqlServer ^
-# rem            --env sa_password=Passw0rd123 ^
-# rem            octopusdeploy/mssql-server-2014-express-windows
-# rem 
-# rem rem ########## start: wait until sql server is ready ##########
-# rem set CheckCount=0
-# rem :checkhealth
-# rem set /a CheckCount=%CheckCount%+1
-# rem if %checkcount% gtr 30 (
-# rem   echo Waited 5 minutes for SQL Server to come alive, but it didn't. Aborting.
-# rem   exit 1
-# rem )
-# rem 
-# rem powershell -command ($(docker inspect OctopusDeploySqlServer) ^| ConvertFrom-Json).State.Health.Status ^| Set-Content -path '.run.tmp'
-# rem set /p OctopusDeploySqlServerContainerHealth=<.run.tmp
-# rem del .run.tmp
-# rem 
-# rem if "%OctopusDeploySqlServerContainerHealth%" equ "" (
-# rem   echo SQL Server container does not exist. Aborting.
-# rem   exit 2
-# rem )
-# rem 
-# rem echo [Attempt %CheckCount%/12] OctopusDeploySqlServer container health state is '%OctopusDeploySqlServerContainerHealth%'
-# rem if "%OctopusDeploySqlServerContainerHealth%" equ "starting" (
-# rem     echo Sleeping for 10 seconds
-# rem     powershell -command sleep 10
-# rem     goto checkhealth:
-# rem )
-# rem if "%OctopusDeploySqlServerContainerHealth%" neq "healthy" (
-# rem     docker inspect OctopusDeploySqlServer
-# rem     exit 3
-# rem )
-# rem rem ########## end: wait until sql server is ready ##########
-
+# Using custom image, while waiting for https://github.com/Microsoft/sql-server-samples/pull/106
+# Once the official image - microsoft/mssql-server-2014-express-windows - supports health checks, we should use that
 & docker run --publish 1433:1433 `
              --name=OctopusDeploySqlServer `
              --env sa_password=Passw0rd123 `
@@ -57,10 +19,33 @@ write-output "Starting SQL Server container"
              --detach `
              octopusdeploy/mssql-server-2014-express-windows:latest
 
-write-host "Sleeping for 2 minutes until SQL Server is up and running (hacky)"
-Start-Sleep -seconds 120
+########## start: wait until sql server is ready ##########
+$checkCount = 0
+$sleepSeconds = 10
+while ($true) {
+  if ($checkCount -gt 30) {
+    write-host "Waited 5 minutes for SQL Server to come alive, but it didn't. Aborting."
+    exit 1
+  }
 
-# hacky way of getting the container's ip address, as --link doesn't work on windows
+  $result = ($(docker inspect OctopusDeploySqlServer) | ConvertFrom-Json).State.Health.Status
+
+  if ($result -eq "") {
+    write-host "SQL Server container does not exist. Aborting."
+    exit 2
+  }
+
+  write-host "[Attempt $checkCount] OctopusDeploySqlServer container health state is '$result'"
+  if ($result -eq "starting") {
+      write-host "Sleeping for $sleepSeconds seconds"
+      powershell -command sleep $sleepSeconds
+  } elseif ($result -ne "healthy") {
+      & docker inspect OctopusDeploySqlServer
+      exit 3
+  }
+}
+########## end: wait until sql server is ready ##########
+
 $sqlServerContainerIpAddress = ($(docker inspect OctopusDeploySqlServer) | ConvertFrom-Json).NetworkSettings.Networks.nat.IpAddress
 
 $sqlDbConnectionString = "Server=tcp:$sqlServerContainerIpAddress,1433;Initial Catalog=Octopus;Persist Security Info=False;User ID=sa;Password=Passw0rd123;MultipleActiveResultSets=False;Connection Timeout=30;"
