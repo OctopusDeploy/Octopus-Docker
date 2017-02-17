@@ -30,6 +30,7 @@ write-output "Starting SQL Server container"
 $checkCount = 0
 $sleepSeconds = 10
 while ($true) {
+  $checkCount = $checkCount + 1
   if ($checkCount -gt 30) {
     write-host "Waited 5 minutes for SQL Server to come alive, but it didn't. Aborting."
     exit 1
