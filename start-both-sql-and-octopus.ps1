@@ -50,6 +50,8 @@ while ($true) {
   } elseif ($result -ne "healthy") {
       & docker inspect OctopusDeploySqlServer
       exit 3
+  } else {
+    break;
   }
 }
 ########## end: wait until sql server is ready ##########
