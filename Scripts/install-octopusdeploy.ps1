@@ -18,7 +18,7 @@ function Write-Log
   )
 
   $timestamp = ([System.DateTime]::UTCNow).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss")
-  Write-Output "[$timestamp] $message"
+  Write-Verbose "[$timestamp] $message"
 }
 
 function Execute-Command ($exe, $arguments)
@@ -42,9 +42,9 @@ function Write-CommandOutput
 
   if ($output -eq "") { return }
 
-  Write-Output ""
-  $output.Trim().Split("`n") |% { Write-Output "`t| $($_.Trim())" }
-  Write-Output ""
+  Write-Verbose ""
+  $output.Trim().Split("`n") |% { Write-Verbose "`t| $($_.Trim())" }
+  Write-Verbose ""
 }
 
 function Create-InstallLocation
