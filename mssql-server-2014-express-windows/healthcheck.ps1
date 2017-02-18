@@ -6,12 +6,12 @@ if (-not (Test-Path c:\sqlserver.initstate)) {
 $service = Get-Service "MSSQL`$SQLEXPRESS"
 if ($service -eq $null) {
   Write-Output "SQL Server Express service (MSSQL`$SQLEXPRESS) not found"
-  exit 2
+  exit 1
 }
 
 if ($service.Status -ne 'Running') {
   Write-Output "SQL Server Express service (MSSQL`$SQLEXPRESS) is not 'running'"
-  exit 3
+  exit 1
 }
 
 Write-Output "SQL Server Express appears to be running okay"
