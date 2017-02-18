@@ -40,6 +40,28 @@ docker run --env OctopusContainerIpAddress=%OctopusContainerIpAddress% ^
            microsoft/windowsservercore ^
            powershell -command "try { $result = (Invoke-WebRequest http://%OctopusContainerIpAddress%:81/app -UseBasicParsing); if ($result.StatusCode -eq 200) { write-host 'Success!'; exit 0 }; Write-Host 'Failed!'; exit 1 } catch { Write-Host 'Exception! ' + $_; exit 2 }"
 
+echo "-----------------------------------"
+echo "Debugging:"
+echo "-----------------------------------"
+echo "docker logs OctopusDeploySqlServer:"
+docker logs OctopusDeploySqlServer
+echo "-----------------------------------"
+echo "docker inspect OctopusDeploySqlServer:"
+docker inspect OctopusDeploySqlServer
+echo "-----------------------------------"
+echo "docker logs OctopusDeploy:"
+docker logs OctopusDeploy
+echo "-----------------------------------"
+echo "docker inspect OctopusDeploy:"
+docker inspect OctopusDeploy
+echo "-----------------------------------"
+
+echo "docker cp Scripts/run-tests.ps1 OctopusDeploy:/run-tests.ps1"
 docker cp Scripts/run-tests.ps1 OctopusDeploy:/run-tests.ps1
+echo "-----------------------------------"
+echo "docker cp Scripts/octopus-server_spec.rb OctopusDeploy:/octopus-server_spec.rb"
 docker cp Scripts/octopus-server_spec.rb OctopusDeploy:/octopus-server_spec.rb
+echo "-----------------------------------"
+echo "docker exec OctopusDeploy ^"powershell -file /run-tests.ps1^""
 docker exec OctopusDeploy "powershell -file /run-tests.ps1"
+echo "-----------------------------------"
