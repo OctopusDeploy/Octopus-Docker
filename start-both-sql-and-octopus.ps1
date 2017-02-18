@@ -25,6 +25,9 @@ write-output "Starting SQL Server container"
              --env ACCEPT_EULA=Y `
              --detach `
              octopusdeploy/mssql-server-2014-express-windows:latest
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
 
 ########## start: wait until sql server is ready ##########
 $checkCount = 0
@@ -69,6 +72,9 @@ write-output "Starting OctopusDeploy $OctopusVersion container"
              --volume c:/temp/octopus-with-docker-sql-volume:c:/Octopus `
              --detach `
              octopusdeploy/octopusdeploy-prerelease:$OctopusVersion
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
 
 # ########## start: wait until octopus is ready ##########
 $OctopusDeployCheckCount = 0
