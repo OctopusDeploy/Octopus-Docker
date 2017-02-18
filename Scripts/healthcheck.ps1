@@ -31,8 +31,8 @@ try {
         Write-Output "Octopus portal is not responding correctly on http://localhost:81 - got status code $statusCode."
         exit 1
     }
-} 
-catch { 
+}
+catch {
     Write-Output "Octopus portal is not responding correctly on http://localhost:81 - got exception $($_)"
     exit 1
 }
