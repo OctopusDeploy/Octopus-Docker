@@ -67,6 +67,7 @@ $masterkey = $env:masterkey
 write-output "Starting OctopusDeploy $OctopusVersion container"
 & docker run --name=OctopusDeploy `
              --publish 81:81 `
+             --publish 10943:10943 `
              --env sqlDbConnectionString="$sqlDbConnectionString" `
              --env masterKey="$masterkey" `
              --volume c:/temp/octopus-with-docker-sql-volume:c:/Octopus `

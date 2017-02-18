@@ -14,6 +14,9 @@ ENV OctopusAdminPassword Passw0rd123
 ARG OctopusVersion
 ENV OctopusVersion ${OctopusVersion}
 
+EXPOSE 81
+EXPOSE 10943
+
 VOLUME ["c:/Octopus"]
 
 RUN powershell -File /install-octopusdeploy.ps1
