@@ -88,7 +88,7 @@ $success = $false
 $sleepSeconds = 10
 
 while ($sw.elapsed -lt $timeout) {
-  $OctopusDeployCheckCount = OctopusDeployCheckCount + 1
+  $OctopusDeployCheckCount = $OctopusDeployCheckCount + 1
   $result = ($(docker inspect OctopusDeploy) | ConvertFrom-Json).State.Health.Status
 
   if ($result -eq "") {
