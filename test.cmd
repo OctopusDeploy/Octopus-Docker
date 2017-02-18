@@ -62,9 +62,9 @@ echo "-----------------------------------"
 echo "docker cp Scripts/octopus-server_spec.rb OctopusDeploy:/octopus-server_spec.rb"
 docker cp Scripts/octopus-server_spec.rb OctopusDeploy:/octopus-server_spec.rb
 echo "-----------------------------------"
-echo "docker exec OctopusDeploy ^"powershell -command gci c:\^""
-docker exec OctopusDeploy "powershell -command gci c:\"
+echo "docker exec OctopusDeploy powershell -command gci c:\"
+docker exec OctopusDeploy powershell -command gci c:\
 echo "-----------------------------------"
-echo "docker exec OctopusDeploy ^"powershell -file /run-tests.ps1^""
-docker exec OctopusDeploy "powershell -file c:\run-tests.ps1"
+echo "docker exec OctopusDeploy powershell -file /run-tests.ps1"
+docker exec OctopusDeploy powershell -file c:\run-tests.ps1
 echo "-----------------------------------"
