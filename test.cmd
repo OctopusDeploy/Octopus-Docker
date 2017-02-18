@@ -39,3 +39,7 @@ docker run --env OctopusContainerIpAddress=%OctopusContainerIpAddress% ^
            --rm ^
            microsoft/windowsservercore ^
            powershell -command "try { $result = (Invoke-WebRequest http://%OctopusContainerIpAddress%:81/app -UseBasicParsing); if ($result.StatusCode -eq 200) { write-host 'Success!'; exit 0 }; Write-Host 'Failed!'; exit 1 } catch { Write-Host 'Exception! ' + $_; exit 2 }"
+
+docker cp Scripts/run-tests.ps1 OctopusDeploy:/run-tests.ps1
+docker cp Scripts/octopus-server_spec.rb OctopusDeploy:/octopus-server_spec.rb
+docker exec OctopusDeploy "powershell -file /run-tests.ps1"
