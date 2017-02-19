@@ -39,7 +39,7 @@ write-host " Checking to make sure OctopusDeploy container is up and running"
 $OctopusDeployContainerHealth = ($(docker inspect OctopusDeploy) | ConvertFrom-Json).State.Health.Status
 
 if ($OctopusDeployContainerHealth -ne "healthy") {
-  write-host "  - OctopusDeploy container is not healthy - health status is '%OctopusDeployContainerHealth%'. Aborting."
+  write-host "  - OctopusDeploy container is not healthy - health status is '$OctopusDeployContainerHealth'. Aborting."
   exit 2
 }
 write-host "  - OctopusDeploy container is healthy"
