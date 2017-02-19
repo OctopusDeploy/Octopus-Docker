@@ -114,6 +114,7 @@ try
   Set-OctopusServerConfiguration
 
   C:/tools/ruby23/bin/bundle.bat exec rspec octopus-server_spec.rb --format documentation
+  exit $LASTEXITCODE
 }
 catch
 {
