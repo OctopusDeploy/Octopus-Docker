@@ -56,11 +56,14 @@ function Run-OctopusDeploy
   # try/finally is here to try and stop the server gracefully upon container stop
   try {
      # sleep-loop indefinitely (until container stop)
-     while (1 -eq 1) {
-         "$([DateTime]::Now.ToShortTimeString()) - OctopusDeploy service is '$((Get-Service "OctopusDeploy").status)'."
-         Start-Sleep -Seconds 60
-     }
-  } 
+    $lastCheck = (Get-Date).AddSeconds(-2)
+    while ($true) {
+      Get-EventLog -LogName Application -Source "Octopus*" -After $lastCheck | Select-Object TimeGenerated, EntryType, Message
+      $lastCheck = Get-Date
+       "$([DateTime]::Now.ToShortTimeString()) - OctopusDeploy service is '$((Get-Service "OctopusDeploy").status)'."
+       Start-Sleep -Seconds 60
+    }
+  }
   finally {
       Write-Log "Shutting down Octopus Deploy instance ..."
       $args = @(
