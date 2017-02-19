@@ -1,0 +1,9 @@
+source "https://rubygems.org"
+
+gem "rake"
+gem "serverspec"
+gem "rspec-teamcity", "~> 0.0.1"
+gem "nokogiri"
+gem "octopus-serverspec-extensions"
+gem "json_spec"
+gem "json", "1.8.3"

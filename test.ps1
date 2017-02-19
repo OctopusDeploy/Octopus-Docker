@@ -68,24 +68,37 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 write-host "-----------------------------------"
-write-host "Copying run-tests.ps1"
-$content = get-content Scripts/run-tests.ps1 -raw
-$encodedContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($content))
-& docker exec OctopusDeploy cmd /c echo $encodedContent `> c:\run-tests.ps1.b64
-$result = Execute-Command "docker" "exec OctopusDeploy powershell -command `$content = gc run-tests.ps1.b64; `$decoded = [System.Convert]::FromBase64String(`$content); Set-Content -Path c:\run-tests.ps1 -Value `$decoded -encoding byte"
-if ($result.ExitCode -ne 0) {
-  exit $result.ExitCode
+write-host "docker logs OctopusDeploy:"
+& docker logs OctopusDeploy
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
 }
 
 write-host "-----------------------------------"
-write-host "Copying octopus-server_spec.rb"
-$content = get-content Scripts/octopus-server_spec.rb -raw
-$encodedContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($content))
-& docker exec OctopusDeploy cmd /c echo $encodedContent `> c:\octopus-server_spec.rb.b64
-$result = Execute-Command "docker" "exec OctopusDeploy powershell -command `$content = gc octopus-server_spec.rb.b64; `$decoded = [System.Convert]::FromBase64String(`$content); Set-Content -Path c:\octopus-server_spec.rb -Value `$decoded -encoding byte"
-if ($result.ExitCode -ne 0) {
-  exit $result.ExitCode
+write-host "docker inspect OctopusDeploy:"
+& docker inspect OctopusDeploy
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
 }
+
+function Copy-FileToDockerContainer($sourceFile, $destFile) {
+  # docker cp only appears to work if you're copying from a drive thats shared (or something weird like that)
+  write-host "Copying $sourceFile"
+  $content = get-content $sourceFile -raw
+  $encodedContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($content))
+  & docker exec OctopusDeploy cmd /c echo $encodedContent `> "$destFile.b64"
+  $result = Execute-Command "docker" "exec OctopusDeploy powershell -command `$content = gc $destFile.b64; `$decoded = [System.Convert]::FromBase64String(`$content); Set-Content -Path $destFile -Value `$decoded -encoding byte"
+  if ($result.ExitCode -ne 0) {
+    exit $result.ExitCode
+  }
+}
+
+write-host "-----------------------------------"
+write-host "Copying test files"
+Copy-FileToDockerContainer "tests/run-tests.ps1" "c:\run-tests.ps1"
+Copy-FileToDockerContainer "tests/octopus-server_spec.rb" "c:\octopus-server_spec.rb"
+Copy-FileToDockerContainer "tests/Gemfile" "c:\Gemfile"
+Copy-FileToDockerContainer "tests/Gemfile.lock" "c:\Gemfile.lock"
 
 write-host "-----------------------------------"
 write-host "docker exec OctopusDeploy powershell -file /run-tests.ps1"
