@@ -99,6 +99,7 @@ Copy-FileToDockerContainer "tests/run-tests.ps1" "c:\run-tests.ps1"
 Copy-FileToDockerContainer "tests/octopus-server_spec.rb" "c:\octopus-server_spec.rb"
 Copy-FileToDockerContainer "tests/Gemfile" "c:\Gemfile"
 Copy-FileToDockerContainer "tests/Gemfile.lock" "c:\Gemfile.lock"
+Copy-FileToDockerContainer "tests/spec_helper.rb" "c:\spec_helper.rb"
 
 write-host "-----------------------------------"
 write-host "docker exec OctopusDeploy powershell -file /run-tests.ps1"
