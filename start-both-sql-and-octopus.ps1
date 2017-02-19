@@ -3,11 +3,6 @@ param (
   [string]$OctopusVersion
 )
 
-write-output "Setting up data folder structure"
-if (-not (Test-Path "c:\temp\octopus-with-docker-sql-volume")) {
-  New-Item "c:\temp\octopus-with-docker-sql-volume" -Type Directory | out-null
-}
-
 write-output "Getting latest 'octopusdeploy/mssql-server-2014-express-windows:latest' image"
 & docker pull octopusdeploy/mssql-server-2014-express-windows:latest
 
@@ -70,7 +65,6 @@ write-output "Starting OctopusDeploy $OctopusVersion container"
              --publish 10943:10943 `
              --env sqlDbConnectionString="$sqlDbConnectionString" `
              --env masterKey="$masterkey" `
-             --volume c:/temp/octopus-with-docker-sql-volume:c:/Octopus `
              --detach `
              octopusdeploy/octopusdeploy-prerelease:$OctopusVersion
 if ($LASTEXITCODE -ne 0) {
