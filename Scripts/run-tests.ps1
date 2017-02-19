@@ -59,7 +59,6 @@ function Install-ServerSpec {
 function Install-Gems {
   echo "##teamcity[blockOpened name='Installing gem bundle']"
 
-  Set-Location c:\temp\tests
   & C:\tools\ruby23\bin\bundle.bat install --path=vendor --jobs 4
   if ($LASTEXITCODE -ne 0) { exit 1 }
 
