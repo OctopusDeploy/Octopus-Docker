@@ -5,9 +5,15 @@ param (
 
 write-output "Getting latest 'octopusdeploy/mssql-server-2014-express-windows:latest' image"
 & docker pull octopusdeploy/mssql-server-2014-express-windows:latest
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
 
 write-output "Getting latest 'octopusdeploy/octopusdeploy-prerelease:$OctopusVersion' image"
 & docker pull octopusdeploy/octopusdeploy-prerelease:$OctopusVersion
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
 
 write-output "Starting SQL Server container"
 
