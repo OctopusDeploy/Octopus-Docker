@@ -15,20 +15,33 @@ function Install-Ruby {
   echo "##teamcity[blockOpened name='Install Ruby']"
 
   choco install ruby --allow-empty-checksums --yes
-  if ($LASTEXITCODE -ne 0) { exit 1 }
+  if ($LASTEXITCODE -ne 0) {
+    write-host "'choco install ruby' failed with with exit code $LASTEXITCODE"
+    exit $LASTEXITCODE
+  }
 
   refreshenv
-  if ($LASTEXITCODE -ne 0) { exit 1 }
+  if ($LASTEXITCODE -ne 0) {
+    write-host "'refreshenv' failed with with exit code $LASTEXITCODE"
+    exit $LASTEXITCODE
+  }
 
   if (-not (Test-Path "c:\temp")) {
     New-Item "C:\temp" -Type Directory | out-null
   }
 
+  write-host "Downloading rubygems update"
   Invoke-WebRequest "https://rubygems.org/downloads/rubygems-update-2.6.7.gem" -outFile "C:\temp\rubygems-update-2.6.7.gem"
   & C:\tools\ruby23\bin\gem.cmd install --local C:\temp\rubygems-update-2.6.7.gem
-  if ($LASTEXITCODE -ne 0) { exit 1 }
+  if ($LASTEXITCODE -ne 0) {
+    write-host "'gem.cmd install --local C:\temp\rubygems-update-2.6.7.gem' failed with with exit code $LASTEXITCODE"
+    exit $LASTEXITCODE
+  }
   & C:\tools\ruby23\bin\update_rubygems.bat --no-ri --no-rdoc
-  if ($LASTEXITCODE -ne 0) { exit 1 }
+  if ($LASTEXITCODE -ne 0) {
+    write-host "'update_rubygems.bat' failed with with exit code $LASTEXITCODE"
+    exit $LASTEXITCODE
+  }
 
   echo "##teamcity[blockClosed name='Install Ruby']"
 }
