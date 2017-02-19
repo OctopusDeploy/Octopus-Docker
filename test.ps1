@@ -103,7 +103,11 @@ Copy-FileToDockerContainer "tests/spec_helper.rb" "c:\spec_helper.rb"
 
 write-host "-----------------------------------"
 write-host "docker exec OctopusDeploy powershell -file /run-tests.ps1"
-& docker exec OctopusDeploy powershell -file c:\run-tests.ps1
+if (Test-Path ENV:TEAMCITY_PROJECT_NAME) {
+  & docker exec --env tc_project_name=$ENV:TEAMCITY_PROJECT_NAME OctopusDeploy powershell -file c:\run-tests.ps1
+} else {
+  & docker exec OctopusDeploy powershell -file c:\run-tests.ps1
+}
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
