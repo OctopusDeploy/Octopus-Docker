@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 
 describe file('c:/Octopus') do
   it { should be_directory }
