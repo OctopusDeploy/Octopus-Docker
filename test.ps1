@@ -51,35 +51,21 @@ if (($OctopusContainerIpAddress -eq $null) -or ($OctopusContainerIpAddress -eq "
     exit 3
 }
 
-# write-host "-----------------------------------"
-# write-host "Debugging:"
-# write-host "-----------------------------------"
-# write-host "docker logs OctopusDeploySqlServer:"
-# & docker logs OctopusDeploySqlServer
-# if ($LASTEXITCODE -ne 0) {
-#   exit $LASTEXITCODE
-# }
+write-host "-----------------------------------"
+write-host "Debugging:"
+write-host "-----------------------------------"
+write-host "docker logs OctopusDeploySqlServer:"
+& docker logs OctopusDeploySqlServer
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
 
-# write-host "-----------------------------------"
-# write-host "docker inspect OctopusDeploySqlServer:"
-# & docker inspect OctopusDeploySqlServer
-# if ($LASTEXITCODE -ne 0) {
-#   exit $LASTEXITCODE
-# }
-
-# write-host "-----------------------------------"
-# write-host "docker logs OctopusDeploy:"
-# & docker logs OctopusDeploy
-# if ($LASTEXITCODE -ne 0) {
-#   exit $LASTEXITCODE
-# }
-
-# write-host "-----------------------------------"
-# write-host "docker inspect OctopusDeploy:"
-# & docker inspect OctopusDeploy
-# if ($LASTEXITCODE -ne 0) {
-#   exit $LASTEXITCODE
-# }
+write-host "-----------------------------------"
+write-host "docker inspect OctopusDeploySqlServer:"
+& docker inspect OctopusDeploySqlServer
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
 
 write-host "-----------------------------------"
 write-host "Copying run-tests.ps1"
