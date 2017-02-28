@@ -1,0 +1,34 @@
+version: '2.1'
+services:
+  db:
+    image: microsoft/mssql-server-windows-express
+    environment:
+      sa_password: "${SA_PASSWORD}"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433" # REMARK: This is currently required, needs investigation
+    healthcheck:
+      test: [ "CMD", "sqlcmd", "-U", "sa", "-P", "${SA_PASSWORD}", "-Q", "select 1" ]
+      interval: 1s
+      retries: 20
+  octopus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        OctopusVersion: "3.11.2"
+    environment:
+      OctopusAdminUsername: "${OCTOPUS_ADMIN_USERNAME}"
+      OctopusAdminPassword: "${OCTOPUS_ADMIN_PASSWORD}"
+      sqlDbConnectionString: "Server=db,1433;Initial Catalog=Octopus;Persist Security Info=False;User ID=sa;Password=${SA_PASSWORD};MultipleActiveResultSets=False;Connection Timeout=30;"
+      masterkey: ${masterkey}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
+
+networks:
+  default:
+    external:
+      name: nat

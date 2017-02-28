@@ -86,8 +86,8 @@ function Install-OctopusDeploy
 {
   Write-Log "Install Octopus Deploy"
 
-  Write-Log "Listing contents of '/source'"
-  Get-ChildItem "/source" -recurse | Write-CommandOutput
+#   Write-Log "Listing contents of '/source'"
+#   Get-ChildItem "/source" -recurse | Write-CommandOutput
 
   if (Test-Path "/source/*.msi") {
     if (Test-Path "/source/Octopus.Tentacle.*.msi") {
@@ -102,7 +102,7 @@ function Install-OctopusDeploy
     (New-Object Net.WebClient).DownloadFile($downloadUrl, $msiPath)
     Write-Log "done."
   }
-  
+
   Write-Verbose "Starting MSI Installer"
   $msiExitCode = (Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $msiPath /qn /l*v $msiLogPath" -Wait -Passthru).ExitCode
   Write-Verbose "MSI installer returned exit code $msiExitCode"
@@ -153,7 +153,7 @@ function Configure-OctopusDeploy
     '--stop'
   )
   Execute-Command $exe $args
-  
+
   Write-Log ""
 }
 
