@@ -59,7 +59,7 @@ function Install-ServerSpec {
 function Install-Gems {
   echo "##teamcity[blockOpened name='Installing gem bundle']"
 
-  & C:\tools\ruby23\bin\bundle.bat install --path=vendor --jobs 4
+  & C:\tools\ruby23\bin\bundle.bat _1.14.4_ install --path=vendor --jobs 4
   if ($LASTEXITCODE -ne 0) { exit 1 }
 
   echo "##teamcity[blockClosed name='Install gem bundle']"
@@ -113,7 +113,7 @@ try
   Install-Gems
   Set-OctopusServerConfiguration
 
-  C:/tools/ruby23/bin/bundle.bat exec rspec octopus-server_spec.rb --format documentation
+  C:/tools/ruby23/bin/bundle.bat _1.14.4_ exec rspec octopus-server_spec.rb --format documentation
   exit $LASTEXITCODE
 }
 catch
