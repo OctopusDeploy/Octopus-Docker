@@ -1,3 +1,6 @@
+[CmdletBinding()]
+Param()
+
 $version = $env:OctopusVersion
 $msiFileName = "Octopus.$($version)-x64.msi"
 $downloadBaseUrl = "https://download.octopusdeploy.com/octopus/"
@@ -99,17 +102,13 @@ function Install-OctopusDeploy
     (New-Object Net.WebClient).DownloadFile($downloadUrl, $msiPath)
     Write-Log "done."
   }
-
-  Write-Log "Installing via '$msiPath' ..."
-  $exe = 'msiexec.exe'
-  $args = @(
-    '/qn',
-    '/i', $msiPath,
-    '/l*v', $msiLogPath
-  )
-  Execute-Command $exe $args
-
-  Write-Log ""
+  
+  Write-Verbose "Starting MSI Installer"
+  $msiExitCode = (Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $msiPath /qn /l*v $msiLogPath" -Wait -Passthru).ExitCode
+  Write-Verbose "MSI installer returned exit code $msiExitCode"
+  if ($msiExitCode -ne 0) {
+	throw "Install of Octopus Server failed, MSIEXEC exited with code: $msiExitCode. View the log at $msiLogPath"
+  }
 }
 
 function Configure-OctopusDeploy
@@ -118,17 +117,8 @@ function Configure-OctopusDeploy
 
   $exe = 'C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe'
 
-  $count = 0
-  while(!(Test-Path $exe) -and $count -lt 10)
-  {
-    Write-Log "$exe - not available yet ... waiting 10s ..."
-    Start-Sleep -s 10
-    $count = $count + 1
-  }
-
-  if (!(Test-Path $exe)) {
-    Write-Error "Octopus didn't install - waited $($count * 10) seconds for $exe to appear, but it didnt"
-    exit 2
+  if(!(Test-Path $exe)) {
+	throw "File not found. Expected to find '$exe' to perform setup."
   }
 
   Write-Log "Creating Octopus Deploy instance ..."
@@ -207,6 +197,7 @@ try
 
   Write-Log "Installation successful."
   Write-Log ""
+  exit 0
 }
 catch
 {

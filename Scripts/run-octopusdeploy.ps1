@@ -1,4 +1,8 @@
-﻿$OFS = "`r`n"
+﻿[CmdletBinding()]
+Param()
+
+
+$OFS = "`r`n"
 
 function Write-Log
 {

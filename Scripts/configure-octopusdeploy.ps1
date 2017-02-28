@@ -1,4 +1,7 @@
-﻿$OFS = "`r`n"
+﻿[CmdletBinding()]
+Param()
+
+$OFS = "`r`n"
 $sqlDbConnectionString=$env:sqlDbConnectionString
 $masterKey=$env:masterKey
 $octopusAdminUsername=$env:OctopusAdminUsername
