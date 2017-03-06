@@ -1,7 +1,17 @@
 param (
   [Parameter(Mandatory=$true)]
+  [string]$UserName,
+  [Parameter(Mandatory=$true)]
+  [string]$Password,
+  [Parameter(Mandatory=$true)]
   [string]$OctopusVersion
 )
+
+write-host "docker login -u=`"$UserName`" -p=`"#########`""
+& docker login -u="$UserName" -p="$Password"
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
 
 write-output "Getting latest 'octopusdeploy/mssql-server-2014-express-windows:latest' image"
 & docker pull octopusdeploy/mssql-server-2014-express-windows:latest
