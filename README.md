@@ -6,7 +6,7 @@ This image can be used to bring up an instance of Octopus in a container.
 
 # Usage #
 
-On Windows 10 with [Docker for Windows](https://www.docker.com/products/docker#/windows) installed, just run:
+On a Windows Server 2016 TP5 server, with the containers feature and [Docker for Windows](https://www.docker.com/products/docker#/windows) installed, just run:
 
 ```
 docker-compose up
@@ -31,7 +31,8 @@ You can configure that to work against a previous database by adding a line to t
 
 ## Support status ##
 
-This project is still in it's infancy.
+Docker on Windows is still in its infancy.
+These images are just a preview and are unsupported.
 
 Here be dragons.
 
