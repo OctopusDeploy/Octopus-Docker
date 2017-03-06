@@ -12,11 +12,7 @@ services:
       interval: 1s
       retries: 20
   octopus:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        OctopusVersion: "3.11.2"
+    image: octopusdeploy/octopusdeploy-prerelease:${OCTOPUS_VERSION}
     environment:
       OctopusAdminUsername: "${OCTOPUS_ADMIN_USERNAME}"
       OctopusAdminPassword: "${OCTOPUS_ADMIN_PASSWORD}"
