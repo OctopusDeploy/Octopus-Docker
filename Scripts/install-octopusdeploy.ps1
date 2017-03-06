@@ -85,11 +85,11 @@ function Delete-InstallLocation
 function Install-OctopusDeploy
 {
   Write-Log "Install Octopus Deploy"
-
-#   Write-Log "Listing contents of '/source'"
-#   Get-ChildItem "/source" -recurse | Write-CommandOutput
-
+  
   if (Test-Path "/source/*.msi") {
+	Write-Log "Listing contents of '/source'"
+	Get-ChildItem "/source" -recurse | Write-CommandOutput
+  
     if (Test-Path "/source/Octopus.Tentacle.*.msi") {
       Remove-Item "/source/Octopus.Tentacle.*.msi"
     }
