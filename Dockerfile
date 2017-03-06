@@ -2,7 +2,7 @@ FROM microsoft/windowsservercore:latest
 
 HEALTHCHECK --interval=30s --timeout=30s --retries=6 CMD powershell -file /healthcheck.ps1
 
-ADD scripts/*.ps1 /
+ADD Scripts/*.ps1 /
 
 ENV OctopusAdminUsername admin
 ENV OctopusAdminPassword Passw0rd123
