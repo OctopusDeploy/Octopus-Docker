@@ -107,7 +107,12 @@ function Install-OctopusDeploy
   $msiExitCode = (Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $msiPath /qn /l*v $msiLogPath" -Wait -Passthru).ExitCode
   Write-Verbose "MSI installer returned exit code $msiExitCode"
   if ($msiExitCode -ne 0) {
-	throw "Install of Octopus Server failed, MSIEXEC exited with code: $msiExitCode. View the log at $msiLogPath"
+    Write-Verbose "-------------"
+    Write-Verbose "MSI Log file:"
+    Write-Verbose "-------------"
+    Get-Content $msiLogPath
+    Write-Verbose "-------------"
+    throw "Install of Octopus Server failed, MSIEXEC exited with code: $msiExitCode. View the log at $msiLogPath"
   }
 }
 
