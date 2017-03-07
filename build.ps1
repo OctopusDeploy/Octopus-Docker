@@ -56,11 +56,5 @@ if($result.ExitCode -ne 0){
      write-host "Docker failed with exit code " $result.ExitCode
     exit $result.ExitCode
 }
-$result = Execute-Command "docker-compose" "up --force-recreate -d"
-if($result.ExitCode -ne 0){
-     write-host "Docker failed with exit code " $result.ExitCode
-    exit $result.ExitCode
-}  
 
-$docker = docker inspect octopusdocker_octopus_1 | convertfrom-json
-Write-Host Server available from the host at http://$($docker[0].NetworkSettings.Networks.nat.IpAddress):81
+Write-Host "Created image with tag 'octopusdeploy/octopusdeploy-prerelease:$OctopusVersion'"
