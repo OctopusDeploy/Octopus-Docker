@@ -1,17 +1,18 @@
 param (
   [Parameter(Mandatory=$true)]
-  [PSCredential][System.Management.Automation.Credential()]$Credential,
-
+  [string]$UserName,
   [Parameter(Mandatory=$true)]
+  [string]$Password,
+  [Parameter(Mandatory=$true)]		
   [string]$OctopusVersion
 )
 
-write-host "docker login -u=`"$($Credential.UserName)`" -p=`"#########`""
-docker login -u="$($Credential.UserName)" -p="$($Credential.GetNetworkCredential().Password)"
+write-host "docker login -u=`"$UserName`" -p=`"#########`""
+& docker login -u="$UserName" -p="$Password"
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
-write-host "docker push octopusdeploy/octopusdeploy:$OctopusVersion"
-docker push octopusdeploy/octopusdeploy:$OctopusVersion
+write-host "docker push octopusdeploy/octopusdeploy-prerelease:$OctopusVersion"
+& docker push octopusdeploy/octopusdeploy-prerelease:$OctopusVersion
 exit $LASTEXITCODE
