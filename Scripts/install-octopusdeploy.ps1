@@ -3,7 +3,7 @@ Param()
 
 $version = $env:OctopusVersion
 $msiFileName = "Octopus.$($version)-x64.msi"
-$downloadBaseUrl = "https://octopus-testing.s3.amazonaws.com/server/"
+$downloadBaseUrl = "https://download.octopusdeploy.com/octopus/"
 $downloadUrl = $downloadBaseUrl + $msiFileName
 $installBasePath = "C:\Install\"
 $msiPath = $installBasePath + $msiFileName
