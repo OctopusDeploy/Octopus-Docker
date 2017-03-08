@@ -14,6 +14,6 @@ EXPOSE 10943
 
 VOLUME ["c:/Octopus"]
 
-RUN powershell -File /install-octopusdeploy.ps1  -Verbose
+RUN powershell -File /install-octopusdeploy.ps1 -Verbose
 
 ENTRYPOINT powershell -File /configure-octopusdeploy.ps1 -Verbose && powershell -File /run-octopusdeploy.ps1 -Verbose

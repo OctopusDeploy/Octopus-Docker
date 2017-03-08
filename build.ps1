@@ -51,10 +51,25 @@ write-host "------------"
 # todo: check to make sure there is an msi in the "source" directory
 
 $env:OCTOPUS_VERSION=$OctopusVersion
-$result = Execute-Command "docker" "build --tag octopusdeploy/octopusdeploy-prerelease:$OctopusVersion --build-arg OctopusVersion=$OctopusVersion ."
-if($result.ExitCode -ne 0){
-     write-host "Docker failed with exit code " $result.ExitCode
+
+$maxAttempts = 10
+$attemptNumber = 0
+while ($true) {
+  $attemptNumber = $attemptNumber + 1
+  write-host "Attempt #$attemptNumber to build container..."
+  $result = Execute-Command "docker" "build --tag octopusdeploy/octopusdeploy-prerelease:$OctopusVersion --build-arg OctopusVersion=$OctopusVersion ."
+  if ($result.stderr -like "*encountered an error during Start: failure in a Windows system call: This operation returned because the timeout period expired. (0x5b4)*") {
+    if ($attemptNumber -gt $maxAttempts) {
+      write-host "Giving up after $attemptNumber attempts."
+      exit 1
+    }
+    write-host "Docker failed - retrying..."
+  } elseif ($result.ExitCode -ne 0) {
+    write-host "Docker failed with an unknown error. Aborting."
     exit $result.ExitCode
+  } else {
+    exit 0
+  }
 }
 
 Write-Host "Created image with tag 'octopusdeploy/octopusdeploy-prerelease:$OctopusVersion'"
