@@ -15,14 +15,14 @@ if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
-write-host "C:\Program Files\Docker Toolbox\docker-compose pull"
-& docker-compose pull
+write-host "docker-compose pull"
+& "C:\Program Files\Docker Toolbox\docker-compose" pull
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
-write-host "C:\Program Files\Docker Toolbox\docker-compose up --force-recreate -d"
-& docker-compose up --force-recreate -d
+write-host "docker-compose up --force-recreate -d"
+& "C:\Program Files\Docker Toolbox\docker-compose" up --force-recreate -d
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
