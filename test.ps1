@@ -1,5 +1,10 @@
-$OctopusDBContainer="octopusdocker_db_1"
-$OctopusServerContainer="octopusdocker_octopus_1"
+param (
+  [Parameter(Mandatory=$false)]
+  [string]$ProjectName="octopusdocker"
+)
+
+$OctopusServerContainer=$ProjectName+"_octopus_1";
+$OctopusDBContainer=$ProjectName+"_db_1";
 
 function Execute-Command ($commandPath, $commandArguments)
 {

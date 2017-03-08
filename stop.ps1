@@ -1,5 +1,11 @@
-write-host "Stopping 'octopusdeploy' compose project"
-& "C:\Program Files\Docker Toolbox\docker-compose" --project-name octopusdeploy stop
+param (
+  [Parameter(Mandatory=$false)]
+  [string]$ProjectName="octopusdocker"
+)
 
-write-host "Removing 'octopusdeploy' compose project"
-& "C:\Program Files\Docker Toolbox\docker-compose" --project-name octopusdeploy down
+  
+write-host "Stopping '$ProjectName' compose project"
+& "C:\Program Files\Docker Toolbox\docker-compose" --project-name $ProjectName stop
+
+write-host "Removing '$ProjectName' compose project"
+& "C:\Program Files\Docker Toolbox\docker-compose" --project-name $ProjectName down
