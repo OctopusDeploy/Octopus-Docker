@@ -185,7 +185,6 @@ try
 {
   Write-Log "==============================================="
   Write-Log "Installing Octopus Deploy version '$version'"
-  Write-Log " - downloading from '$downloadUrl'"
   Write-Log "==============================================="
 
   Write-Log "Installing '$msiFileName'"
