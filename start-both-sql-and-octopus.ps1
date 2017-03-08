@@ -21,8 +21,8 @@ if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
-write-host "docker-compose up --force-recreate -d"
-& "C:\Program Files\Docker Toolbox\docker-compose" up --force-recreate -d
+write-host "docker-compose --project-name octopusdocker up --force-recreate -d"
+& "C:\Program Files\Docker Toolbox\docker-compose" --project-name octopusdocker up --force-recreate -d
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
