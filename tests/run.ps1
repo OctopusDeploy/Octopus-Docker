@@ -102,11 +102,11 @@ function Copy-FileToDockerContainer($sourceFile, $destFile) {
 
 write-host "-----------------------------------"
 write-host "Copying test files"
-Copy-FileToDockerContainer "tests/run-tests.ps1" "c:\run-tests.ps1"
-Copy-FileToDockerContainer "tests/octopus-server_spec.rb" "c:\octopus-server_spec.rb"
-Copy-FileToDockerContainer "tests/Gemfile" "c:\Gemfile"
-Copy-FileToDockerContainer "tests/Gemfile.lock" "c:\Gemfile.lock"
-Copy-FileToDockerContainer "tests/spec_helper.rb" "c:\spec_helper.rb"
+Copy-FileToDockerContainer "$PSScriptRoot/scripts/run-tests.ps1" "c:\run-tests.ps1"
+Copy-FileToDockerContainer "$PSScriptRoot/scripts/octopus-server_spec.rb" "c:\octopus-server_spec.rb"
+Copy-FileToDockerContainer "$PSScriptRoot/scripts/Gemfile" "c:\Gemfile"
+Copy-FileToDockerContainer "$PSScriptRoot/scripts/Gemfile.lock" "c:\Gemfile.lock"
+Copy-FileToDockerContainer "$PSScriptRoot/scripts/spec_helper.rb" "c:\spec_helper.rb"
 
 write-host "-----------------------------------"
 write-host "docker exec $OctopusServerContainer powershell -file /run-tests.ps1"

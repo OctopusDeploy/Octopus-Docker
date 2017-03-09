@@ -9,8 +9,13 @@ param (
   [string]$ProjectName = "octopusdocker"
 )
 
-$env:OCTOPUS_VERSION=$OctopusVersion
+$env:OCTOPUS_VERSION=$OctopusVersion;
 $ServerServiceName=$ProjectName+"_octopus_1";
+
+#Consider different endpoints for concurrent testing
+$env:PORT_PORTAL=81;
+$env:PORT_HALIBUT=10943;
+
 
 write-host "docker login -u=`"$UserName`" -p=`"#########`""
 & docker login -u="$UserName" -p="$Password"
@@ -19,17 +24,15 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 write-host "docker-compose pull"
-& "docker-compose" pull
+& "C:\Program Files\Docker Toolbox\docker-compose" pull
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
 write-host "docker-compose --project-name $ProjectName up --force-recreate -d"
-& "docker-compose" --project-name $ProjectName up --force-recreate -d
+& "docker-compose" --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d
 if ($LASTEXITCODE -ne 0) {
- Write-Error "Exit Code: $LASTEXITCODE"
- & "docker-compose"  --project-name $ProjectName logs
- exit 1
+  exit $LASTEXITCODE
 }
 
 # Wait for health check to indicate its alive!
@@ -50,7 +53,6 @@ While($attempts -lt 20)
 }
 if ((($(docker inspect $ServerServiceName) | ConvertFrom-Json).State.Health.Status) -ne "healthy"){
 	Write-Error "Octopus container failed to go healthy after $($attempts * $sleepsecs) seconds";
-	& "docker" logs $ServerServiceName
 	exit 1;
 }
 

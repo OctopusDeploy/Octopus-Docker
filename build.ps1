@@ -2,6 +2,7 @@ param (
   [Parameter(Mandatory=$true)]
   [string]$OctopusVersion
 )
+$VerbosePreference = "continue"
 
 function Execute-Command ($commandPath, $commandArguments)
 {
@@ -51,6 +52,7 @@ write-host "------------"
 # todo: check to make sure there is an msi in the "source" directory
 
 $env:OCTOPUS_VERSION=$OctopusVersion
+
 
 $maxAttempts = 10
 $attemptNumber = 0
