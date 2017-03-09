@@ -50,6 +50,7 @@ While($attempts -lt 20)
 }
 if ((($(docker inspect $ServerServiceName) | ConvertFrom-Json).State.Health.Status) -ne "healthy"){
 	Write-Error "Octopus container failed to go healthy after $($attempts * $sleepsecs) seconds";
+	& "docker" logs $ServerServiceName
 	exit 1;
 }
 
