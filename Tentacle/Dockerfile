@@ -4,16 +4,13 @@ FROM microsoft/windowsservercore:latest
 
 ADD Scripts/*.ps1 /
 
-#ENV OctopusAdminUsername admin
-#ENV OctopusAdminPassword Passw0rd123
-#ARG OctopusVersion
-#ENV OctopusVersion ${OctopusVersion}
+ARG OctopusVersion
+ENV OctopusVersion ${OctopusVersion}
 
-#EXPOSE 81
 EXPOSE 10933
 
 VOLUME ["c:/Octopus"]
 
 RUN powershell -File /install-octopusdeploy-tentacle.ps1 -Verbose
-ENTRYPOINT powershell -File /configure-octopusdeploy-tentacle.ps1 -Verbose
+#ENTRYPOINT powershell -File /configure-octopusdeploy-tentacle.ps1 -Verbose && powershell -File /run-octopusdeploy-tentacle.ps1 -Verbose
 #ENTRYPOINT powershell -File /configure-octopusdeploy.ps1 -Verbose && powershell -File /run-octopusdeploy.ps1 -Verbose

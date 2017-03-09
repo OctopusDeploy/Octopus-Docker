@@ -7,8 +7,6 @@ $OctopusTentaclePort = $env:OctopusTentaclePort;
 $OctopusEnvironment = $env:OctopusEnvironment;
 $MachineRoles = $env:MachineRoles;
 
-#"http://master.octopushq.com"
-#"API-BZ1RNCOBH312W0PKCP6OQ3UZL4"
 if($OctopusServerApiKey -eq $null) {
 	Write-Error "Missing api key. Provide OctopusServerApiKey environment variable"
 	exit 1;
@@ -39,11 +37,11 @@ write-host "current working dir is $currDir"
 Install-Module "OctopusDSC"
 echo "using PSModulePath: ${env:PSModulePath}"
 echo ""
-echo "Running Configuration file: InstallOctopusTentacle.ps1"
+echo "Running Configuration file: ConfigureOctopusTentacle.ps1"
 
 # Import the Manifest
 cd $currDir
-. $currDir\InstallOctopusTentacle.ps1
+. $currDir\ConfigureOctopusTentacle.ps1
 
 $StagingPath = $currDir +"staging"
 $Config = @{
@@ -56,14 +54,14 @@ $Config = @{
         }
     )
 };
-InstallOctopusTentacle -OutputPath $StagingPath `
+ConfigureOctopusTentacle -OutputPath $StagingPath `
 	-ConfigurationData $Config `
 	-ApiKey $OctopusServerApiKey `
 	-OctopusServerUrl $OctopusServerUrl `
 	-Environments $OctopusEnvironment `
 	-Roles $MachineRole `
 	-ListenPort $OctopusTentaclePort
-
+#>
 # Start a DSC Configuration run
 Start-DscConfiguration -Force -Wait -Verbose -Path $StagingPath
 del $StagingPath\*.mof

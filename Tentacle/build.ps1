@@ -2,6 +2,7 @@ param (
   [Parameter(Mandatory=$true)]
   [string]$OctopusVersion
 )
+$VerbosePreference = "continue"
 
 function Execute-Command ($commandPath, $commandArguments)
 {
@@ -31,33 +32,23 @@ function Execute-Command ($commandPath, $commandArguments)
     }
 }
 
-write-host "------------"
-write-host "docker --version"
-write-host "------------"
-& docker --version
-if ($LASTEXITCODE -ne 0) {
-  exit $LASTEXITCODE
+function CopySource() {
+	# Copy msi files provided as build artifacts
+	if(!(Test-Path -Path ./Source)){
+		mkdir ./Source;
+	}
+	Copy-Item ..\Source\* .\Source\ -Force
+
 }
 
-write-host "------------"
-write-host "docker version"
-write-host "------------"
-& docker version
-if ($LASTEXITCODE -ne 0) {
-  exit $LASTEXITCODE
-}
-write-host "------------"
 
-# todo: check to make sure there is an msi in the "source" directory
-
-$env:OCTOPUS_VERSION=$OctopusVersion
-
+CopySource;
 $maxAttempts = 10
 $attemptNumber = 0
 while ($true) {
   $attemptNumber = $attemptNumber + 1
   write-host "Attempt #$attemptNumber to build container..."
-  $result = Execute-Command "docker" "build --tag octopusdeploy/octopusdeploy-tentacle-prerelease:$OctopusVersion --build-arg OctopusVersion=$OctopusVersion ."
+  $result = Execute-Command "docker" "build --tag octopusdeploy/octopusdeploy-prerelease:$OctopusVersion --build-arg OctopusVersion=$OctopusVersion ."
   if ($result.stderr -like "*encountered an error during Start: failure in a Windows system call: This operation returned because the timeout period expired. (0x5b4)*") {
     if ($attemptNumber -gt $maxAttempts) {
       write-host "Giving up after $attemptNumber attempts."
@@ -68,8 +59,7 @@ while ($true) {
     write-host "Docker failed with an unknown error. Aborting."
     exit $result.ExitCode
   } else {
-    exit 0
+    break;
   }
 }
-
-Write-Host "Created image with tag 'octopusdeploy/octopusdeploy-tentacle-prerelease:$OctopusVersion'"
+Write-Host "Created image with tag 'octopusdeploy/octopusdeploy-prerelease:$OctopusVersion'"

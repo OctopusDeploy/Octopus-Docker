@@ -42,19 +42,17 @@ function Write-CommandOutput
 
 function Run-OctopusDeploy
 {
-  $exe = 'C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe'
-
-  Write-Log "Start Octopus Deploy instance ..."
+  $exe = 'C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe'
+#"C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe" service --instance "Tentacle" --install --start
+  Write-Log "Start Octopus Deploy Tentacle instance ..."
   $args = @(
     'service',
     '--console',
-    '--instance', 'OctopusServer',
+    '--instance', 'Tentacle',
     '--install',
-    '--reconfigure',
     '--start'
   )
   Execute-Command $exe $args
-
   "Run started." | Set-Content "c:\octopus-run.initstate"
 
   # try/finally is here to try and stop the server gracefully upon container stop
@@ -62,9 +60,9 @@ function Run-OctopusDeploy
      # sleep-loop indefinitely (until container stop)
     $lastCheck = (Get-Date).AddSeconds(-2)
     while ($true) {
-      Get-EventLog -LogName Application -Source "Octopus*" -After $lastCheck | Select-Object TimeGenerated, EntryType, Message
+      Get-EventLog -LogName Application -Source "OctopusDeploy Tentacle*" -After $lastCheck | Select-Object TimeGenerated, EntryType, Message
       $lastCheck = Get-Date
-       "$([DateTime]::Now.ToShortTimeString()) - OctopusDeploy service is '$((Get-Service "OctopusDeploy").status)'."
+       "$([DateTime]::Now.ToShortTimeString()) - OctopusDeploy service is '$((Get-Service "OctopusDeploy Tentacle").status)'."
        Start-Sleep -Seconds 60
     }
   }
@@ -73,9 +71,8 @@ function Run-OctopusDeploy
       $args = @(
         'service',
         '--console',
-        '--instance', 'OctopusServer',
+        '--instance', 'Tentacle',
         '--install',
-        '--reconfigure',
         '--stop'
       )
       Execute-Command $exe $args
