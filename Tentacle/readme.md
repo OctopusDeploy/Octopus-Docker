@@ -14,11 +14,11 @@ docker build --tag octopusdeploy/octopusdeploy-tentacle-prerelease:3.11.2 --buil
 
 ## Running a Tentacle: Quick Start
 ````
-docker run --publish 1433:1433 --env "OctopusServerApiKey=API-ZKCQ5ICDCK9FQV3SJHEPZGRGESS" --env "OctopusServerUrl=http://master.octopushq.com" --volume "c:/temp:c:/Octopus" octopusdeploy/octopusdeploy-tentacle-prerelease:3.11.2
+docker run --publish 10933:10933 --env "OctopusServerApiKey=API-RUB65MWKBPLTZ976IOADGLWW0" --env "Environment=Test" --env "OctopusServerUrl=http://master.octopushq.com" octopusdeploy/octopusdeploy-tentacle-prerelease:3.11.2
 ````
 
 ## Ports
- - **1433**: Port tentacle will be listening on.
+ - **10933**: Port tentacle will be listening on.
 
 
 ## Environment variables
