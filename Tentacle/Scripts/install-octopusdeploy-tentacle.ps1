@@ -14,6 +14,7 @@ if ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne "Trusted") {
     Set-PSRepository -Name PSGallery -InstallationPolicy "Trusted"
 }
 
+
 Install-Module "OctopusDSC"
 echo "using PSModulePath: ${env:PSModulePath}"
 echo ""
@@ -23,8 +24,8 @@ echo "Running Configuration file: InstallOctopusTentacle.ps1"
 cd $currDir
 . $currDir\InstallOctopusTentacle.ps1
 
-$StagingPath = $currDir +"staging"
-mkdir $StagingPath
+
+
 $Config = @{
     AllNodes =
     @(
@@ -35,8 +36,9 @@ $Config = @{
         }
     )
 };
-InstallOctopusTentacle -OutputPath $StagingPath -ConfigurationData $Config
 
-# Start a DSC Configuration run
+$StagingPath = $currDir +"staging"
+mkdir $StagingPath
+InstallOctopusTentacle -OutputPath $StagingPath -ConfigurationData $Config
 Start-DscConfiguration -Force -Wait -Verbose -Path $StagingPath
 del $StagingPath\*.mof

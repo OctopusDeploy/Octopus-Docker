@@ -31,8 +31,6 @@ $MachineRole = "app-server, docker-container";
 
 $OFS = "`r`n"
 
-$currDir = Split-Path $MyInvocation.MyCommand.Path
-write-host "current working dir is $currDir"
 
 Install-Module "OctopusDSC"
 echo "using PSModulePath: ${env:PSModulePath}"
@@ -40,10 +38,11 @@ echo ""
 echo "Running Configuration file: ConfigureOctopusTentacle.ps1"
 
 # Import the Manifest
-cd $currDir
-. $currDir\ConfigureOctopusTentacle.ps1
+cd $PSScriptRoot
+. $PSScriptRoot\ConfigureOctopusTentacle.ps1
+$StagingPath = $PSScriptRoot +"staging"
 
-$StagingPath = $currDir +"staging"
+
 $Config = @{
     AllNodes =
     @(
@@ -54,14 +53,16 @@ $Config = @{
         }
     )
 };
-ConfigureOctopusTentacle -OutputPath $StagingPath `
+
+
+ConfigureOctopusTentacle `
+	-OutputPath $StagingPath `
 	-ConfigurationData $Config `
 	-ApiKey $OctopusServerApiKey `
 	-OctopusServerUrl $OctopusServerUrl `
 	-Environments $OctopusEnvironment `
 	-Roles $MachineRole `
 	-ListenPort $OctopusTentaclePort
-#>
-# Start a DSC Configuration run
+
 Start-DscConfiguration -Force -Wait -Verbose -Path $StagingPath
 del $StagingPath\*.mof

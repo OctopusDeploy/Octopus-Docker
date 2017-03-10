@@ -1,6 +1,6 @@
 Configuration InstallOctopusTentacle
 {
-    param ($ListenPort)
+    param ()
 
     Import-DscResource -Module OctopusDSC
 
@@ -16,17 +16,9 @@ Configuration InstallOctopusTentacle
             # than one instance
             Name = "Tentacle"
 
-            # Defaults to <MachineName>_<InstanceName> unless overridden
-            DisplayName = "My Tentacle"
-
             # Registration - all parameters required
 			ApiKey = "XX"
-            OctopusServerUrl = "http://www.example.com"
-
-            # Optional settings
-            ListenPort = 10933
-            #DefaultApplicationDirectory = "C:\Applications"
-            #TentacleHomeDirectory = "C:\Octopus"
+            OctopusServerUrl = "http://www.example.com"            
         }
     }
 }

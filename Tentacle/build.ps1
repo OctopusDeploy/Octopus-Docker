@@ -38,9 +38,7 @@ function CopySource() {
 		mkdir ./Source;
 	}
 	Copy-Item ..\Source\* .\Source\ -Force
-
 }
-
 
 CopySource;
 $maxAttempts = 10
