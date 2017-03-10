@@ -1,19 +1,16 @@
 ﻿[CmdletBinding()]
 Param()
 
-$OctopusServerApiKey = $env:OctopusServerApiKey;
-$OctopusServerUrl = $env:OctopusServerUrl;
-$Environment = $env:Environment;
-$MachineRoles = $env:MachineRoles;
-
+$ServerApiKey = $env:ServerApiKey;
+$ServerUrl = $env:ServerUrl;
+$MachineEnvironment = $env:MachineEnvironment;
+$MachineRole = $env:MachineRole;
 
 . ./octopus-common.ps1
 
-
 function Configure-Tentacle
 {
- 	
-	  Write-Log "Configure Octopus Deploy Tentacle"
+	Write-Log "Configure Octopus Deploy Tentacle"
  
   if(!(Test-Path $TentacleExe)) {
 	throw "File not found. Expected to find '$TentacleExe' to perform setup."
@@ -24,8 +21,8 @@ function Configure-Tentacle
     'configure',
     '--console',
     '--instance', 'Tentacle',
-	'--home', 'C:\Octopus\Tentacle',
-	'--app', 'C:\Octopus\Applications\Tentacle')
+	'--home', 'C:\TentacleHome',
+	'--app', 'C:\Applications')
   
 	Write-Log "Configuring communication type ..."
   Execute-Command $TentacleExe @(
@@ -58,17 +55,7 @@ Execute-Command $TentacleExe @(
     '--instance', 'Tentacle',
 	'--install'
   )
-	<#
-  Execute-Command $TentacleExe @(
-    'configure',
-    '--console',
-    '--instance', 'Tentacle',
-    '--trust', $OctopusServerThumbprint
-  )
-   
-  #>
   
-   
   Write-Log ""
 }
 
@@ -119,27 +106,30 @@ function Get-PublicHostName
     return $publicHostName
 }
 
-function Validate-Arguments() {
-	if($OctopusServerApiKey -eq $null) {
-		Write-Error "Missing api key. Set the 'OctopusServerApiKey' environment variable"
+function Validate-Variables() {
+	if($ServerApiKey -eq $null) {
+		Write-Error "Missing 'ServerApiKey' environment variable"
 		exit 1;
 	}
 
-	if($OctopusServerUrl -eq $null) {
-		Write-Error "Missing api key. Set the 'OctopusServerUrl' environment variable"
+	if($ServerUrl -eq $null) {
+		Write-Error "Missing 'ServerUrl' environment variable"
 		exit 1;
 	}	
 
-	if($script:Environment -eq $null){
-		$script:Environment = "Dev";
-	}
-	if($MachineRole -eq $null){
-		$MachineRole = "app-server, docker-container";
+	if($MachineEnvironment -eq $null) {
+		Write-Error "Missing 'MachineEnvironment' environment variable"
+		exit 1;
 	}
 	
-	Write-Log " - server endpoint '$OctopusServerUrl'"
+	if($MachineRole -eq $null) {
+		Write-Error "Missing 'MachineRole' environment variable"
+		exit 1;
+	}
+	
+	Write-Log " - server endpoint '$ServerUrl'"
 	Write-Log " - api key '##########'"
-	Write-Log " - environment '$Environment'"
+	Write-Log " - environment '$MachineEnvironment'"
 	Write-Log " - role '$MachineRole'"
 }
 
@@ -154,34 +144,40 @@ function Register-Tentacle(){
  Write-Log "Registering with server ..."
   
   $publicHostName=Get-PublicHostName;
- $args = @(
+  New-Variable -Name argz -Option AllScope
+$argz = @(
     'register-with',
     '--console',
     '--instance', 'Tentacle',
     '--name', 'CustomName',
 	'--publicHostName', $publicHostName,
-	'--apiKey', $OctopusServerApiKey,
-	'--server', $OctopusServerUrl,	
-	'--role','bread',
+	'--apiKey', $ServerApiKey,
+	'--server', $ServerUrl,
 	'--force')
+		
+	$MachineEnvironment.Split(",") | ForEach { 
+		$argz += '--environment'; 
+		$argz += $_.Trim();
+	 };
+	 
+	 $MachineRole.Split(",") | ForEach { 
+		$argz += '--role'; 
+		$argz += $_.Trim();
+	 };
+
+	Write-Host "Env:" $MachineEnvironment
+	Write-Host "ArgsL" $argz
 	
-	$Environment.Split(",") | ForEach { $parms+= '--environment'; $parms += $_.Trim(); };
-	#$MachineRoles.Split(",") | ForEach { $parms+= '--role'; $parms += $_.Trim(); };
-	Write-Host "Env:" $Environment
-	Execute-Command $TentacleExe $args;
+	Execute-Command $TentacleExe $argz;
 }
-
-
-
 
 function Run-Tentacle() {
 Write-Log "Starting Octopus Deploy Tentacle Process"
 
 Execute-Command $TentacleExe @(
-    'service',
-    '--console',
-    '--instance', 'Tentacle',
-	'--start'
+    'run',
+	'--console',
+    '--instance', 'Tentacle'
   )
 }
 
@@ -189,13 +185,12 @@ try
 {
   Write-Log "==============================================="
   Write-Log "Configuring Octopus Deploy Tentacle"
-  Validate-Arguments
+  Validate-Variables
   Write-Log "==============================================="
 
   Restore-Configuration
   Configure-Tentacle
   Register-Tentacle
-  Run-Tentacle
   "Configuration complete." | Set-Content "c:\octopus-configuration.initstate"
 
   Write-Log "Configuration successful."

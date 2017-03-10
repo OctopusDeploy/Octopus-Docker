@@ -20,7 +20,9 @@ docker run --publish 10933:10933 --env "OctopusServerApiKey=API-RUB65MWKBPLTZ976
 ## Ports
  - **10933**: Port tentacle will be listening on.
 
-
 ## Environment variables
  - **OctopusServerApiKey**: The API Key of the Octopus Server the Tentacle should register with.
  - **OctopusServerUrl**: The Url of the Octopus Server the Tentacle should register with..
+ 
+## Volume
+ - **C:\Applications**: Default directory to deploy applications to
