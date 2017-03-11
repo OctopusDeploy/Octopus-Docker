@@ -1,21 +1,32 @@
 FROM microsoft/windowsservercore:latest
 
-HEALTHCHECK --interval=30s --timeout=30s --retries=6 CMD powershell -file /healthcheck.ps1
+HEALTHCHECK --interval=30s --timeout=30s --retries=6 CMD powershell -file ./Server/healthcheck-server.ps1
+
+EXPOSE 81
+EXPOSE 10943
+
+VOLUME ["C:/Octopus", "C:/Migrate"]
 
 ADD Scripts/*.ps1 /
+ADD Server/Scripts/*.ps1 /Server/
+ADD Source/ /Installers
 
 ENV OctopusAdminUsername admin
 ENV OctopusAdminPassword Passw0rd123
 ARG OctopusVersion
 ENV OctopusVersion ${OctopusVersion}
 
-EXPOSE 81
-EXPOSE 10943
-
-VOLUME ["c:/Octopus"]
-
-ADD Source /source
-
-RUN powershell -File /install-octopusdeploy.ps1 -Verbose
-
-ENTRYPOINT powershell -File /configure-octopusdeploy.ps1 -Verbose && powershell -File /run-octopusdeploy.ps1 -Verbose
+LABEL 	org.label-schema.schema-version="1.0" \
+		org.label-schema.name="Octopus Deploy Server" \
+		org.label-schema.vendor="Octopus Deploy" \
+		org.label-schema.url="https://octopus.com" \
+		org.label-schema.vcs-url="https://github.com/OctopusDeploy/Octopus-Docker" \
+		org.label-schema.license="Apache"  \
+		org.label-schema.description="Octopus Deploy Server Instance" \    
+		org.label-schema.build-date=$BUILD_DATE 
+	
+#SHELL ["powershell", "-Command"]
+#RUN Write-Host BLAH
+RUN powershell -File ./install-base.ps1 -Msi Octopus -Verbose && powershell -File ./Server/install-server.ps1 -Verbose
+ENTRYPOINT powershell -File ./Server/configure-server.ps1 -Verbose  && powershell -File ./Server/run-server.ps1 -Verbose
+#ENTRYPOINT powershell -File /configure-server.ps1 -Verbose && powershell -File /run-server.ps1 -Verbose

@@ -32,23 +32,22 @@ function Execute-Command ($commandPath, $commandArguments)
     }
 }
 
-function CopySource() {
-	# Copy msi files provided as build artifacts
-	if(!(Test-Path -Path ./Source)){
-		mkdir ./Source;
-	}
-	Copy-Item ..\Source\* .\Source\ -Force
 
+# Copy msi files provided as build artifacts
+if(!(Test-Path -Path ./Installers)){
+	mkdir ./Installers;
+}
+if(Test-Path ..\Source) {
+	Write-Host "Copying files from ../source to ./Installers to be included in image"
+	Copy-Item ..\Source\* .\Installers\ -Force
 }
 
-
-CopySource;
 $maxAttempts = 10
 $attemptNumber = 0
 while ($true) {
   $attemptNumber = $attemptNumber + 1
   write-host "Attempt #$attemptNumber to build container..."
-  $result = Execute-Command "docker" "build --tag octopusdeploy/octopusdeploy-tentacle-prerelease:$OctopusVersion --build-arg OctopusVersion=$OctopusVersion ."
+  $result = Execute-Command "docker" "build --tag octopusdeploy/octopusdeploy-prerelease:$OctopusVersion --build-arg OctopusVersion=$OctopusVersion ."
   if ($result.stderr -like "*encountered an error during Start: failure in a Windows system call: This operation returned because the timeout period expired. (0x5b4)*") {
     if ($attemptNumber -gt $maxAttempts) {
       write-host "Giving up after $attemptNumber attempts."

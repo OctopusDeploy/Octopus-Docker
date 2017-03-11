@@ -1,7 +1,9 @@
 $OFS = "`r`n";
-$TentacleExe = "C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe";
+$TentacleExe="C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe";
 $TentacleConfig="C:\Octopus\Tentacle.config";
 $TentacleConfigTemp="C:\Tentacle.config.orig"; # work around https://github.com/docker/docker/issues/20127
+ 
+ $ServerExe="C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe";
  
 function Write-Log
 {

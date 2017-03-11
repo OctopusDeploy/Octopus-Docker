@@ -5,4 +5,4 @@ services:
    - "${PORT_PORTAL}:81"
    - "${PORT_HALIBUT}:10943"
   volumes:
-   - "./tests/OctopusHome:c:/Octopus"
+    - "C:/Migrate:C:/Migrate"
