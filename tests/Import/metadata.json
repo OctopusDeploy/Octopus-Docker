@@ -1,0 +1,8 @@
+{
+  "$type": "Octopus.Migrator.ExportProcess.ServerMetadata, Octopus.Migrator",
+  "Id": "SKYNET",
+  "Name": "SKYNET",
+  "Created": "2017-03-10T19:34:16.8844884+10:00",
+  "DatabaseVersion": "0.0.0",
+  "Hello": "GAhRGtKfMRXFxHVyYWnoXQ==|AAAAAAAAAAAAAAAAAAAAAA=="
+}

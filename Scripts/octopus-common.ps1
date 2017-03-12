@@ -4,6 +4,7 @@ $TentacleConfig="C:\Octopus\Tentacle.config";
 $TentacleConfigTemp="C:\Tentacle.config.orig"; # work around https://github.com/docker/docker/issues/20127
  
  $ServerExe="C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe";
+ $MigratorExe="C:\Program Files\Octopus Deploy\Octopus\Octopus.Migrator.exe";
  
 function Write-Log
 {

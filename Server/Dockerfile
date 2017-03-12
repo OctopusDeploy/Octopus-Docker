@@ -5,7 +5,7 @@ HEALTHCHECK --interval=30s --timeout=30s --retries=6 CMD powershell -file ./Serv
 EXPOSE 81
 EXPOSE 10943
 
-VOLUME ["C:/Octopus", "C:/Migrate"]
+VOLUME ["C:/Octopus", "C:/Import"]
 
 ADD Scripts/*.ps1 /
 ADD Server/Scripts/*.ps1 /Server/
@@ -26,7 +26,5 @@ LABEL 	org.label-schema.schema-version="1.0" \
 		org.label-schema.build-date=$BUILD_DATE 
 	
 #SHELL ["powershell", "-Command"]
-#RUN Write-Host BLAH
 RUN powershell -File ./install-base.ps1 -Msi Octopus -Verbose && powershell -File ./Server/install-server.ps1 -Verbose
 ENTRYPOINT powershell -File ./Server/configure-server.ps1 -Verbose  && powershell -File ./Server/run-server.ps1 -Verbose
-#ENTRYPOINT powershell -File /configure-server.ps1 -Verbose && powershell -File /run-server.ps1 -Verbose

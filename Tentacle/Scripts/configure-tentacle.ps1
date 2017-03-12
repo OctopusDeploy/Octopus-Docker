@@ -113,8 +113,10 @@ function Get-PublicHostName
 
 function Validate-Variables() {
 	if($ServerApiKey -eq $null) {
-		Write-Error "Missing 'ServerApiKey' environment variable"
-		exit 1;
+		if($ServerPassword -eq $null -or $ServerUsername -eq $null){
+			Write-Error "No 'ServerApiKey' or username/pasword environment variables are available"
+			exit 1;
+		}
 	}
 
 	if($ServerUrl -eq $null) {

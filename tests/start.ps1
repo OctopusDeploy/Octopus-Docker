@@ -22,13 +22,13 @@ write-host "docker login -u=`"$UserName`" -p=`"#########`""
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
-<#
+
 write-host "docker-compose pull"
 & "C:\Program Files\Docker Toolbox\docker-compose" pull
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
-#>
+
 write-host "docker-compose --project-name $ProjectName up --force-recreate -d"
 & "docker-compose" --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d
 if ($LASTEXITCODE -ne 0) {

@@ -15,4 +15,12 @@ if ($LASTEXITCODE -ne 0) {
 
 write-host "docker push octopusdeploy/octopusdeploy-prerelease:$OctopusVersion"
 & docker push octopusdeploy/octopusdeploy-prerelease:$OctopusVersion
-exit $LASTEXITCODE
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
+
+write-host "docker push octopusdeploy/octopusdeploy-tentacle-prerelease:$OctopusVersion"
+& docker push octopusdeploy/octopusdeploy-tentacle-prerelease:$OctopusVersion
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}

@@ -5,4 +5,4 @@ services:
    - "${PORT_PORTAL}:81"
    - "${PORT_HALIBUT}:10943"
   volumes:
-    - "C:/Migrate:C:/Migrate"
+    - "C:/Dev/Octopus-Docker/tests/Import:C:/Import"

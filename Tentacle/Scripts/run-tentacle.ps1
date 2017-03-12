@@ -3,6 +3,27 @@ Param()
 
 . ./octopus-common.ps1
 
+function Deregister-Machine(){
+  Write-Log "Deregistering Octopus Deploy Tentacle with server ..."
+  $argz=@(
+    'deregister-from',
+    '--console',
+    '--instance', 'Tentacle',
+	'--server', $ServerUrl
+  );
+  if(!($ServerApiKey -eq $null)) {
+		Write-Verbose "Registering Tentacle with api key"
+		$argz += "--apiKey";
+		$argz += $ServerApiKey
+	} else {
+		Write-Verbose "Registering Tentacle with username/password"
+		$argz += "--username";
+		$argz += $ServerUsername
+		$argz += "--password";
+		$argz += $ServerPassword
+	}
+  Execute-Command $TentacleExe, $argz
+}
 
 function Run-OctopusDeployTentacle
 {
@@ -32,6 +53,7 @@ function Run-OctopusDeployTentacle
     }
   }
   finally {
+		#TODO: Re-register
       Write-Log "Shutting down Octopus Deploy instance ..."
       Execute-Command $TentacleExe @(
         'service',

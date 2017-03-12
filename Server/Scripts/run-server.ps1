@@ -3,6 +3,22 @@ Param()
 
 . ../octopus-common.ps1
 
+function Process-Import(){
+ Write-Log "Running Migrator import on C:\Import directory ..."
+  $args = @(
+    'import',
+	'--console',
+    '--directory',
+    'C:\Import',
+    '--instance',
+    'OctopusServer',
+    '--password',
+	'blank'
+  )
+  Execute-Command "C:\Program Files\Octopus Deploy\Octopus\Octopus.Migrator.exe" $args
+#import --directory C:\Temp\TempExport --instance blah --password "nothing"
+}
+
 function Run-OctopusDeploy
 {
 
@@ -52,6 +68,7 @@ try
   Write-Log "Running Octopus Deploy"
   Write-Log "==============================================="
 
+  Process-Import
   Run-OctopusDeploy
 
   Write-Log "Run successful."

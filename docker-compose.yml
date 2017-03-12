@@ -24,6 +24,17 @@ services:
     ports:
       - "81:81"
       - "10943:10943"
+  tentacle:
+    image: octopusdeploy/octopusdeploy-tentacle-prerelease:${OCTOPUS_VERSION}
+    depends_on:
+      octopus:
+        condition: service_healthy
+    environment:
+      ServerUsername: "${OCTOPUS_ADMIN_USERNAME}"
+      ServerPassword: "${OCTOPUS_ADMIN_PASSWORD}"
+      TargetEnvironment: "Development"
+      TargetRole: "bread"
+      ServerUrl: "http://octopus:81"
 networks:
   default:
     external:

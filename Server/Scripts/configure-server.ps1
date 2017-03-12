@@ -12,6 +12,7 @@ $configFile = "c:\Octopus\OctopusServer.config"
 
 . ../octopus-common.ps1
 
+
 function Configure-OctopusDeploy
 {
   
