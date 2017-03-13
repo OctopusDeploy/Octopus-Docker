@@ -3,20 +3,21 @@ Param()
 
 . ../octopus-common.ps1
 
-function Process-Import(){
- Write-Log "Running Migrator import on C:\Import directory ..."
-  $args = @(
-    'import',
-	'--console',
-    '--directory',
-    'C:\Import',
-    '--instance',
-    'OctopusServer',
-    '--password',
-	'blank'
-  )
-  Execute-Command "C:\Program Files\Octopus Deploy\Octopus\Octopus.Migrator.exe" $args
-#import --directory C:\Temp\TempExport --instance blah --password "nothing"
+function Process-Import() {
+ if(Test-Path 'C:\Import\metadata.json' ){
+	 Write-Log "Running Migrator import on C:\Import directory ..."
+	  $args = @(
+		'import',
+		'--console',
+		'--directory',
+		'C:\Import',
+		'--instance',
+		'OctopusServer',
+		'--password',
+		'blank'
+	  )
+	  Execute-Command $MigratorExe $args
+ }
 }
 
 function Run-OctopusDeploy

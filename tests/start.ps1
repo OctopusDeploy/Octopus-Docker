@@ -1,9 +1,5 @@
 param (
   [Parameter(Mandatory=$true)]
-  [string]$UserName,
-  [Parameter(Mandatory=$true)]
-  [string]$Password,
-  [Parameter(Mandatory=$true)]
   [string]$OctopusVersion,
   [Parameter(Mandatory=$false)]
   [string]$ProjectName = "octopusdocker"
@@ -16,18 +12,6 @@ $ServerServiceName=$ProjectName+"_octopus_1";
 $env:PORT_PORTAL=81;
 $env:PORT_HALIBUT=10943;
 
-
-write-host "docker login -u=`"$UserName`" -p=`"#########`""
-& docker login -u="$UserName" -p="$Password"
-if ($LASTEXITCODE -ne 0) {
-  exit $LASTEXITCODE
-}
-
-write-host "docker-compose pull"
-& "C:\Program Files\Docker Toolbox\docker-compose" pull
-if ($LASTEXITCODE -ne 0) {
-  exit $LASTEXITCODE
-}
 
 write-host "docker-compose --project-name $ProjectName up --force-recreate -d"
 & "docker-compose" --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d
