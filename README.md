@@ -1,4 +1,4 @@
-This image can be used to bring up an instance of Octopus in a container.
+These images can be used to bring up an instance of an Octopus Server or Tentacle in a container.
 
 **This is a preview, and is not supported**
 
@@ -11,7 +11,7 @@ On a Windows Server 2016 TP5 server, with the containers feature and [Docker for
 ```
 docker-compose up
 ```
-
+By default the `latest` tagged image will be used. To use a specific version, set the `OCTOPUS_VERSION` environment variable.
 Once launched, Octopus will be available on port 81, and you can find the NATed address by running:
 
 ```
