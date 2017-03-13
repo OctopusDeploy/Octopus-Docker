@@ -32,9 +32,14 @@ function Execute-Command ($commandPath, $commandArguments)
     }
 }
 
-Write-Host "Output Here"
-gci "./source"
 
+Write-Host "docker pull microsoft/windowsservercore:latest"
+& docker pull microsoft/windowsservercore:latest
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
+
+Write-Host "Building Octopus Server"
 $maxAttempts = 10
 $attemptNumber = 0
 while ($true) {
@@ -58,7 +63,7 @@ while ($true) {
 
 
 
-
+Write-Host "Building Octopus Tentacle"
 while ($true) {
   $attemptNumber = $attemptNumber + 1
   write-host "Attempt #$attemptNumber to build container..."
