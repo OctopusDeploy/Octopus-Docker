@@ -9,7 +9,7 @@ $env:OCTOPUS_VERSION=$OctopusVersion;
 $ServerServiceName=$ProjectName+"_octopus_1";
 $TentacleServiceName=$ProjectName+"_tentacle_1";
 
-write-host "docker-compose --project-name $ProjectName up --force-recreate -d"
+write-host "docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d"
 & "docker-compose" --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
@@ -35,8 +35,6 @@ if ((($(docker inspect $ServerServiceName) | ConvertFrom-Json).State.Health.Stat
 	Write-Error "Octopus container failed to go healthy after $($attempts * $sleepsecs) seconds";
 	exit 1;
 }
-
-
 
 
 # Wait for health check to indicate its alive!
