@@ -4,6 +4,7 @@ param (
 )
 
 $OctopusServerContainer=$ProjectName+"_octopus_1";
+$OctopusTentacleContainer=$ProjectName+"_tentacle_1";
 $OctopusDBContainer=$ProjectName+"_db_1";
 
 function Execute-Command ($commandPath, $commandArguments)
@@ -34,29 +35,51 @@ function Execute-Command ($commandPath, $commandArguments)
     }
 }
 
-write-host "Checking to make sure Sql Server container is up and running"
-$OctopusDeploySqlServerContainerHealth = ($(docker inspect $OctopusDBContainer) | ConvertFrom-Json).State.Health.Status
+function CheckDBHealth() {
+	write-host "Checking to make sure Sql Server container is up and running"
+	$OctopusDeploySqlServerContainerHealth = ($(docker inspect $OctopusDBContainer) | ConvertFrom-Json).State.Health.Status
 
-if ($OctopusDeploySqlServerContainerHealth -ne "healthy") {
-  write-host "  - OctopusDeploySqlServer container is not healthy - health status is '$OctopusDeploySqlServerContainerHealth'. Aborting."
-  exit 1
+	if ($OctopusDeploySqlServerContainerHealth -ne "healthy") {
+	  write-host "  - OctopusDeploySqlServer container is not healthy - health status is '$OctopusDeploySqlServerContainerHealth'. Aborting."
+	  exit 1
+	}
+	write-host "  - OctopusDeploySqlServer container is healthy"
 }
-write-host "  - OctopusDeploySqlServer container is healthy"
 
-write-host " Checking to make sure OctopusDeploy container is up and running"
-$OctopusDeployContainerHealth = ($(docker inspect $OctopusServerContainer) | ConvertFrom-Json).State.Health.Status
 
-if ($OctopusDeployContainerHealth -ne "healthy") {
-  write-host "  - OctopusDeploy container is not healthy - health status is '$OctopusDeployContainerHealth'. Aborting."
-  exit 2
+function CheckServerHealth() {
+	write-host " Checking to make sure OctopusDeploy container is up and running"
+	$OctopusDeployContainerHealth = ($(docker inspect $OctopusServerContainer) | ConvertFrom-Json).State.Health.Status
+	if ($OctopusDeployContainerHealth -ne "healthy") {
+	  write-host "  - OctopusDeploy container is not healthy - health status is '$OctopusDeployContainerHealth'. Aborting."
+	  exit 2
+	}
+	write-host "  - OctopusDeploy container is healthy"
 }
-write-host "  - OctopusDeploy container is healthy"
 
-$OctopusContainerIpAddress = ($(docker inspect $OctopusServerContainer) | ConvertFrom-Json).NetworkSettings.Networks.nat.IpAddress
-if (($OctopusContainerIpAddress -eq $null) -or ($OctopusContainerIpAddress -eq "")) {
-    write-host " OctopusDeploy Container does not exist. Aborting."
-    exit 3
+function CheckTentacleHealth() {
+	write-host " Checking to make sure OctopusDeploy Tentacle container is up and running"
+	$OctopusDeployContainerHealth = ($(docker inspect $OctopusTentacleContainer) | ConvertFrom-Json).State.Health.Status
+
+	if ($OctopusDeployContainerHealth -ne "healthy") {
+	  write-host "  - OctopusDeploy Tentacle container is not healthy - health status is '$OctopusDeployContainerHealth'. Aborting."
+	  exit 2
+	}
+	write-host "  - OctopusDeploy Tentacle container is healthy"
 }
+
+function CheckIPAddress() {
+	$OctopusContainerIpAddress = ($(docker inspect $OctopusServerContainer) | ConvertFrom-Json).NetworkSettings.Networks.nat.IpAddress
+	if (($OctopusContainerIpAddress -eq $null) -or ($OctopusContainerIpAddress -eq "")) {
+		write-host " OctopusDeploy Container does not exist. Aborting."
+		exit 3
+	}
+}
+
+CheckDBHealth
+CheckServerHealth
+CheckTentacleHealth
+CheckIPAddress
 
 write-host "-----------------------------------"
 write-host "Debugging:"

@@ -1,6 +1,6 @@
 FROM microsoft/windowsservercore:latest
 
-HEALTHCHECK --interval=30s --timeout=30s --retries=6 CMD powershell -file /healthcheck.ps1
+HEALTHCHECK --interval=30s --timeout=30s --retries=6 CMD powershell -file ./Tentacle/healthcheck-tentacle.ps1
 
 EXPOSE 10933
 
