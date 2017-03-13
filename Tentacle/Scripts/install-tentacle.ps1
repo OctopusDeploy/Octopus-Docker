@@ -133,19 +133,15 @@ function Move-ConfigToBackupLocation
 try
 {
   Write-Log "==============================================="
-  Write-Log "Installing Octopus Deploy Tentacle version '$version'"
+  Write-Log "Configuring Octopus Deploy Tentacle version '$version'"
   Write-Log "==============================================="
 
-  Create-InstallLocation
-  Stage-Installer
-  Install-OctopusDeploy
   Configure-OctopusDeploy
-  Delete-InstallLocation      # removes files we dont need to save space in the image
   Move-ConfigToBackupLocation # work around https://github.com/docker/docker/issues/20127
 
   "Install complete." | Set-Content "c:\octopus-install.initstate"
 
-  Write-Log "Installation successful."
+  Write-Log "Configuration successful."
   Write-Log ""
   exit 0
 }
