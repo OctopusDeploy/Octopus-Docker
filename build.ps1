@@ -32,16 +32,6 @@ function Execute-Command ($commandPath, $commandArguments)
     }
 }
 
-
-# Copy msi files provided as build artifacts
-if(!(Test-Path -Path ./Installers)){
-	mkdir ./Installers;
-}
-if(Test-Path ..\Source) {
-	Write-Host "Copying files from ../source to ./Installers to be included in image"
-	Copy-Item ..\Source\* .\Installers\ -Force
-}
-
 $maxAttempts = 10
 $attemptNumber = 0
 while ($true) {
@@ -61,6 +51,7 @@ while ($true) {
     break;
   }
 }
+
 
 
 
