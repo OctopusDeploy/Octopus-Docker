@@ -40,8 +40,12 @@ function Create-InstallLocation
 
 function Stage-Installer {
 gci $installersPath
+Write-Verbose "Looking For"
+
 	Write-Log "Stage Installer"
-	$embeddedPath=[System.IO.Path]::Combine($installersPath,$msiFileName);  
+	$embeddedPath=[System.IO.Path]::Combine($installersPath,$msiFileName); 
+Write-Verbose $embeddedPath
+	
 	if (Test-Path $embeddedPath) {
 		Write-Log "Found correct version installer at '$embeddedPath'. Copying to '$msiPath' ..."
 		Copy-Item $embeddedPath $msiPath
