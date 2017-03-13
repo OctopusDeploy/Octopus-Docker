@@ -32,6 +32,9 @@ function Execute-Command ($commandPath, $commandArguments)
     }
 }
 
+Write-Host "Output Here"
+gci "./source"
+
 $maxAttempts = 10
 $attemptNumber = 0
 while ($true) {

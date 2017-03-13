@@ -39,6 +39,7 @@ function Create-InstallLocation
 }
 
 function Stage-Installer {
+gci $installersPath
 	Write-Log "Stage Installer"
 	$embeddedPath=[System.IO.Path]::Combine($installersPath,$msiFileName);  
 	if (Test-Path $embeddedPath) {
