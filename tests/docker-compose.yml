@@ -2,7 +2,6 @@ version: '2.1'
 services:
  octopus:
   ports:
-   - "${PORT_PORTAL}:81"
-   - "${PORT_HALIBUT}:10943"
+   - "81"
   volumes:
     - "./tests/Import:C:/Import"

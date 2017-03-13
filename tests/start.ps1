@@ -8,10 +8,6 @@ param (
 $env:OCTOPUS_VERSION=$OctopusVersion;
 $ServerServiceName=$ProjectName+"_octopus_1";
 
-#Consider different endpoints for concurrent testing
-$env:PORT_PORTAL=81;
-$env:PORT_HALIBUT=10943;
-
 
 write-host "docker-compose --project-name $ProjectName up --force-recreate -d"
 & "docker-compose" --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d
@@ -41,5 +37,7 @@ if ((($(docker inspect $ServerServiceName) | ConvertFrom-Json).State.Health.Stat
 }
 
 # Write out helpful info on success
-$docker = docker inspect $ServerServiceName | convertfrom-json
+$docker = (docker inspect $ServerServiceName | convertfrom-json)[0]
+#$port = $docker.NetworkSettings.Ports.'81/tcp'.HostPort
+$ipAddress = $docker.NetworkSettings.Networks.nat.IpAddress
 Write-Host Server available from the host at http://$($docker[0].NetworkSettings.Networks.nat.IpAddress):81

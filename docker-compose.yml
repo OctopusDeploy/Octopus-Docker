@@ -21,9 +21,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    ports:
-      - "81:81"
-      - "10943:10943"
   tentacle:
     image: octopusdeploy/octopusdeploy-tentacle-prerelease:${OCTOPUS_VERSION}
     depends_on:
