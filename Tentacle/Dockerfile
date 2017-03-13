@@ -8,7 +8,7 @@ VOLUME ["C:/Applications", "C:/TentacleHome"]
 
 ADD Scripts/*.ps1 /
 ADD Tentacle/Scripts/*.ps1 /Tentacle/
-ADD Source/ /Installers
+ADD source/ /Installers
 
 ARG OctopusVersion
 ENV OctopusVersion ${OctopusVersion}

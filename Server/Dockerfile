@@ -9,7 +9,7 @@ VOLUME ["C:/Octopus", "C:/Import"]
 
 ADD Scripts/*.ps1 /
 ADD Server/Scripts/*.ps1 /Server/
-ADD Source/ /Installers
+ADD source/ /Installers
 
 ENV OctopusAdminUsername admin
 ENV OctopusAdminPassword Passw0rd123
