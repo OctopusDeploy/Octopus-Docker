@@ -39,6 +39,7 @@ if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
+#Stupid rety logic due to windows/docker error https://github.com/docker/docker/issues/27588
 Write-Host "Building Octopus Server"
 $maxAttempts = 10
 $attemptNumber = 0
