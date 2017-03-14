@@ -1,11 +1,11 @@
 FROM microsoft/windowsservercore:latest
 
-HEALTHCHECK --interval=10s --timeout=10s --retries=6 CMD powershell -file ./Server/healthcheck-server.ps1
+HEALTHCHECK --interval=20s --timeout=20s --retries=6 CMD powershell -file ./Server/healthcheck-server.ps1
 
 EXPOSE 81
 EXPOSE 10943
 
-VOLUME ["C:/Octopus", "C:/Import"]
+VOLUME ["C:/Octopus", "C:/Import", "C:/Repository", "C:/Artifacts", "C:/TaskLogs"]
 
 ADD Scripts/*.ps1 /
 ADD Server/Scripts/*.ps1 /Server/

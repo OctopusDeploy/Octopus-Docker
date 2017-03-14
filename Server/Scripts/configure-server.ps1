@@ -6,15 +6,11 @@ $masterKey=$env:masterKey
 $masterKeySupplied = ($masterKey -ne $null) -and ($masterKey -ne "")
 $octopusAdminUsername=$env:OctopusAdminUsername
 $octopusAdminPassword=$env:OctopusAdminPassword
-
 $configFile = "c:\Octopus\OctopusServer.config"
-
 
 . ../octopus-common.ps1
 
-
-function Configure-OctopusDeploy
-{
+function Configure-OctopusDeploy(){
   
   $configAlreadyExists = Test-Path $configFile
   
@@ -43,6 +39,17 @@ function Configure-OctopusDeploy
     '--console',
     '--instance', 'OctopusServer',
     '--create'
+  )
+  Execute-Command $ServerExe $args
+  
+   Write-Log "Configuring Paths ..."
+  $args = @(
+    'path',
+    '--console',
+    '--instance', 'OctopusServer',
+	'--nugetRepository', 'C:\Repository',
+	'--artifacts', 'C:\Artifacts',
+	'--taskLogs', 'C:\TaskLogs'
   )
   Execute-Command $ServerExe $args
 
@@ -107,8 +114,6 @@ function Validate-Variables(){
   Write-Log " - local admin user '$octopusAdminUsername'"
   Write-Log " - local admin password '##########'"
 }
-
-
 
 try
 {  

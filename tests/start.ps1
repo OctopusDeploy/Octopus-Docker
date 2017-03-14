@@ -9,8 +9,13 @@ $env:OCTOPUS_VERSION=$OctopusVersion;
 $ServerServiceName=$ProjectName+"_octopus_1";
 $TentacleServiceName=$ProjectName+"_tentacle_1";
 
+
+if(!(Test-Path .\tests\Applications)) {
+	mkdir .\tests\Applications
+}
+
 write-host "docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d"
-& "docker-compose" --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d
+& "docker-compose" --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up  --force-recreate  -d
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }

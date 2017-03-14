@@ -15,9 +15,7 @@ $webListenPrefixes = "http://localhost:$port"
 
 . ../octopus-common.ps1
 
-
-function Configure-OctopusDeploy
-{
+function Configure-OctopusDeploy() {
   Write-Log "Configure Octopus Deploy"
 
   if(!(Test-Path $ServerExe)) {
@@ -47,7 +45,8 @@ function Configure-OctopusDeploy
     '--commsListenPort', $listenPort
   )
   Execute-Command $ServerExe $args
-
+  
+  
   Write-Log "Stopping Octopus Deploy instance ..."
   $args = @(
     'service',

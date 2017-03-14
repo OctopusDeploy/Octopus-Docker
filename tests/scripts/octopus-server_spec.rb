@@ -18,14 +18,6 @@ describe windows_registry_key('HKEY_LOCAL_MACHINE\Software\Octopus\OctopusServer
   it { should have_property_value('ConfigurationFilePath', :type_string, 'C:\Octopus\OctopusServer.config') }
 end
 
-##
-#describe service('OctopusDeploy') do
-#  it { should be_installed }
-#  it { should be_running }
-#  it { should have_start_mode('Automatic') }
-#  it { should run_under_account('LocalSystem') }
-#end
-
 describe port(10943) do
   it { should be_listening.with('tcp') }
 end

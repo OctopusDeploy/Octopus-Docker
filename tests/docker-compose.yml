@@ -12,6 +12,9 @@ services:
       TargetRole: "bread"
       ServerUrl: "http://octopus:81"
     stdin_open: true #Process sits and waits for ReadLine
+    volumes:
+      - "./tests/Applications:C:/Applications"
   octopus:
     volumes:
       - "./tests/Import:C:/Import"
+      - "./tests/Repository:C:/Repository"
