@@ -13,18 +13,6 @@ if (-not (Test-Path c:\octopus-run.initstate)) {
     exit 1
 }
 
-$service = Get-Service "OctopusDeploy Tentacle"
-if ($service -eq $null) {
-    Write-Output "OctopusDeploy service not found"
-    exit 1
-}
-
-if ($service.Status -ne 'Running') {
-    Write-Output "OctopusDeploy Tentacle service is not 'running'. Current status is '$($service.Status)'."
-    exit 1
-}
-
-
 #No simple parameter to pass to skip SSL checking in PS until https://github.com/PowerShell/PowerShell/pull/2006
 add-type @"
     using System.Net;

@@ -1,6 +1,6 @@
 FROM microsoft/windowsservercore:latest
 
-HEALTHCHECK --interval=30s --timeout=30s --retries=6 CMD powershell -file ./Server/healthcheck-server.ps1
+HEALTHCHECK --interval=10s --timeout=10s --retries=6 CMD powershell -file ./Server/healthcheck-server.ps1
 
 EXPOSE 81
 EXPOSE 10943

@@ -11,6 +11,7 @@ services:
       TargetEnvironment: "Development"
       TargetRole: "bread"
       ServerUrl: "http://octopus:81"
+    stdin_open: true #Process sits and waits for ReadLine
   octopus:
     volumes:
       - "./tests/Import:C:/Import"
