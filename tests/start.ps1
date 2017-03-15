@@ -16,10 +16,19 @@ if(!(Test-Path .\tests\Applications)) {
 }
 
 write-host "docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d"
-& docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up  --force-recreate  -d
-if ($LASTEXITCODE -ne 0) {
-  Write-Log "docker-compose failed with $LASTEXITCODE"
-  & docker-compose --project-name $ProjectName logs
+try {
+
+	& docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up  --force-recreate  -d
+	if ($LASTEXITCODE -ne 0) {
+	  Write-Log "docker-compose failed with $LASTEXITCODE"
+	  & docker-compose --project-name $ProjectName logs
+	  exit 1
+	}
+}
+catch
+{
+	Write-Log "docker-compose failed with $LASTEXITCODE"
+   & docker-compose --project-name $ProjectName logs
   exit 1
 }
 
