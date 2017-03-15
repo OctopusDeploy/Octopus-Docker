@@ -11,7 +11,11 @@ $TargetName=$env:TargetName;
 $ListeningPort=$env:ListeningPort;
 $PublicHostNameConfiguration=$env:PublicHostNameConfiguration
 
+$InternalListeningPort=10933;
+
 . ./octopus-common.ps1
+
+
 
 function Configure-Tentacle
 {
@@ -34,7 +38,7 @@ function Configure-Tentacle
     'configure',
     '--console',
     '--instance', 'Tentacle',
-	'--port', 10933,
+	'--port', $InternalListeningPort,
 	'--noListen', '"False"')
   
     Write-Log "Updating trust ..."
@@ -138,10 +142,6 @@ function Validate-Variables() {
 		$script:PublicHostNameConfiguration = 'ComputerName'
 	}
 	
-	if($ListeningPort -eq $null){
-		$script:ListeningPort = 10933
-	}
-		
 	Write-Log " - server endpoint '$ServerUrl'"
 	Write-Log " - api key '##########'"
 	Write-Log " - registered port $ListeningPort"
@@ -164,8 +164,8 @@ function Register-Tentacle(){
  Write-Log "Registering with server ..."
   
   $publicHostName=Get-PublicHostName $PublicHostNameConfiguration;
-  New-Variable -Name argz -Option AllScope
-	$argz = @(
+  New-Variable -Name arg -Option AllScope
+	$arg = @(
     'register-with',
     '--console',
     '--instance', 'Tentacle',
@@ -173,34 +173,39 @@ function Register-Tentacle(){
 	'--server', $ServerUrl,
 	'--force')
 	
+	if($ListeningPort -ne $null -and $ListeningPort -ne $InternalListeningPort) {
+		$arg += "--tentacle-comms-port";
+		$arg += $ListeningPort
+	}
+	
 	if(!($ServerApiKey -eq $null)) {
 		Write-Verbose "Registering Tentacle with api key"
-		$argz += "--apiKey";
-		$argz += $ServerApiKey
+		$arg += "--apiKey";
+		$arg += $ServerApiKey
 	} else {
 		Write-Verbose "Registering Tentacle with username/password"
-		$argz += "--username";
-		$argz += $ServerUsername
-		$argz += "--password";
-		$argz += $ServerPassword
+		$arg += "--username";
+		$arg += $ServerUsername
+		$arg += "--password";
+		$arg += $ServerPassword
 	}
 	
 	if($env:TargetName -ne $null) {
-		$argz += "--name";
-		$argz += $env:TargetName;
+		$arg += "--name";
+		$arg += $env:TargetName;
 	}
 		
 	$TargetEnvironment.Split(",") | ForEach { 
-		$argz += '--environment'; 
-		$argz += $_.Trim();
+		$arg += '--environment'; 
+		$arg += $_.Trim();
 	 };
 	 
 	 $TargetRole.Split(",") | ForEach { 
-		$argz += '--role'; 
-		$argz += $_.Trim();
+		$arg += '--role'; 
+		$arg += $_.Trim();
 	 };
 
-	Execute-Command $TentacleExe $argz;
+	Execute-Command $TentacleExe $arg;
 }
 
 function Run-Tentacle() {
