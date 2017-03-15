@@ -31,12 +31,17 @@ function Run-OctopusDeploy
   Write-Log ""
 }
 
+function EnsureNotRunningAlready() {
+	 Stop-Process -name "Octopus.Server" -Force -ErrorAction SilentlyContinue
+}
+
 try
 {
   Write-Log "==============================================="
   Write-Log "Running Octopus Deploy"
   Write-Log "==============================================="
 
+  EnsureNotRunningAlready
   Process-Import
   Run-OctopusDeploy
 

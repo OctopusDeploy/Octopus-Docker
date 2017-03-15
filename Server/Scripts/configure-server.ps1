@@ -119,6 +119,12 @@ try
 {  
   Write-Log "==============================================="
   Write-Log "Configuring Octopus Deploy"
+  if(Test-Path c:\octopus-configuration.initstate){
+	Write-Verbose "This Server has already been initialized and registered so reconfiguration will be skipped. 
+If you need to change the configuration, please start a new container";
+	exit 0
+  }
+  
   Validate-Variables;
   Write-Log "==============================================="
 

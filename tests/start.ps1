@@ -9,7 +9,7 @@ $env:OCTOPUS_VERSION=$OctopusVersion;
 $ServerServiceName=$ProjectName+"_octopus_1";
 $TentacleServiceName=$ProjectName+"_tentacle_1";
 
-. ./octopus-common.ps1
+. ./Scripts/octopus-common.ps1
 
 if(!(Test-Path .\tests\Applications)) {
 	mkdir .\tests\Applications
