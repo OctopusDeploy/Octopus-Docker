@@ -15,9 +15,11 @@ if(!(Test-Path .\tests\Applications)) {
 }
 
 write-host "docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d"
-& "docker-compose" --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up  --force-recreate  -d
+& docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up  --force-recreate  -d
 if ($LASTEXITCODE -ne 0) {
-  exit $LASTEXITCODE
+  Write-Log "docker-compose failed with $LASTEXITCODE"
+  & docker-compose --project-name $ProjectName logs
+  exit 1
 }
 
 # Wait for health check to indicate its alive!
