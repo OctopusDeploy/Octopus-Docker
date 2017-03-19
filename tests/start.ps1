@@ -15,22 +15,28 @@ if(!(Test-Path .\tests\Applications)) {
 	mkdir .\tests\Applications
 }
 
-write-host "docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d"
-try {
-
-	& docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up  --force-recreate  -d
-	if ($LASTEXITCODE -ne 0) {
-	  Write-Log "docker-compose failed with $LASTEXITCODE"
-	  & docker-compose --project-name $ProjectName logs
-	  exit 1
+function Try-UpCompose() {
+	$PrevExitCode = -1;
+	$attempts=5;
+	write-host "docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d"
+	
+	while ($true -and $PrevExitCode -ne 0) {
+		if($attempts-- -lt 0){
+			& docker-compose --project-name $ProjectName logs	 
+			write-host "Ran out of attempts to create container.";
+			exit 1
+		}
+		
+		& docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up  --force-recreate  -d
+		$PrevExitCode = $LASTEXITCODE
+		if($PrevExitCode -ne 0){
+			Write-Host "docker-compose failed with exit code $PrevExitCode";
+		}
 	}
 }
-catch
-{
-	Write-Log "docker-compose failed with $LASTEXITCODE"
-   & docker-compose --project-name $ProjectName logs
-  exit 1
-}
+
+Try-UpCompose
+
 
 # Wait for health check to indicate its alive!
 $attempts = 0;
