@@ -32,7 +32,7 @@ param (
 		$image += "-tentacle";
 	}
 	
-	if($Release) {
+	if($IsRelease) {
 	 $image += "-preview"
 	} else {
 	 $image += "-prerelease"	
@@ -65,7 +65,7 @@ function TagRelease() {
 function Publish(){
 param(
 	[Parameter(Mandatory=$true)]		
-	[bool]$IsRelease = $false	
+	[bool]$IsRelease = $False	
 	)
 	Push-Image $(Get-ImageName "server" $OctopusVersion $IsRelease)
 	Push-Image $(Get-ImageName "tentacle" $OctopusVersion $IsRelease)	
