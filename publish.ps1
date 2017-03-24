@@ -5,8 +5,7 @@ param (
   [string]$Password,
   [Parameter(Mandatory=$true)]		
   [string]$OctopusVersion,
-  [Parameter(Mandatory=$false)]		
-  [bool]$Release = $false
+  [switch]$Release
 )
 
 function Docker-Login() {
@@ -24,8 +23,7 @@ param (
 	[string]$AppType,
 	[Parameter(Mandatory=$true)]		
 	[string]$Version,
-	[Parameter(Mandatory=$true)]		
-	[bool]$Release = $false
+	[bool]$IsRelease=$False
 	)
 	
 	$image = "octopusdeploy/octopusdeploy"
@@ -67,16 +65,16 @@ function TagRelease() {
 function Publish(){
 param(
 	[Parameter(Mandatory=$true)]		
-	[bool]$Release = $false	
+	[bool]$IsRelease = $false	
 	)
-	Push-Image $(Get-ImageName "server" $OctopusVersion $Release)
-	Push-Image $(Get-ImageName "tentacle" $OctopusVersion $Release)	
+	Push-Image $(Get-ImageName "server" $OctopusVersion $IsRelease)
+	Push-Image $(Get-ImageName "tentacle" $OctopusVersion $IsRelease)	
 }
 
 #Docker-Login
 if($Release) {
 	TagRelease
-	Publish -Release $True
+	Publish -IsRelease $True
 } else {
-	Publish -Release $False
+	Publish -IsRelease $False
 }
