@@ -29,8 +29,10 @@ function Try-UpCompose() {
 		
 		& docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up  --force-recreate  -d
 		$PrevExitCode = $LASTEXITCODE
-		if($PrevExitCode -ne 0){
+		if($PrevExitCode -ne 0) {
+			Write-Host $Error
 			Write-Host "docker-compose failed with exit code $PrevExitCode";
+			& docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml logs
 		}
 	}
 }
@@ -80,6 +82,13 @@ if ((($(docker inspect $TentacleServiceName) | ConvertFrom-Json).State.Health.St
 	Write-Error "Octopus Tentacle container failed to go healthy after $($attempts * $sleepsecs) seconds";
 	exit 1;
 }
+
+if(!(Test-Path .\tests\Logs)) {
+	mkdir .\tests\Logs
+}
+
+& docker logs  $ServerServiceName > .\tests\Logs\OctopusServer.log
+& docker logs  $TentacleServiceName > .\tests\Logs\OctopusTentacle.log
 
 
 # Write out helpful info on success
