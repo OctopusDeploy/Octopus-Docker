@@ -5,7 +5,7 @@ param (
   [string]$Password,
   [Parameter(Mandatory=$true)]		
   [string]$OctopusVersion,
-  [Parameter(Mandatory=$true)]		
+  [Parameter(Mandatory=$false)]		
   [bool]$Release = $false
 )
 
