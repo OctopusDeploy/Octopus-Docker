@@ -4,6 +4,12 @@ param (
 )
 $VerbosePreference = "continue"
 
+
+if(!(Test-Path .\Logs)) {
+	mkdir .\Logs
+}
+
+
 function Execute-Command ($commandPath, $commandArguments)
 {
     Write-Host "Executing '$commandPath $commandArguments'"
@@ -47,6 +53,8 @@ while ($true) {
   $attemptNumber = $attemptNumber + 1
   write-host "Attempt #$attemptNumber to build container..."
   $result = Execute-Command "docker" "build --tag octopusdeploy/octopusdeploy-prerelease:$OctopusVersion --build-arg OctopusVersion=$OctopusVersion --file Server\Dockerfile ."
+  $result.stdout >  .\Logs\server.log
+  $result.stderr > .\Logs\server-err.log
   if ($result.stderr -like "*encountered an error during Start: failure in a Windows system call: This operation returned because the timeout period expired. (0x5b4)*") {
     if ($attemptNumber -gt $maxAttempts) {
       write-host "Giving up after $attemptNumber attempts."
@@ -60,15 +68,19 @@ while ($true) {
     break;
   }
 }
-
+Write-Host "Created image with tag 'octopusdeploy/octopusdeploy-prerelease:$OctopusVersion'"
 
 
 
 Write-Host "Building Octopus Tentacle"
+$maxAttempts = 10
+$attemptNumber = 0
 while ($true) {
   $attemptNumber = $attemptNumber + 1
   write-host "Attempt #$attemptNumber to build container..."
   $result = Execute-Command "docker" "build --tag octopusdeploy/octopusdeploy-tentacle-prerelease:$OctopusVersion --build-arg OctopusVersion=$OctopusVersion --file Tentacle\Dockerfile ."
+  $result.stdout > .\Logs\tentacle.log
+  $result.stderr > .\Logs\tentacle-err.log
   if ($result.stderr -like "*encountered an error during Start: failure in a Windows system call: This operation returned because the timeout period expired. (0x5b4)*") {
     if ($attemptNumber -gt $maxAttempts) {
       write-host "Giving up after $attemptNumber attempts."
