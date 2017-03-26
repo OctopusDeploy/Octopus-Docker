@@ -1,3 +1,5 @@
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12,[System.Net.SecurityProtocolType]::Tls11,[System.Net.SecurityProtocolType]::Tls
+
 # If for whatever reason this doesn't work, check this file:
 Start-Transcript -path "C:\run-octopus-server-tests.txt" -append
 
