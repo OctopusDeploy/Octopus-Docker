@@ -71,7 +71,7 @@ param(
 	Push-Image $(Get-ImageName "tentacle" $OctopusVersion $IsRelease)	
 }
 
-#Docker-Login
+Docker-Login
 if($Release) {
 	TagRelease
 	Publish -IsRelease $True
