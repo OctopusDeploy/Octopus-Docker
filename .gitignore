@@ -8,6 +8,10 @@ Desktop.ini
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
+# Log folders generated during builds
+Logs/
+tests/Logs
+
 # Windows Installer files
 *.cab
 *.msi
