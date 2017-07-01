@@ -39,7 +39,7 @@ function Configure-OctopusDeploy() {
     '--home', 'C:\Octopus',
     '--upgradeCheck', 'True',
     '--upgradeCheckWithStatistics', 'True',
-    '--webAuthenticationMode', 'UsernamePassword',
+    '--usernamePasswordIsEnabled', 'True', #this will only work from 3.5 and above
     '--webForceSSL', 'False',
     '--webListenPrefixes', $webListenPrefixes,
     '--commsListenPort', $listenPort
