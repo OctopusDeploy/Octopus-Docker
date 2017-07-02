@@ -19,13 +19,13 @@ function Configure-OctopusDeploy(){
     Copy-item "c:\OctopusServer.config.orig" $configFile
   }
 
-  Write-Log "Configuring Octopus Deploy instance ..."
+  Write-Log "Creating Octopus Deploy database ..."
   $args = @(
-    'configure',
+    'database',
     '--console',
     '--instance', 'OctopusServer',
-    '--home', 'C:\Octopus',
-    '--storageConnectionString', $sqlDbConnectionString
+    '--storageConnectionString', $sqlDbConnectionString,
+    '--create'
   )
   if ($masterKeySupplied -and (-not ($configAlreadyExists))) {
     $args += '--masterkey'
@@ -33,12 +33,13 @@ function Configure-OctopusDeploy(){
   }
   Execute-Command $ServerExe $args
 
-  Write-Log "Creating Octopus Deploy database ..."
+  Write-Log "Configuring Octopus Deploy instance ..."
   $args = @(
-    'database',
+    'configure',
     '--console',
     '--instance', 'OctopusServer',
-    '--create'
+    '--home', 'C:\Octopus',
+    '--usernamePasswordIsEnabled', 'True' #this will only work from 3.5 and above
   )
   Execute-Command $ServerExe $args
   
