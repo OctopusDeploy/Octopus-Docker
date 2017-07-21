@@ -7,8 +7,7 @@ $OctopusServerContainer=$ProjectName+"_octopus_1";
 $OctopusTentacleContainer=$ProjectName+"_tentacle_1";
 $OctopusDBContainer=$ProjectName+"_db_1";
 
-function Execute-Command ($commandPath, $commandArguments)
-{
+function Execute-Command ($commandPath, $commandArguments) {
   Write-Host "Executing '$commandPath $commandArguments'"
   $pinfo = New-Object System.Diagnostics.ProcessStartInfo
   $pinfo.FileName = $commandPath
@@ -78,7 +77,7 @@ function CheckIPAddress() {
 
 CheckDBHealth
 CheckServerHealth
-CheckTentacleHealth
+# CheckTentacleHealth
 CheckIPAddress
 
 write-host "-----------------------------------"
