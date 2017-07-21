@@ -14,7 +14,7 @@ $installerLogPath = $installBasePath + 'Install-OctopusDeploy.ps1.log'
 $OFS = "`r`n"
 
 . ./octopus-common.ps1
- 
+
 function Create-InstallLocation
 {
   Write-Log "Create Install Location"
@@ -35,7 +35,7 @@ function Create-InstallLocation
 
 function Delete-InstallLocation
 {
-	Write-Log "Delete ./Installers Directory"
+  Write-Log "Delete ./Installers Directory"
   if (!(Test-Path "./Installers"))
   {
     Write-Log "Installers directory didn't exist - skipping delete"
@@ -45,8 +45,8 @@ function Delete-InstallLocation
     Remove-Item "./Installers" -Recurse -Force
   }
   Write-Log ""
-  
-  
+
+
   Write-Log "Delete Install Location"
   if (!(Test-Path $installBasePath))
   {
@@ -60,28 +60,28 @@ function Delete-InstallLocation
 }
 
 function Stage-Installer {
-	Write-Log "Stage Octopus Deploy Installer"
-	$embeddedPath=[System.IO.Path]::Combine("/Installers",$msiFileName);  
-	if (Test-Path $embeddedPath) {
+  Write-Log "Stage Octopus Deploy Installer"
+  $embeddedPath=[System.IO.Path]::Combine("/Installers",$msiFileName);
+  if (Test-Path $embeddedPath) {
 
-		Write-Log "Found correct version Octopus Deploy installer at '$embeddedPath'. Copying to '$msiPath' ..."
-		Copy-Item $embeddedPath $msiPath
-		Write-Log "done."
-	}
-	else {  
-		if($version -eq $null){
-			$downloadUrl = $downloadUrlLatest
-			Write-Log "No version specified for install. Using latest";
-		}
-		Write-Log "Downloading Octopus Deploy installer '$downloadUrl' to '$msiPath' ..."
-		(New-Object Net.WebClient).DownloadFile($downloadUrl, $msiPath)
-		Write-Log "done."
-	}
+    Write-Log "Found correct version Octopus Deploy installer at '$embeddedPath'. Copying to '$msiPath' ..."
+    Copy-Item $embeddedPath $msiPath
+    Write-Log "done."
+  }
+  else {
+    if($version -eq $null){
+      $downloadUrl = $downloadUrlLatest
+      Write-Log "No version specified for install. Using latest";
+    }
+    Write-Log "Downloading Octopus Deploy installer '$downloadUrl' to '$msiPath' ..."
+    (New-Object Net.WebClient).DownloadFile($downloadUrl, $msiPath)
+    Write-Log "done."
+  }
 }
 
 function Install-OctopusDeploy
 {
-  Write-Log "Install Octopus Deploy  Tentacle" 
+  Write-Log "Install Octopus Deploy  Tentacle"
   Write-Verbose "Starting MSI Installer"
   $msiExitCode = (Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $msiPath /qn /l*v $msiLogPath" -Wait -Passthru).ExitCode
   Write-Verbose "MSI installer returned exit code $msiExitCode"
@@ -98,9 +98,9 @@ function Install-OctopusDeploy
 function Configure-OctopusDeploy
 {
   Write-Log "Configure Octopus Deploy Tentacle"
- 
+
   if(!(Test-Path $TentacleExe)) {
-	throw "File not found. Expected to find '$TentacleExe' to perform setup."
+  throw "File not found. Expected to find '$TentacleExe' to perform setup."
   }
 
   Write-Log "Creating Octopus Deploy Tentacle instance ..."

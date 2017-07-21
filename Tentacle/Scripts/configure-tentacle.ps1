@@ -19,52 +19,52 @@ $InternalListeningPort=10933;
 
 function Configure-Tentacle
 {
-	Write-Log "Configure Octopus Deploy Tentacle"
- 
+  Write-Log "Configure Octopus Deploy Tentacle"
+
   if(!(Test-Path $TentacleExe)) {
-	throw "File not found. Expected to find '$TentacleExe' to perform setup."
-  }  
-  
+    throw "File not found. Expected to find '$TentacleExe' to perform setup."
+  }
+
   Write-Log "Setting directory paths ..."
   Execute-Command $TentacleExe @(
     'configure',
     '--console',
     '--instance', 'Tentacle',
-	'--home', 'C:\TentacleHome',
-	'--app', 'C:\Applications')
-  
-	Write-Log "Configuring communication type ..."
+    '--home', 'C:\TentacleHome',
+    '--app', 'C:\Applications')
+
+  Write-Log "Configuring communication type ..."
   Execute-Command $TentacleExe @(
     'configure',
     '--console',
     '--instance', 'Tentacle',
-	'--port', $InternalListeningPort,
-	'--noListen', '"False"')
-  
+    '--port', $InternalListeningPort,
+    '--noListen', '"False"')
+
     Write-Log "Updating trust ..."
   Execute-Command $TentacleExe @(
     'configure',
     '--console',
     '--instance', 'Tentacle',
     '--reset-trust')
-	
-	Write-Log "Creating certificate ..."
+
+  Write-Log "Creating certificate ..."
   Execute-Command $TentacleExe @(
     'new-certificate',
     '--console',
     '--instance', 'Tentacle',
     '--if-blank'
   )
-  
+
   Write-Log "Starting Octopus Deploy Tentacle Process"
 
 Execute-Command $TentacleExe @(
     'service',
     '--console',
     '--instance', 'Tentacle',
-	'--install'
+    '--install'
   )
-  
+
   Write-Log ""
 }
 
@@ -74,83 +74,83 @@ Execute-Command $TentacleExe @(
 # know the public IP/host name of the current 10?
 function Get-MyPublicIPAddress
 {
-    Write-Verbose "Getting public IP address"
+  Write-Verbose "Getting public IP address"
 
-    try
-    {
-        $ip = Invoke-RestMethod -Uri https://api.ipify.org
-    }
-    catch
-    {
-        Write-Verbose $_
-    }
-    return $ip
+  try
+  {
+    $ip = Invoke-RestMethod -Uri https://api.ipify.org
+  }
+  catch
+  {
+    Write-Verbose $_
+  }
+  return $ip
 }
 
 function Get-PublicHostName
 {
-    param (
-        [ValidateSet("PublicIp", "FQDN", "ComputerName", "Custom")]
-        [string]$publicHostNameConfiguration = "PublicIp",
-        [string]$customPublicHostName
-    )
-    if ($publicHostNameConfiguration -eq "Custom")
-    {
-        $publicHostName = $customPublicHostName
-    }
-    elseif ($publicHostNameConfiguration -eq "FQDN")
-    {
-        $computer = Get-CimInstance win32_computersystem
-        $publicHostName = "$($computer.DNSHostName).$($computer.Domain)"
-    }
-    elseif ($publicHostNameConfiguration -eq "ComputerName")
-    {
-        $publicHostName = $env:COMPUTERNAME
-    }
-    else
-    {
-        $publicHostName = Get-MyPublicIPAddress
-    }
-    $publicHostName = $publicHostName.Trim()
-    return $publicHostName
+  param (
+    [ValidateSet("PublicIp", "FQDN", "ComputerName", "Custom")]
+    [string]$publicHostNameConfiguration = "PublicIp",
+    [string]$customPublicHostName
+  )
+  if ($publicHostNameConfiguration -eq "Custom")
+  {
+    $publicHostName = $customPublicHostName
+  }
+  elseif ($publicHostNameConfiguration -eq "FQDN")
+  {
+    $computer = Get-CimInstance win32_computersystem
+    $publicHostName = "$($computer.DNSHostName).$($computer.Domain)"
+  }
+  elseif ($publicHostNameConfiguration -eq "ComputerName")
+  {
+    $publicHostName = $env:COMPUTERNAME
+  }
+  else
+  {
+    $publicHostName = Get-MyPublicIPAddress
+  }
+  $publicHostName = $publicHostName.Trim()
+  return $publicHostName
 }
 
 function Validate-Variables() {
-	if($ServerApiKey -eq $null) {
-		if($ServerPassword -eq $null -or $ServerUsername -eq $null){
-			Write-Error "No 'ServerApiKey' or username/pasword environment variables are available"
-			exit 1;
-		}
-	}
+  if($ServerApiKey -eq $null) {
+    if($ServerPassword -eq $null -or $ServerUsername -eq $null){
+      Write-Error "No 'ServerApiKey' or username/pasword environment variables are available"
+      exit 1;
+    }
+  }
 
-	if($ServerUrl -eq $null) {
-		Write-Error "Missing 'ServerUrl' environment variable"
-		exit 1;
-	}	
+  if($ServerUrl -eq $null) {
+    Write-Error "Missing 'ServerUrl' environment variable"
+    exit 1;
+  }
 
-	if($TargetEnvironment -eq $null) {
-		Write-Error "Missing 'TargetEnvironment' environment variable"
-		exit 1;
-	}
-	
-	if($TargetRole -eq $null) {
-		Write-Error "Missing 'TargetRole' environment variable"
-		exit 1;
-	}
-	
-	if($PublicHostNameConfiguration -eq $null) {
-		$script:PublicHostNameConfiguration = 'ComputerName'
-	}
-	
-	Write-Log " - server endpoint '$ServerUrl'"
-	Write-Log " - api key '##########'"
-	Write-Log " - registered port $ListeningPort"
-	Write-Log " - environment '$TargetEnvironment'"
-	Write-Log " - role '$TargetRole'"
-	Write-Log " - host '$PublicHostNameConfiguration'"
-	if($env:TargetName -ne $null) {
-		Write-Log " - name '$env:TargetName'"
-	}
+  if($TargetEnvironment -eq $null) {
+    Write-Error "Missing 'TargetEnvironment' environment variable"
+    exit 1;
+  }
+
+  if($TargetRole -eq $null) {
+    Write-Error "Missing 'TargetRole' environment variable"
+    exit 1;
+  }
+
+  if($PublicHostNameConfiguration -eq $null) {
+    $script:PublicHostNameConfiguration = 'ComputerName'
+  }
+
+  Write-Log " - server endpoint '$ServerUrl'"
+  Write-Log " - api key '##########'"
+  Write-Log " - registered port $ListeningPort"
+  Write-Log " - environment '$TargetEnvironment'"
+  Write-Log " - role '$TargetRole'"
+  Write-Log " - host '$PublicHostNameConfiguration'"
+  if($env:TargetName -ne $null) {
+    Write-Log " - name '$env:TargetName'"
+  }
 }
 
 function Restore-Configuration() {
@@ -162,72 +162,71 @@ function Restore-Configuration() {
 
 function Register-Tentacle(){
  Write-Log "Registering with server ..."
-  
+
   $publicHostName=Get-PublicHostName $PublicHostNameConfiguration;
   New-Variable -Name arg -Option AllScope
-	$arg = @(
+  $arg = @(
     'register-with',
     '--console',
     '--instance', 'Tentacle',
-	'--publicHostName', $publicHostName,
-	'--server', $ServerUrl,
-	'--force')
-	
-	if($ListeningPort -ne $null -and $ListeningPort -ne $InternalListeningPort) {
-		$arg += "--tentacle-comms-port";
-		$arg += $ListeningPort
-	}
-	
-	if(!($ServerApiKey -eq $null)) {
-		Write-Verbose "Registering Tentacle with api key"
-		$arg += "--apiKey";
-		$arg += $ServerApiKey
-	} else {
-		Write-Verbose "Registering Tentacle with username/password"
-		$arg += "--username";
-		$arg += $ServerUsername
-		$arg += "--password";
-		$arg += $ServerPassword
-	}
-	
-	if($env:TargetName -ne $null) {
-		$arg += "--name";
-		$arg += $env:TargetName;
-	}
-		
-	$TargetEnvironment.Split(",") | ForEach { 
-		$arg += '--environment'; 
-		$arg += $_.Trim();
-	 };
-	 
-	 $TargetRole.Split(",") | ForEach { 
-		$arg += '--role'; 
-		$arg += $_.Trim();
-	 };
+  '--publicHostName', $publicHostName,
+  '--server', $ServerUrl,
+  '--force')
 
-	Execute-Command $TentacleExe $arg;
+  if($ListeningPort -ne $null -and $ListeningPort -ne $InternalListeningPort) {
+    $arg += "--tentacle-comms-port";
+    $arg += $ListeningPort
+  }
+
+  if(!($ServerApiKey -eq $null)) {
+    Write-Verbose "Registering Tentacle with api key"
+    $arg += "--apiKey";
+    $arg += $ServerApiKey
+  } else {
+    Write-Verbose "Registering Tentacle with username/password"
+    $arg += "--username";
+    $arg += $ServerUsername
+    $arg += "--password";
+    $arg += $ServerPassword
+  }
+
+  if($env:TargetName -ne $null) {
+    $arg += "--name";
+    $arg += $env:TargetName;
+  }
+
+  $TargetEnvironment.Split(",") | ForEach {
+    $arg += '--environment';
+    $arg += $_.Trim();
+   };
+
+   $TargetRole.Split(",") | ForEach {
+    $arg += '--role';
+    $arg += $_.Trim();
+   };
+
+  Execute-Command $TentacleExe $arg;
 }
 
 function Run-Tentacle() {
 Write-Log "Starting Octopus Deploy Tentacle Process"
 
 Execute-Command $TentacleExe @(
-    'run',
-	'--console',
-    '--instance', 'Tentacle'
-  )
+  'run',
+  '--console',
+  '--instance', 'Tentacle')
 }
 
 try
 {
   Write-Log "==============================================="
   Write-Log "Configuring Octopus Deploy Tentacle"
-  
+
   if(Test-Path c:\octopus-configuration.initstate){
-	Write-Verbose "This Tentacle has already been initialized and registered so reconfiguration will be skipped";
-	exit 0
+    Write-Verbose "This Tentacle has already been initialized and registered so reconfiguration will be skipped";
+    exit 0
   }
-  
+
   Validate-Variables
   Write-Log "==============================================="
 

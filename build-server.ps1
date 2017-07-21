@@ -6,7 +6,7 @@ $VerbosePreference = "continue"
 
 
 if(!(Test-Path .\Logs)) {
-	mkdir .\Logs
+  mkdir .\Logs
 }
 
 

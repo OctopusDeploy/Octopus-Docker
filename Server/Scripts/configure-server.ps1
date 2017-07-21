@@ -11,9 +11,9 @@ $configFile = "c:\Octopus\OctopusServer.config"
 . ../octopus-common.ps1
 
 function Configure-OctopusDeploy(){
-  
+
   $configAlreadyExists = Test-Path $configFile
-  
+
   if (-not($configAlreadyExists)) {
     # work around https://github.com/docker/docker/issues/20127
     Copy-item "c:\OctopusServer.config.orig" $configFile
@@ -42,15 +42,15 @@ function Configure-OctopusDeploy(){
     '--usernamePasswordIsEnabled', 'True' #this will only work from 3.5 and above
   )
   Execute-Command $ServerExe $args
-  
+
    Write-Log "Configuring Paths ..."
   $args = @(
     'path',
     '--console',
     '--instance', 'OctopusServer',
-	'--nugetRepository', 'C:\Repository',
-	'--artifacts', 'C:\Artifacts',
-	'--taskLogs', 'C:\TaskLogs'
+    '--nugetRepository', 'C:\Repository',
+    '--artifacts', 'C:\Artifacts',
+    '--taskLogs', 'C:\TaskLogs'
   )
   Execute-Command $ServerExe $args
 
@@ -83,19 +83,19 @@ function Configure-OctopusDeploy(){
   Execute-Command $ServerExe $args
 
   if (($masterKey -eq $null) -or ($masterKey -eq "")) {
-      Write-Log "Display master key ..."
-      $args = @(
-        'show-master-key',
-        '--console',
-        '--instance', 'OctopusServer'
-      )
-      Execute-Command $ServerExe $args
+    Write-Log "Display master key ..."
+    $args = @(
+      'show-master-key',
+      '--console',
+      '--instance', 'OctopusServer'
+    )
+    Execute-Command $ServerExe $args
   }
 
   Write-Log ""
 }
 
-function Validate-Variables(){
+function Validate-Variables() {
   $masterKeySupplied = ($masterKey -ne $null) -and ($masterKey -ne "")
   if ((Test-Path $configFile) -and $masterKeySupplied) {
     Write-Log " - masterkey supplied, but server has already been configured - ignoring"
@@ -109,7 +109,7 @@ function Validate-Variables(){
   else {
     Write-Log " - masterkey not supplied. A new key will be generated automatically"
   }
-  
+
   $maskedConnectionString = $sqlDbConnectionString -replace "password=.*?;", "password=###########;"
   Write-Log " - using database '$maskedConnectionString'"
   Write-Log " - local admin user '$octopusAdminUsername'"
@@ -117,16 +117,16 @@ function Validate-Variables(){
 }
 
 try
-{  
+{
   Write-Log "==============================================="
   Write-Log "Configuring Octopus Deploy"
   if(Test-Path c:\octopus-configuration.initstate){
-	Write-Verbose "This Server has already been initialized and registered so reconfiguration will be skipped. 
-If you need to change the configuration, please start a new container";
-	exit 0
+    Write-Verbose "This Server has already been initialized and registered so reconfiguration will be skipped."
+    Write-Verbose "If you need to change the configuration, please start a new container"
+    exit 0
   }
-  
-  Validate-Variables;
+
+  Validate-Variables
   Write-Log "==============================================="
 
   Configure-OctopusDeploy

@@ -19,7 +19,7 @@ function Configure-OctopusDeploy() {
   Write-Log "Configure Octopus Deploy"
 
   if(!(Test-Path $ServerExe)) {
-	throw "File not found. Expected to find '$exe' to perform setup."
+    throw "File not found. Expected to find '$exe' to perform setup."
   }
 
   Write-Log "Creating Octopus Deploy instance ..."
@@ -44,8 +44,7 @@ function Configure-OctopusDeploy() {
     '--commsListenPort', $listenPort
   )
   Execute-Command $ServerExe $args
-  
-  
+
   Write-Log "Stopping Octopus Deploy instance ..."
   $args = @(
     'service',

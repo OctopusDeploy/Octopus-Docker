@@ -3,8 +3,7 @@ Param(
   [Parameter(Mandatory=$True)]
   [string]$Msi
   )
-  
- 
+
 $version = $env:OctopusVersion
 $msiFileName = "$($Msi).$($version)-x64.msi"
 $downloadUrl = "https://download.octopusdeploy.com/octopus/" + $msiFileName
@@ -39,29 +38,28 @@ function Create-InstallLocation
 }
 
 function Stage-Installer {
-	Write-Log "Stage Installer"
-	$embeddedPath=[System.IO.Path]::Combine($installersPath,$msiFileName); 
-	Write-Log "Checking for $embeddedPath"
-	if (Test-Path $embeddedPath) {
-		Write-Log "Found correct version installer at '$embeddedPath'. Copying to '$msiPath' ..."
-		Copy-Item $embeddedPath $msiPath
-		Write-Log "done."
-	}
-	else {  
-		if($version -eq $null){
-			$downloadUrl = $downloadUrlLatest
-			Write-Log "No version specified for install. Using latest";
-		}
-		Write-Log "Downloading installer '$downloadUrl' to '$msiPath' ..."
-		(New-Object Net.WebClient).DownloadFile($downloadUrl, $msiPath)
-		Write-Log "done."
-	}
+  Write-Log "Stage Installer"
+  $embeddedPath=[System.IO.Path]::Combine($installersPath,$msiFileName);
+  Write-Log "Checking for $embeddedPath"
+  if (Test-Path $embeddedPath) {
+    Write-Log "Found correct version installer at '$embeddedPath'. Copying to '$msiPath' ..."
+    Copy-Item $embeddedPath $msiPath
+    Write-Log "done."
+  }
+  else {
+    if($version -eq $null){
+      $downloadUrl = $downloadUrlLatest
+      Write-Log "No version specified for install. Using latest";
+    }
+    Write-Log "Downloading installer '$downloadUrl' to '$msiPath' ..."
+    (New-Object Net.WebClient).DownloadFile($downloadUrl, $msiPath)
+    Write-Log "done."
+  }
 }
-
 
 function Install-OctopusDeploy
 {
-  Write-Log "Installing $msiFileName" 
+  Write-Log "Installing $msiFileName"
   Write-Verbose "Starting MSI Installer"
   $msiExitCode = (Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $msiPath /qn /l*v $msiLogPath" -Wait -Passthru).ExitCode
   Write-Verbose "MSI installer returned exit code $msiExitCode"
@@ -75,11 +73,9 @@ function Install-OctopusDeploy
   }
 }
 
-
-
 function Delete-InstallLocation
 {
-	Write-Log "Delete $installersPath Directory"
+  Write-Log "Delete $installersPath Directory"
   if (!(Test-Path $installersPath))
   {
     Write-Log "Installers directory didn't exist - skipping delete"
@@ -89,8 +85,8 @@ function Delete-InstallLocation
     Remove-Item $installersPath -Recurse -Force
   }
   Write-Log ""
-  
-  
+
+
   Write-Log "Delete Install Location"
   if (!(Test-Path $installBasePath))
   {
