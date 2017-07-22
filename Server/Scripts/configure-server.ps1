@@ -1,4 +1,4 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 Param()
 
 $sqlDbConnectionString=$env:sqlDbConnectionString
@@ -24,7 +24,7 @@ function Configure-OctopusDeploy(){
     'database',
     '--console',
     '--instance', 'OctopusServer',
-    '--storageConnectionString', $sqlDbConnectionString,
+    '--connectionString', $sqlDbConnectionString,
     '--create'
   )
   if ($masterKeySupplied -and (-not ($configAlreadyExists))) {
