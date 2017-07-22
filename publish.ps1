@@ -68,7 +68,7 @@ param(
   [bool]$IsRelease = $False
   )
   Push-Image $(Get-ImageName "server" $OctopusVersion $IsRelease)
-  Push-Image $(Get-ImageName "tentacle" $OctopusVersion $IsRelease)
+  #Push-Image $(Get-ImageName "tentacle" $OctopusVersion $IsRelease)
 }
 
 Docker-Login
