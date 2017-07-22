@@ -15,8 +15,8 @@ if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
-Write-Host "docker-compose --file .\docker-compose.yml --file .\tests\docker-compose.yml pull"
-& docker-compose --file .\docker-compose.yml --file .\tests\docker-compose.yml pull
+Write-Host "docker-compose --file .\docker-compose.yml pull"
+& docker-compose --file .\docker-compose.yml pull
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
