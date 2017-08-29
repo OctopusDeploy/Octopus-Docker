@@ -46,7 +46,6 @@ function CheckDBHealth() {
   write-host "  - OctopusDeploySqlServer container is healthy"
 }
 
-
 function CheckServerHealth() {
   write-host " Checking to make sure OctopusDeploy container is up and running"
   $OctopusDeployContainerHealth = ($(docker inspect $OctopusServerContainer) | ConvertFrom-Json).State.Health.Status
