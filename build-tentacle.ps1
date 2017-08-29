@@ -9,9 +9,7 @@ if(!(Test-Path .\Logs)) {
   mkdir .\Logs
 }
 
-
-function Execute-Command ($commandPath, $commandArguments)
-{
+function Execute-Command ($commandPath, $commandArguments) {
   Write-Host "Executing '$commandPath $commandArguments'"
   $pinfo = New-Object System.Diagnostics.ProcessStartInfo
   $pinfo.FileName = $commandPath
@@ -37,7 +35,6 @@ function Execute-Command ($commandPath, $commandArguments)
     ExitCode = $p.ExitCode
   }
 }
-
 
 Write-Host "docker pull microsoft/windowsservercore:latest"
 & docker pull microsoft/windowsservercore:latest
