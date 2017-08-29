@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   tentacle:
-    image: octopusdeploy/octopusdeploy-tentacle-prerelease:${OCTOPUS_VERSION}
+    image: octopusdeploy/octopusdeploy-tentacle-prerelease:${TENTACLE_VERSION}
     depends_on:
       octopus:
         condition: service_healthy

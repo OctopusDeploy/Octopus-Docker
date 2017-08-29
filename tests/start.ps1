@@ -2,12 +2,17 @@ param (
   [Parameter(Mandatory=$true)]
   [string]$OctopusVersion,
   [Parameter(Mandatory=$false)]
+  [string]$TentacleVersion,
+  [Parameter(Mandatory=$false)]
   [string]$ProjectName = "octopusdocker"
 )
 
 $env:OCTOPUS_VERSION=$OctopusVersion;
+$env:TENTACLE_VERSION=$TentacleVersion;
 $ServerServiceName=$ProjectName+"_octopus_1";
 $TentacleServiceName=$ProjectName+"_tentacle_1";
+
+$IncludeTentacle = ($TentacleVersion -ne $null)
 
 . ./Scripts/octopus-common.ps1
 
@@ -18,7 +23,12 @@ if(!(Test-Path .\tests\Applications)) {
 function Try-UpCompose() {
   $PrevExitCode = -1;
   $attempts=5;
-  write-host "docker-compose --project-name $ProjectName --file ..\docker-compose.yml up --force-recreate -d"
+  if ($IncludeTentacle) {
+    write-host "docker-compose --project-name $ProjectName --file .\docker-compose.yml --file ..\docker-compose.yml up --force-recreate -d"
+  }
+  else {
+    write-host "docker-compose --project-name $ProjectName --file ..\docker-compose.yml up --force-recreate -d"
+  }
 
   while ($true -and $PrevExitCode -ne 0) {
     if($attempts-- -lt 0){
@@ -27,12 +37,22 @@ function Try-UpCompose() {
       exit 1
     }
 
-    & docker-compose --project-name $ProjectName --file .\docker-compose.yml up --force-recreate -d
+    if ($IncludeTentacle) {
+      & docker-compose --project-name $ProjectName --file .\docker-compose.yml --file ..\docker-compose.yml up --force-recreate -d
+    }
+    else {
+      & docker-compose --project-name $ProjectName --file ..\docker-compose.yml up --force-recreate -d
+    }
     $PrevExitCode = $LASTEXITCODE
     if($PrevExitCode -ne 0) {
       Write-Host $Error
       Write-Host "docker-compose failed with exit code $PrevExitCode";
-      & docker-compose --project-name $ProjectName --file .\docker-compose.yml logs
+      if ($IncludeTentacle) {
+        & docker-compose --project-name $ProjectName --file .\docker-compose.yml --file ..\docker-compose.yml logs
+      }
+      else {
+        & docker-compose --project-name $ProjectName --file .\docker-compose.yml logs
+      }
     }
   }
 }
@@ -84,17 +104,24 @@ function Wait-ForTentacleToPassHealthCheck() {
 
 Try-UpCompose
 Wait-ForServerToPassHealthCheck
-#Wait-ForTentacleToPassHealthCheck
+if ($IncludeTentacle) {
+  Wait-ForTentacleToPassHealthCheck
+}
 
 if(!(Test-Path .\tests\Logs)) {
   mkdir .\tests\Logs
 }
 
-& docker logs  $ServerServiceName > .\tests\Logs\OctopusServer.log
-#& docker logs  $TentacleServiceName > .\tests\Logs\OctopusTentacle.log
+& docker logs $ServerServiceName > .\tests\Logs\OctopusServer.log
+if ($IncludeTentacle) {
+  & docker logs $TentacleServiceName > .\tests\Logs\OctopusTentacle.log
+}
 
 # Write out helpful info on success
 $docker = (docker inspect $ServerServiceName | convertfrom-json)[0]
-#$port = $docker.NetworkSettings.Ports.'81/tcp'.HostPort
+if ($IncludeTentacle) {
+  $docker = (docker inspect $TentacleServiceName | convertfrom-json)[0]
+}
+
 $ipAddress = $docker.NetworkSettings.Networks.nat.IpAddress
 Write-Host Server available from the host at http://$($docker[0].NetworkSettings.Networks.nat.IpAddress):81

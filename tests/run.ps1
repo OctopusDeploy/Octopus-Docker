@@ -1,6 +1,7 @@
 param (
   [Parameter(Mandatory=$false)]
-  [string]$ProjectName="octopusdocker"
+  [string]$ProjectName="octopusdocker",
+  [switch]$IncludeTentacle,
 )
 
 $OctopusServerContainer=$ProjectName+"_octopus_1";
@@ -77,7 +78,9 @@ function CheckIPAddress() {
 
 CheckDBHealth
 CheckServerHealth
-# CheckTentacleHealth
+if ($IncludeTentacle) {
+  CheckTentacleHealth
+}
 CheckIPAddress
 
 write-host "-----------------------------------"
