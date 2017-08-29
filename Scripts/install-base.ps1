@@ -3,7 +3,7 @@ Param(
   [Parameter(Mandatory=$True)]
   [string]$Msi,
   [Parameter(Mandatory=$True)]
-  [string]$Version,
+  [string]$Version
   )
 
 $msiFileName = "$($Msi).$($version)-x64.msi"
