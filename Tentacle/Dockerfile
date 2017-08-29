@@ -10,8 +10,8 @@ ADD Scripts/*.ps1 /
 ADD Tentacle/Scripts/*.ps1 /Tentacle/
 ADD source/ /Installers
 
-ARG OctopusVersion
-ENV OctopusVersion ${OctopusVersion}
+ARG TentacleVersion
+ENV TentacleVersion ${TentacleVersion}
 
 LABEL   org.label-schema.schema-version="1.0" \
     org.label-schema.name="Octopus Deploy Tentacle" \
@@ -22,9 +22,5 @@ LABEL   org.label-schema.schema-version="1.0" \
     org.label-schema.description="Octopus Tentacle instance with auto-registration to Octopus Server" \
     org.label-schema.build-date=$BUILD_DATE
 
-RUN powershell -File ./install-base.ps1 -Msi "Octopus.Tentacle" -Verbose && powershell -File ./Tentacle/install-tentacle.ps1 -Verbose
+RUN powershell -File ./install-base.ps1 -Msi "Octopus.Tentacle" -Version $TentacleVersion -Verbose && powershell -File ./Tentacle/install-tentacle.ps1 -Verbose
 ENTRYPOINT powershell -File ./Tentacle/configure-tentacle.ps1 -Verbose  && powershell -File ./Tentacle/run-tentacle.ps1 -Verbose
-
-#RUN powershell -File /install-octopusdeploy-tentacle.ps1 -Verbose
-#ENTRYPOINT ["/bin/bash"]
-#CMD ["-l"]

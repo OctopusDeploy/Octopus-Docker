@@ -1,14 +1,19 @@
 [CmdletBinding()]
 Param(
   [Parameter(Mandatory=$True)]
-  [string]$Msi
+  [string]$Msi,
+  [Parameter(Mandatory=$True)]
+  [string]$Version,
   )
 
-$version = $env:OctopusVersion
 $msiFileName = "$($Msi).$($version)-x64.msi"
 $downloadUrl = "https://download.octopusdeploy.com/octopus/" + $msiFileName
-#$downloadUrlLatest = "https://octopusdeploy.com/downloads/latest/OctopusTentacle"
-#http://octopusdeploy.com/downloads/latest/OctopusTentacle
+
+if ($Msi -eq 'Octopus.Tentacle') {
+  $downloadUrlLatest = 'https://octopus.com/downloads/latest/WindowsX64/OctopusTentacle'
+} else {
+  $downloadUrlLatest = 'https://octopus.com/downloads/latest/WindowsX64/OctopusServer'
+}
 
 $installBasePath = "C:\Install\"
 $installersPath = "C:\Installers\"
