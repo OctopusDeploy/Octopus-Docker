@@ -38,17 +38,17 @@ function Try-UpCompose() {
     }
 
     if ($IncludeTentacle) {
-      & docker-compose --project-name $ProjectName --file .\docker-compose.yml --file ..\docker-compose.yml up --force-recreate -d
+      & docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d
     }
     else {
-      & docker-compose --project-name $ProjectName --file ..\docker-compose.yml up --force-recreate -d
+      & docker-compose --project-name $ProjectName --file .\docker-compose.yml up --force-recreate -d
     }
     $PrevExitCode = $LASTEXITCODE
     if($PrevExitCode -ne 0) {
       Write-Host $Error
       Write-Host "docker-compose failed with exit code $PrevExitCode";
       if ($IncludeTentacle) {
-        & docker-compose --project-name $ProjectName --file .\docker-compose.yml --file ..\docker-compose.yml logs
+        & docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml logs
       }
       else {
         & docker-compose --project-name $ProjectName --file .\docker-compose.yml logs

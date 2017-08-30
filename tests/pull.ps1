@@ -25,8 +25,8 @@ if ($LASTEXITCODE -ne 0) {
 
 if ($null -ne $TentacleVersion) {
   $env:TENTACLE_VERSION=$OctopusVersion;
-  Write-Host "docker-compose --file ..\docker-compose.yml pull"
-  & docker-compose --file ..\docker-compose.yml pull
+  Write-Host "docker-compose --file .\tests\docker-compose.yml pull"
+  & docker-compose --file .\tests\docker-compose.yml pull
   if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
   }
