@@ -22,5 +22,5 @@ LABEL   org.label-schema.schema-version="1.0" \
     org.label-schema.description="Octopus Tentacle instance with auto-registration to Octopus Server" \
     org.label-schema.build-date=$BUILD_DATE
 
-RUN powershell -File ./install-base.ps1 -Msi "Octopus.Tentacle" -Version $TentacleVersion -Verbose && powershell -File ./Tentacle/install-tentacle.ps1 -Verbose
+RUN powershell -File ./install-base.ps1 -Msi "Octopus.Tentacle" -Verbose && powershell -File ./Tentacle/install-tentacle.ps1 -Verbose
 ENTRYPOINT powershell -File ./Tentacle/configure-tentacle.ps1 -Verbose  && powershell -File ./Tentacle/run-tentacle.ps1 -Verbose
