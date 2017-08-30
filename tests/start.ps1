@@ -1,5 +1,9 @@
 param (
   [Parameter(Mandatory=$true)]
+  [string]$UserName,
+  [Parameter(Mandatory=$true)]
+  [string]$Password,
+  [Parameter(Mandatory=$true)]
   [string]$OctopusVersion,
   [Parameter(Mandatory=$false)]
   [string]$TentacleVersion,
@@ -96,6 +100,12 @@ function Wait-ForTentacleToPassHealthCheck() {
     Write-Error "Octopus Tentacle container failed to go healthy after $($attempts * $sleepsecs) seconds";
     exit 1;
   }
+}
+
+Write-Host "docker login -u=`"$UserName`" -p=`"#########`""
+& docker login -u="$UserName" -p="$Password"
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
 }
 
 Start-DockerCompose

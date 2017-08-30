@@ -1,8 +1,4 @@
 param (
-  [Parameter(Mandatory=$true)]
-  [string]$UserName,
-  [Parameter(Mandatory=$true)]
-  [string]$Password,
   [Parameter(Mandatory=$false)]
   [string]$ProjectName="octopusdocker",
   [switch]$IncludeTentacle,
@@ -77,12 +73,6 @@ function CheckIPAddress() {
     write-host " OctopusDeploy Container does not exist. Aborting."
     exit 3
   }
-}
-
-Write-Host "docker login -u=`"$UserName`" -p=`"#########`""
-& docker login -u="$UserName" -p="$Password"
-if ($LASTEXITCODE -ne 0) {
-  exit $LASTEXITCODE
 }
 
 CheckDBHealth
