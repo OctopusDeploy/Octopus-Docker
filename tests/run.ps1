@@ -1,7 +1,7 @@
 param (
   [Parameter(Mandatory=$false)]
   [string]$ProjectName="octopusdocker",
-  [switch]$IncludeTentacle,
+  [switch]$IncludeTentacle
 )
 
 $OctopusServerContainer=$ProjectName+"_octopus_1";
