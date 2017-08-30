@@ -23,12 +23,6 @@ if(!(Test-Path .\tests\Applications)) {
 function Start-DockerCompose() {
   $PrevExitCode = -1;
   $attempts=5;
-  if ($IncludeTentacle) {
-    write-host "docker-compose --project-name $ProjectName --file .\docker-compose.yml --file ..\docker-compose.yml up --force-recreate -d"
-  }
-  else {
-    write-host "docker-compose --project-name $ProjectName --file ..\docker-compose.yml up --force-recreate -d"
-  }
 
   while ($true -and $PrevExitCode -ne 0) {
     if($attempts-- -lt 0){
@@ -38,9 +32,11 @@ function Start-DockerCompose() {
     }
 
     if ($IncludeTentacle) {
+      write-host "docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d"
       & docker-compose --project-name $ProjectName --file .\docker-compose.yml --file .\tests\docker-compose.yml up --force-recreate -d
     }
     else {
+      write-host "docker-compose --project-name $ProjectName --file .\docker-compose.yml up --force-recreate -d"
       & docker-compose --project-name $ProjectName --file .\docker-compose.yml up --force-recreate -d
     }
     $PrevExitCode = $LASTEXITCODE
