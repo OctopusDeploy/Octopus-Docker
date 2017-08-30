@@ -20,7 +20,7 @@ if(!(Test-Path .\tests\Applications)) {
   mkdir .\tests\Applications
 }
 
-function Try-UpCompose() {
+function Start-DockerCompose() {
   $PrevExitCode = -1;
   $attempts=5;
   if ($IncludeTentacle) {
@@ -102,7 +102,7 @@ function Wait-ForTentacleToPassHealthCheck() {
   }
 }
 
-Try-UpCompose
+Start-DockerCompose
 Wait-ForServerToPassHealthCheck
 if ($IncludeTentacle) {
   Wait-ForTentacleToPassHealthCheck
