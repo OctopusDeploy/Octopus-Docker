@@ -12,7 +12,7 @@ $env:TENTACLE_VERSION=$TentacleVersion;
 $ServerServiceName=$ProjectName+"_octopus_1";
 $TentacleServiceName=$ProjectName+"_tentacle_1";
 
-$IncludeTentacle = ($TentacleVersion -ne $null && $TentacleVersion -ne "")
+$IncludeTentacle = (($TentacleVersion -ne $null) -and ($TentacleVersion -ne ""))
 
 . ./Scripts/octopus-common.ps1
 
