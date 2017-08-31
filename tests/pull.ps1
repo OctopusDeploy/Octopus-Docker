@@ -23,7 +23,7 @@ if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
-if ($null -ne $TentacleVersion) {
+if (($TentacleVersion -ne $null) -and ($TentacleVersion -ne "")) {
   $env:TENTACLE_VERSION=$TentacleVersion;
   Write-Host "docker-compose --file .\tests\docker-compose.yml pull"
   & docker-compose --file .\tests\docker-compose.yml pull
