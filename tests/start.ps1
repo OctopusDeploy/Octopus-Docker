@@ -19,9 +19,9 @@ $TentacleServiceName=$ProjectName+"_tentacle_1";
 $IncludeTentacle = (($TentacleVersion -ne $null) -and ($TentacleVersion -ne ""))
 
 if ($IncludeTentacle) {
-  $env:OCTOPUS_IMAGE_SUFFIX = "-preview"
+  $env:OCTOPUS_IMAGE_SUFFIX = "preview"
 } else {
-  $env:OCTOPUS_IMAGE_SUFFIX = "-prerelease"
+  $env:OCTOPUS_IMAGE_SUFFIX = "prerelease"
 }
 
 . ./Scripts/octopus-common.ps1
