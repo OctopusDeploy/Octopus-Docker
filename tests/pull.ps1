@@ -9,7 +9,7 @@ param (
   [string]$TentacleVersion
 )
 
-$env:OCTOPUS_VERSION=$OctopusVersion;
+$env:OCTOPUS_VERSION=$OctopusVersion
 
 $IncludeTentacle = (($TentacleVersion -ne $null) -and ($TentacleVersion -ne ""))
 
@@ -31,10 +31,10 @@ if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
-if (($TentacleVersion -ne $null) -and ($TentacleVersion -ne "")) {
+if ($IncludeTentacle) {
   $env:TENTACLE_VERSION=$TentacleVersion;
-  Write-Host "docker-compose --file .\tests\docker-compose.yml pull"
-  & docker-compose --file .\tests\docker-compose.yml pull
+  Write-Host "docker-compose --file .\tests\docker-compose.yml --file .\docker-compose.yml pull"
+  & docker-compose --file .\tests\docker-compose.yml pull --file .\docker-compose.yml
   if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
   }
