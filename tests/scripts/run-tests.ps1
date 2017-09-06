@@ -16,7 +16,7 @@ function Install-Chocolatey {
 function Install-Ruby {
   echo "##teamcity[blockOpened name='Install Ruby']"
 
-  choco install ruby --version 2.3.3 --allow-empty-checksums --yes
+  choco install ruby --version 2.3.3 --allow-empty-checksums --yes --no-progress
   if ($LASTEXITCODE -ne 0) {
     write-host "'choco install ruby --version 2.3.3' failed with with exit code $LASTEXITCODE"
     exit $LASTEXITCODE
