@@ -16,24 +16,6 @@ function Docker-Login() {
   }
 }
 
-function Get-ImageName() {
-  param (
-    [Parameter(Mandatory=$true)]
-    [string]$Version,
-    [bool]$IsRelease=$False
-  )
-
-  $image = "octopusdeploy/octopusdeploy"
-
-  if ($IsRelease) {
-   $image += "-preview"
-  } else {
-   $image += "-prerelease"
-  }
-
-  return $image + ":$Version"
-}
-
 function Push-Image() {
   param (
     [Parameter(Mandatory=$true)]
@@ -47,24 +29,26 @@ function Push-Image() {
   }
 }
 
-function TagRelease() {
-  Write-Host "docker tag $(Get-ImageName $OctopusVersion $False) $(Get-ImageName $OctopusVersion $True)"
-  & docker tag $(Get-ImageName $OctopusVersion $False) $(Get-ImageName $OctopusVersion $True)
+function Set-Tag($tag) {
+  Write-Host "docker tag 'octopusdeploy/octopusdeploy-prerelease:$Version' '$tag'"
+  & docker tag "octopusdeploy/octopusdeploy-prerelease:$Version" "$tag"
 }
 
-function Publish(){
-  param(
-    [Parameter(Mandatory=$true)]
-    [bool]$IsRelease = $False
-  )
-  Push-Image $(Get-ImageName $OctopusVersion $IsRelease)
+function Get-LatestVersion() {
+  $response = (Invoke-RestMethod "https://octopus.com/downloads/latest/WindowsX64/OctopusServer/version")
 }
 
 Docker-Login
 
 if ($Release) {
-  TagRelease
-  Publish -IsRelease $True
+  Set-Tag "octopusdeploy/octopusdeploy-preview:$Version"
+  Push-Image "octopusdeploy/octopusdeploy-preview:$Version"
+
+  $latestVersion = (Invoke-RestMethod "https://octopus.com/downloads/latest/WindowsX64/OctopusServer/version")
+  if ($latestVersion -eq $version) {
+    Set-Tag "octopusdeploy/octopusdeploy-preview:latest"
+    Push-Image "octopusdeploy/octopusdeploy-preview:latest"
+  }
 } else {
-  Publish -IsRelease $False
+  Push-Image "octopusdeploy/octopusdeploy-prerelease:$Version"
 }

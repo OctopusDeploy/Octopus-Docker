@@ -16,24 +16,6 @@ function Docker-Login() {
   }
 }
 
-function Get-ImageName() {
-  param (
-    [Parameter(Mandatory=$true)]
-    [string]$Version,
-    [bool]$IsRelease=$False
-  )
-
-  $image = "octopusdeploy/octopusdeploy-tentacle"
-
-  if ($IsRelease) {
-   $image += "-preview"
-  } else {
-   $image += "-prerelease"
-  }
-
-  return $image + ":$Version"
-}
-
 function Push-Image() {
   param (
     [Parameter(Mandatory=$true)]
@@ -47,24 +29,23 @@ function Push-Image() {
   }
 }
 
-function TagRelease() {
-  write-host "docker tag $(Get-ImageName $TentacleVersion $False) $(Get-ImageName $TentacleVersion $True)"
-  & docker tag $(Get-ImageName $TentacleVersion $False) $(Get-ImageName $TentacleVersion $True)
-}
-
-function Publish() {
-  param(
-    [Parameter(Mandatory=$true)]
-    [bool]$IsRelease = $False
-  )
-  Push-Image $(Get-ImageName $TentacleVersion $IsRelease)
+function Set-Tag($tag) {
+  Write-Host "docker tag 'octopusdeploy/octopusdeploy-tentacle-prerelease:$Version' '$tag'"
+  & docker tag "octopusdeploy/octopusdeploy-tentacle-prerelease:$Version" "$tag"
 }
 
 Docker-Login
 
 if ($Release) {
-  TagRelease
-  Publish -IsRelease $True
+  Set-Tag "octopusdeploy/octopusdeploy-tentacle-preview:$Version"
+  Push-Image "octopusdeploy/octopusdeploy-tentacle-preview:$Version"
+
+  $latestVersion = (Invoke-RestMethod "https://octopus.com/downloads/latest/WindowsX64/OctopusTentacle/version")
+  if ($latestVersion -eq $version) {
+    Set-Tag "octopusdeploy/octopusdeploy-tentacle-preview:latest"
+    Push-Image "octopusdeploy/octopusdeploy-tentacle-preview:latest"
+  }
 } else {
-  Publish -IsRelease $False
+  Push-Image "octopusdeploy/octopusdeploy-tentacle-prerelease:$Version"
 }
+
