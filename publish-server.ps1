@@ -30,25 +30,21 @@ function Push-Image() {
 }
 
 function Set-Tag($tag) {
-  Write-Host "docker tag 'octopusdeploy/octopusdeploy-prerelease:$Version' '$tag'"
-  & docker tag "octopusdeploy/octopusdeploy-prerelease:$Version" "$tag"
-}
-
-function Get-LatestVersion() {
-  $response = (Invoke-RestMethod "https://octopus.com/downloads/latest/WindowsX64/OctopusServer/version")
+  Write-Host "docker tag 'octopusdeploy/octopusdeploy-prerelease:$OctopusVersion' '$tag'"
+  & docker tag "octopusdeploy/octopusdeploy-prerelease:$OctopusVersion" "$tag"
 }
 
 Docker-Login
 
 if ($Release) {
-  Set-Tag "octopusdeploy/octopusdeploy-preview:$Version"
-  Push-Image "octopusdeploy/octopusdeploy-preview:$Version"
+  Set-Tag "octopusdeploy/octopusdeploy-preview:$OctopusVersion"
+  Push-Image "octopusdeploy/octopusdeploy-preview:$OctopusVersion"
 
   $latestVersion = (Invoke-RestMethod "https://octopus.com/downloads/latest/WindowsX64/OctopusServer/version")
-  if ($latestVersion -eq $version) {
+  if ($latestVersion -eq $OctopusVersion) {
     Set-Tag "octopusdeploy/octopusdeploy-preview:latest"
     Push-Image "octopusdeploy/octopusdeploy-preview:latest"
   }
 } else {
-  Push-Image "octopusdeploy/octopusdeploy-prerelease:$Version"
+  Push-Image "octopusdeploy/octopusdeploy-prerelease:$OctopusVersion"
 }
