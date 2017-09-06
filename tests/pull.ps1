@@ -11,6 +11,14 @@ param (
 
 $env:OCTOPUS_VERSION=$OctopusVersion;
 
+$IncludeTentacle = (($TentacleVersion -ne $null) -and ($TentacleVersion -ne ""))
+
+if ($IncludeTentacle) {
+  $env:OCTOPUS_IMAGE_SUFFIX = "preview"
+} else {
+  $env:OCTOPUS_IMAGE_SUFFIX = "prerelease"
+}
+
 Write-Host "docker login -u=`"$UserName`" -p=`"#########`""
 & docker login -u="$UserName" -p="$Password"
 if ($LASTEXITCODE -ne 0) {
