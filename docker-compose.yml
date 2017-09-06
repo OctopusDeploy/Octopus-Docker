@@ -12,7 +12,7 @@ services:
       interval: 1s
       retries: 20
   octopus:
-    image: octopusdeploy/octopusdeploy-prerelease:${OCTOPUS_VERSION}
+    image: octopusdeploy/octopusdeploy-${OCTOPUS_IMAGE_SUFFIX}:${OCTOPUS_VERSION}
     environment:
       OctopusAdminUsername: "${OCTOPUS_ADMIN_USERNAME}"
       OctopusAdminPassword: "${OCTOPUS_ADMIN_PASSWORD}"
