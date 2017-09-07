@@ -4,37 +4,11 @@ param (
 )
 $VerbosePreference = "continue"
 
-
 if(!(Test-Path .\Logs)) {
-  mkdir .\Logs
+  mkdir .\Logs | Out-Null
 }
 
-function Execute-Command ($commandPath, $commandArguments) {
-  Write-Host "Executing '$commandPath $commandArguments'"
-  $pinfo = New-Object System.Diagnostics.ProcessStartInfo
-  $pinfo.FileName = $commandPath
-  $pinfo.RedirectStandardError = $true
-  $pinfo.RedirectStandardOutput = $true
-  $pinfo.UseShellExecute = $false
-  $pinfo.Arguments = $commandArguments
-  $pinfo.WorkingDirectory = $pwd
-  $p = New-Object System.Diagnostics.Process
-  $p.StartInfo = $pinfo
-  $p.Start() | Out-Null
-  $stdout = $p.StandardOutput.ReadToEnd()
-  $stderr = $p.StandardError.ReadToEnd()
-  $p.WaitForExit()
-
-  Write-Host $stdout
-  Write-Host $stderr
-  Write-Host "Process exited with exit code $($p.ExitCode)"
-
-  [pscustomobject]@{
-    stdout = $stdout
-    stderr = $stderr
-    ExitCode = $p.ExitCode
-  }
-}
+. ../Scripts/build-comon.ps1
 
 Write-Host "docker pull microsoft/windowsservercore:latest"
 & docker pull microsoft/windowsservercore:latest

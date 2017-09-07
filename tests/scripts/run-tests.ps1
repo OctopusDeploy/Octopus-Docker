@@ -115,7 +115,7 @@ try
   Install-Gems
   Set-OctopusServerConfiguration
 
-  C:/tools/ruby23/bin/bundle.bat _1.14.4_ exec rspec octopus-server_spec.rb --format documentation
+  C:/tools/ruby23/bin/bundle.bat _1.14.4_ exec rspec *_spec.rb --format documentation
   exit $LASTEXITCODE
 }
 catch

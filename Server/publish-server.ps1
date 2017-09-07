@@ -8,26 +8,7 @@ param (
   [switch]$Release
 )
 
-function Docker-Login() {
-  write-host "docker login -u=`"$UserName`" -p=`"#########`""
-  & docker login -u="$UserName" -p="$Password"
-  if ($LASTEXITCODE -ne 0) {
-    exit $LASTEXITCODE
-  }
-}
-
-function Push-Image() {
-  param (
-    [Parameter(Mandatory=$true)]
-    [string] $ImageName
-  )
-
-  write-host "docker push $ImageName"
-  & docker push $ImageName
-  if ($LASTEXITCODE -ne 0) {
-    exit $LASTEXITCODE
-  }
-}
+. ../Scripts/build-comon.ps1
 
 function Set-Tag($tag) {
   Write-Host "docker tag 'octopusdeploy/octopusdeploy-prerelease:$OctopusVersion' '$tag'"
