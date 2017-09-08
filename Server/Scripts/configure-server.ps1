@@ -54,15 +54,6 @@ function Configure-OctopusDeploy(){
   )
   Execute-Command $ServerExe $args
 
-  Write-Log "Stopping Octopus Deploy instance ..."
-  $args = @(
-    'service',
-    '--console',
-    '--instance', 'OctopusServer',
-    '--stop'
-  )
-  Execute-Command $ServerExe $args
-
   Write-Log "Creating Admin User for Octopus Deploy instance ..."
   $args = @(
     'admin',

@@ -48,25 +48,25 @@ function Push-Image() {
   }
 }
 
-function Start-DockerCompose($ProjectName) {
+function Start-DockerCompose($projectName, $composeFile) {
   $PrevExitCode = -1;
   $attempts=5;
 
   while ($true -and $PrevExitCode -ne 0) {
     if($attempts-- -lt 0){
-      & docker-compose --project-name $ProjectName logs
+      & docker-compose --project-name $projectName logs
       write-host "Ran out of attempts to create container.";
       exit 1
     }
 
-    write-host "docker-compose --project-name $ProjectName --file .\docker-compose.yml up --force-recreate -d"
-    & docker-compose --project-name $ProjectName --file .\docker-compose.yml up --force-recreate -d
+    write-host "docker-compose --project-name $projectName --file $composeFile up --force-recreate -d"
+    & docker-compose --project-name $projectName --file $composeFile up --force-recreate -d
 
     $PrevExitCode = $LASTEXITCODE
     if($PrevExitCode -ne 0) {
       Write-Host $Error
       Write-Host "docker-compose failed with exit code $PrevExitCode";
-      & docker-compose --project-name $ProjectName --file .\docker-compose.yml logs
+      & docker-compose --project-name $projectName --file $composeFile logs
     }
   }
 }
@@ -74,7 +74,7 @@ function Start-DockerCompose($ProjectName) {
 function Wait-ForServiceToPassHealthCheck($serviceName) {
   $attempts = 0;
   $sleepsecs = 5;
-  While($attempts -lt 20)
+  while ($attempts -lt 60)
   {
     $attempts++
     $health = ($(docker inspect $serviceName) | ConvertFrom-Json).State.Health.Status;
@@ -93,16 +93,51 @@ function Wait-ForServiceToPassHealthCheck($serviceName) {
   }
 }
 
-function Copy-FileToDockerContainer($sourceFile, $destFile) {
+function Copy-FileToDockerContainer($sourceFile, $destFile, $container) {
   # docker cp only appears to work if you're copying from a drive thats shared (or something weird like that)
   write-host "Copying $sourceFile"
   $content = get-content $sourceFile -raw
+  write-host " - file is $($content.length) characters"
   $encodedContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($content))
-  & docker exec $OctopusServerContainer cmd /c echo $encodedContent `> "$destFile.b64"
-  $result = Execute-Command "docker" "exec $OctopusServerContainer powershell -command `$content = gc $destFile.b64; `$decoded = [System.Convert]::FromBase64String(`$content); Set-Content -Path $destFile -Value `$decoded -encoding byte"
+  write-host " - base 64 encoded file is $($encodedContent.length) characters"
+  $currentPosition = 0
+  # kill existing file if it exists
+  write-host " - creating initial file $destFile.b64"
+  & docker exec $container powershell -command "set-content -path $destFile.b64 -value ''"
+  if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+  }
+  while ($currentPosition -lt $encodedContent.length) {
+    $length = (1000, ($encodedContent.length - $currentPosition) | Measure -Minimum).Minimum
+    write-host " - sending partial file, $length characters starting from $currentPosition"
+    $text = $encodedContent.Substring($currentPosition, $length)
+    & docker exec $container cmd /c echo $text `>> "$destFile.b64"
+    if ($LASTEXITCODE -ne 0) {
+      exit $LASTEXITCODE
+    }
+    $currentPosition = $currentPosition + 1000
+  }
+  
+  write-host " - decoding partial file from $destFile.b64 tp $destFile"
+  $result = Execute-Command "docker" "exec $container powershell -command `$content = gc $destFile.b64; `$decoded = [System.Convert]::FromBase64String(`$content); Set-Content -Path $destFile -Value `$decoded -encoding byte"
+
   if ($result.ExitCode -ne 0) {
     exit $result.ExitCode
   }
+}
+
+function Copy-FilesToDockerContainer($sourcePath, $container) {
+
+  Start-TeamCityBlock "Copying test files"
+  write-host "-----------------------------------"
+  write-host "Copying test files to $container"
+
+  foreach($file in gci $sourcePath -file) {
+    $fileName = Split-Path $file -Leaf
+    Copy-FileToDockerContainer $file.FullName "c:\$fileName" $container
+  }
+
+  Stop-TeamCityBlock "Copying test files"
 }
 
 function Test-RunningUnderTeamCity() {
@@ -130,7 +165,7 @@ function Write-DebugInfo($containerNames) {
   foreach($containerName in $containerNames) {
     Start-TeamCityBlock "docker logs $containerName"
     write-host "-----------------------------------"
-    write-host "docker logs $containerName:"
+    write-host "docker logs $containerName"
     & docker logs $containerName
     if ($LASTEXITCODE -ne 0) {
       exit $LASTEXITCODE
@@ -139,7 +174,7 @@ function Write-DebugInfo($containerNames) {
 
     Start-TeamCityBlock "docker inspect $containerName"
     write-host "-----------------------------------"
-    write-host "docker inspect $containerName:"
+    write-host "docker inspect $containerName"
     & docker inspect $containerName
     if ($LASTEXITCODE -ne 0) {
       exit $LASTEXITCODE
@@ -156,5 +191,18 @@ function Check-IPAddress() {
   if (($OctopusContainerIpAddress -eq $null) -or ($OctopusContainerIpAddress -eq "")) {
     write-host " OctopusDeploy Container does not exist. Aborting."
     exit 3
+  }
+}
+
+function Confirm-RunningFromRootDirectory {
+  $currentFolderName = ($pwd | Split-Path -Leaf)
+  if ($currentFolderName -ne "Octopus-Docker") {
+    write-host "This script needs to be run from the root of the repo"
+    exit 5
+  }
+  $childFolders = Get-ChildItem -Directory | split-Path -Leaf
+  if ((-not ($childFolders -contains "Tentacle")) -or (-not ($childFolders -contains "Server"))) {
+    write-host "This script needs to be run from the root of the repo"
+    exit 5
   }
 }

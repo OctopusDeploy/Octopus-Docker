@@ -15,8 +15,6 @@ $InternalListeningPort=10933;
 
 . ./octopus-common.ps1
 
-
-
 function Configure-Tentacle
 {
   Write-Log "Configure Octopus Deploy Tentacle"
@@ -55,17 +53,6 @@ function Configure-Tentacle
     '--instance', 'Tentacle',
     '--if-blank'
   )
-
-  Write-Log "Starting Octopus Deploy Tentacle Process"
-
-Execute-Command $TentacleExe @(
-    'service',
-    '--console',
-    '--instance', 'Tentacle',
-    '--install'
-  )
-
-  Write-Log ""
 }
 
 
@@ -169,9 +156,9 @@ function Register-Tentacle(){
     'register-with',
     '--console',
     '--instance', 'Tentacle',
-  '--publicHostName', $publicHostName,
-  '--server', $ServerUrl,
-  '--force')
+    '--publicHostName', $publicHostName,
+    '--server', $ServerUrl,
+    '--force')
 
   if($ListeningPort -ne $null -and $ListeningPort -ne $InternalListeningPort) {
     $arg += "--tentacle-comms-port";
@@ -206,15 +193,6 @@ function Register-Tentacle(){
    };
 
   Execute-Command $TentacleExe $arg;
-}
-
-function Run-Tentacle() {
-Write-Log "Starting Octopus Deploy Tentacle Process"
-
-Execute-Command $TentacleExe @(
-  'run',
-  '--console',
-  '--instance', 'Tentacle')
 }
 
 try

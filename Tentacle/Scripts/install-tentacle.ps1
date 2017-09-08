@@ -112,15 +112,6 @@ function Configure-OctopusDeploy
   )
   Execute-Command $TentacleExe $args
 
-  Write-Log "Stopping Octopus Deploy instance ..."
-  $args = @(
-    'service',
-    '--console',
-    '--instance', 'Tentacle',
-    '--stop'
-  )
-  Execute-Command $TentacleExe $args
-
   Write-Log ""
 }
 

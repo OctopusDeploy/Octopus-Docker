@@ -4,15 +4,16 @@ param (
   [Parameter(Mandatory=$true)]
   [string]$Password,
   [Parameter(Mandatory=$true)]
-  [string]$OctopusVersion,
-  [Parameter(Mandatory=$true)]
-  [string]$TentacleVersion
+  [string]$OctopusVersion
 )
 
-. ../Scripts/build-comon.ps1
+. ./Scripts/build-common.ps1
+
+Confirm-RunningFromRootDirectory
 
 $env:OCTOPUS_VERSION=$OctopusVersion
-$env:TENTACLE_VERSION=$TentacleVersion;
+
+Docker-Login
 
 Write-Host "docker-compose --file .\docker-compose.yml pull"
 & docker-compose --file .\docker-compose.yml pull

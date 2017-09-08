@@ -5,10 +5,17 @@ param (
   [string]$OctopusVersion
 )
 
-$env:OCTOPUS_VERSION=$OctopusVersion;
+$env:OCTOPUS_VERSION = $OctopusVersion
+
+. ./Scripts/build-common.ps1
+Confirm-RunningFromRootDirectory
+
+pushd Server
 
 write-host "Stopping '$ProjectName' compose project"
-& "C:\Program Files\Docker Toolbox\docker-compose" --project-name $ProjectName stop
+& docker-compose --project-name $ProjectName stop
 
 write-host "Removing '$ProjectName' compose project"
-& "C:\Program Files\Docker Toolbox\docker-compose" --project-name $ProjectName down
+& docker-compose --project-name $ProjectName down
+
+popd

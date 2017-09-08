@@ -1,7 +1,12 @@
+param (
+  [Parameter(Mandatory=$True)]
+  [string]$testfile
+)
+
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12,[System.Net.SecurityProtocolType]::Tls11,[System.Net.SecurityProtocolType]::Tls
 
 # If for whatever reason this doesn't work, check this file:
-Start-Transcript -path "C:\run-octopus-server-tests.txt" -append
+Start-Transcript -path "C:\run-octopus-docker-tests.txt" -append
 
 function Install-Chocolatey {
   echo "##teamcity[blockOpened name='Installing Chocolatey']"
@@ -68,12 +73,21 @@ function Install-Gems {
 }
 
 function Set-OctopusServerConfiguration {
-  $OctopusURI = "http://localhost:81"
   $octopusAdminUsername="admin"
   $octopusAdminPassword="Passw0rd123"
 
-  Add-Type -Path "${env:ProgramFiles}\Octopus Deploy\Octopus\Newtonsoft.Json.dll"
-  Add-Type -Path "${env:ProgramFiles}\Octopus Deploy\Octopus\Octopus.Client.dll"
+  if (Test-Path "${env:ProgramFiles}\Octopus Deploy\Octopus\Newtonsoft.Json.dll") {
+    $OctopusURI = "http://localhost:81"
+    $ApiKeyName = "Docker Octopus Server Testing - $([guid]::NewGuid())"
+    Add-Type -Path "${env:ProgramFiles}\Octopus Deploy\Octopus\Newtonsoft.Json.dll"
+    Add-Type -Path "${env:ProgramFiles}\Octopus Deploy\Octopus\Octopus.Client.dll"
+  }
+  else {
+    $OctopusURI = "http://octopus:81"
+    $ApiKeyName = "Docker Tentacle Testing - $([guid]::NewGuid())"
+    Add-Type -Path "${env:ProgramFiles}\Octopus Deploy\Tentacle\Newtonsoft.Json.dll"
+    Add-Type -Path "${env:ProgramFiles}\Octopus Deploy\Tentacle\Octopus.Client.dll"
+  }
 
   Write-host "Signing into Octopus server at $OctopusURI"
   #connect
@@ -86,18 +100,11 @@ function Set-OctopusServerConfiguration {
   $credentials.Password = $octopusAdminPassword
   $repository.Users.SignIn($credentials)
 
-  Write-Host "Checking if we need to create a new api key"
   #create the api key
   $user = $repository.Users.GetCurrent()
   $apiKeys = $repository.Users.GetApiKeys($user)
-  Write-host "Existing api keys: [$($apiKeys.Purpose -join ', ')]"
-  $apiKey = $apiKeys | where-object { $_.Purpose -eq "Docker Container Testing" }
-  if ($null -eq $apiKey) {
-    Write-Host "Creating a new api key"
-    $apiKey = $repository.Users.CreateApiKey($user, "Docker Container Testing")
-  } else {
-    Write-Host "API Key already exists"
-  }
+  Write-Host "Creating a new api key"
+  $apiKey = $repository.Users.CreateApiKey($user, $ApiKeyName)
 
   Write-Host "Setting environment variables for use in tests"
   #save it to enviornment variables for tests to use
@@ -115,7 +122,7 @@ try
   Install-Gems
   Set-OctopusServerConfiguration
 
-  C:/tools/ruby23/bin/bundle.bat _1.14.4_ exec rspec *_spec.rb --format documentation
+  C:/tools/ruby23/bin/bundle.bat _1.14.4_ exec rspec $testfile --format documentation
   exit $LASTEXITCODE
 }
 catch

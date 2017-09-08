@@ -16,7 +16,9 @@ $env:TENTACLE_VERSION=$TentacleVersion;
 $ServerServiceName=$ProjectName+"_octopus_1";
 $TentacleServiceName=$ProjectName+"_tentacle_1";
 
-. ../Scripts/build-common.ps1
+. ./Scripts/build-common.ps1
+
+Confirm-RunningFromRootDirectory
 
 if(!(Test-Path .\tests\Applications)) {
   mkdir .\tests\Applications | Out-Null
@@ -24,7 +26,7 @@ if(!(Test-Path .\tests\Applications)) {
 
 Docker-Login
 
-Start-DockerCompose $ProjectName
+Start-DockerCompose $ProjectName .\Tentacle\docker-compose.yml
 Wait-ForServiceToPassHealthCheck $TentacleServiceName
 
 if(!(Test-Path .\tests\Logs)) {
@@ -35,6 +37,5 @@ if(!(Test-Path .\tests\Logs)) {
 & docker logs $TentacleServiceName > .\tests\Logs\OctopusTentacle.log
 
 $docker = (docker inspect $ServerServiceName | convertfrom-json)[0]
-
 $ipAddress = $docker.NetworkSettings.Networks.nat.IpAddress
 Write-Host Server available from the host at http://$($docker[0].NetworkSettings.Networks.nat.IpAddress):81

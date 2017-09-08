@@ -12,15 +12,17 @@ param (
 $env:OCTOPUS_VERSION=$OctopusVersion;
 $ServerServiceName=$ProjectName+"_octopus_1";
 
-. ../Scripts/build-common.ps1
+. ./Scripts/build-common.ps1
+
+Confirm-RunningFromRootDirectory
 
 if(!(Test-Path .\tests\Applications)) {
-  mkdir .\tests\Applications | Out-NUll
+  mkdir .\tests\Applications | Out-Null
 }
 
 Docker-Login
 
-Start-DockerCompose $ProjectName
+Start-DockerCompose $ProjectName .\Server\docker-compose.yml
 Wait-ForServiceToPassHealthCheck $ServerServiceName
 
 if(!(Test-Path .\tests\Logs)) {

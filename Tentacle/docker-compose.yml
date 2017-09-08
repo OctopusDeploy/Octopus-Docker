@@ -9,8 +9,8 @@ services:
       - "1433:1433" # REMARK: This is currently required, needs investigation
     healthcheck:
       test: [ "CMD", "sqlcmd", "-U", "sa", "-P", "${SA_PASSWORD}", "-Q", "select 1" ]
-      interval: 1s
-      retries: 20
+      interval: 10s
+      retries: 10
   octopus:
     image: octopusdeploy/octopusdeploy-preview:${OCTOPUS_VERSION}
     environment:
@@ -24,8 +24,8 @@ services:
         condition: service_healthy
     stdin_open: true #Process sits and waits for ReadLine
     volumes:
-      - "./tests/Import:C:/Import"
-      - "./tests/Repository:C:/Repository"
+      - "../tests/Import:C:/Import"
+      - "../tests/Repository:C:/Repository"
   tentacle:
     image: octopusdeploy/octopusdeploy-tentacle-prerelease:${TENTACLE_VERSION}
     depends_on:
@@ -39,7 +39,7 @@ services:
       ServerUrl: "http://octopus:81"
     stdin_open: true #Process sits and waits for ReadLine
     volumes:
-      - "./tests/Applications:C:/Applications"
+      - "../tests/Applications:C:/Applications"
 networks:
   default:
     external:
