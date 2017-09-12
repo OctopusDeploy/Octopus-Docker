@@ -16,6 +16,8 @@ This will run a SQL Express container and an Octopus Server container:
 & docker-compose --project-name octopusdocker --file Server\docker-compose.yml up --force-recreate -d
 ```
 
+Usage of this `docker-compose.yml` file implies acceptance of the Microsoft EULA as per https://hub.docker.com/r/microsoft/mssql-server-windows-express/.
+
 ### Environment variables
 
 Default values are set in the `.env` file.
