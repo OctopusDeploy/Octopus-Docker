@@ -18,8 +18,8 @@ $env:TENTACLE_VERSION=$TentacleVersion
 
 Docker-Login
 
-Write-Host "docker-compose --file .\docker-compose.yml pull"
-& docker-compose --file .\docker-compose.yml pull
+Write-Host "docker-compose --file .\Tentacle\docker-compose.yml pull"
+& docker-compose --file .\Tentacle\docker-compose.yml pull
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }

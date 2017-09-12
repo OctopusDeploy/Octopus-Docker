@@ -15,8 +15,8 @@ $env:OCTOPUS_VERSION=$OctopusVersion
 
 Docker-Login
 
-Write-Host "docker-compose --file .\docker-compose.yml pull"
-& docker-compose --file .\docker-compose.yml pull
+Write-Host "docker-compose --file .\server\docker-compose.yml pull"
+& docker-compose --file .\server\docker-compose.yml pull
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
