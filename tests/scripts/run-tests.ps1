@@ -108,10 +108,8 @@ function Set-OctopusServerConfiguration {
 
   Write-Host "Setting environment variables for use in tests"
   #save it to enviornment variables for tests to use
-  [environment]::SetEnvironmentVariable("OctopusServerUrl", $OctopusURI, "User")
-  [environment]::SetEnvironmentVariable("OctopusServerUrl", $OctopusURI, "Machine")
-  [environment]::SetEnvironmentVariable("OctopusApiKey", $apiKey.ApiKey, "User")
-  [environment]::SetEnvironmentVariable("OctopusApiKey", $apiKey.ApiKey, "Machine")
+  $env:OctopusServerUrl = $OctopusURI
+  $env:OctopusApiKey = $apiKey.ApiKey
 }
 
 try
