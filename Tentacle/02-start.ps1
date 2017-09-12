@@ -26,6 +26,8 @@ if(!(Test-Path .\tests\Applications)) {
 
 Docker-Login
 
+$env:OCTOPUS_TENTACLE_REPO_SUFFIX = "-prerelease"
+
 Start-DockerCompose $ProjectName .\Tentacle\docker-compose.yml
 Wait-ForServiceToPassHealthCheck $TentacleServiceName
 
@@ -39,3 +41,5 @@ if(!(Test-Path .\tests\Logs)) {
 $docker = (docker inspect $ServerServiceName | convertfrom-json)[0]
 $ipAddress = $docker.NetworkSettings.Networks.nat.IpAddress
 Write-Host Server available from the host at http://$($docker[0].NetworkSettings.Networks.nat.IpAddress):81
+
+$env:OCTOPUS_TENTACLE_REPO_SUFFIX = ""

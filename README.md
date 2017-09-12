@@ -1,27 +1,71 @@
 These images can be used to bring up an instance of an Octopus Server or Tentacle in a container.
 
-**This is a preview, and is not supported**
+**Docker on windows is still relatively new, and should be used with caution.**
 
-**This is for demonstration and test purposes only and should not be used to run a production server.**
+# Pre-Requisites
 
-# Usage #
+Docker containers are supported on Windows Server 2016 and Windows 10. 
 
-On a Windows Server 2016 TP5 server, with the containers feature and [Docker for Windows](https://www.docker.com/products/docker#/windows) installed, just run:
+Make sure you've enabled the containers feature:
 
 ```
-docker-compose up
+Enable-WindowsOptionalFeature -Online -FeatureName containers –All
 ```
+
+If you want to run with [Hyper-V isolation](https://docs.microsoft.com/en-us/virtualization/windowscontainers/manage-containers/hyperv-container), enable Hyper-V as well:
+
+```
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All
+```
+
+You will also need [Docker for Windows](https://www.docker.com/community-edition#/windows) installed.
+
+# Usage
+
+This repo is setup mainly around building and publishing the official Octopus Deploy docker images. As such, while it is still useful as a starting point to run Octopus and/or Tentacles in a container for other scenarios, this is not the goal of this repo. You should take and modify the `docker-compose.yml` files for your scenario.
+
+## Octopus Server
+
+The following command will launch a SQL Server Express container along with an Octopus Server. On startup, it will create a new database. Note that this database will be destroyed on termination.
+
+```
+docker-compose --file .\Server\docker-compose.yml up
+```
+
 By default the `latest` tagged image will be used. To use a specific version, set the `OCTOPUS_VERSION` environment variable.
-Once launched, Octopus will be available on port 81, and you can find the NATed address by running:
+During launch, Octopus will create a new database and once ready, Octopus will be available on port 81. You can open the Octopus portal by running:
 
 ```
-$docker = docker inspect octopusdocker_octopus_1 | convertfrom-json
+$docker = docker inspect server_octopus_1 | convertfrom-json
 start "http://$($docker[0].NetworkSettings.Networks.nat.IpAddress):81"
 ```
 
-## Setting up a server to run containers on ##
+Note that the database will be created inside the container - it will be deleted when the containers are removed. If you wish to retain your database, either modify the `docker-compose.yml` file to use an external database server, or [map a volume and use external db files](https://hub.docker.com/r/microsoft/mssql-server-windows-express/).
 
-The easiest way to setup a server on which to run docker containers is to follow [these instructions](https://msdn.microsoft.com/en-au/virtualization/windowscontainers/quick_start/quick_start_windows_server).
+Usage of this `docker-compose.yml` file implies acceptance of the Microsoft EULA as per https://hub.docker.com/r/microsoft/mssql-server-windows-express/.
+
+Please see the [Server ReadMe](./Tentacle/readme.md) for more information.
+
+## Tentacle
+
+To launch a Database/Octopus Server/Tentacle setup, use the folowing command:
+
+```
+docker-compose --file .\Tentacle\docker-compose.yml up
+```
+
+As above, this will create a database on launch, and destroy it when the containers are removed. 
+
+Run the following to open the Octopus portal:
+
+```
+$docker = docker inspect tentacle_octopus_1 | convertfrom-json
+start "http://$($docker[0].NetworkSettings.Networks.nat.IpAddress):81"
+```
+
+Usage of this `docker-compose.yml` file implies acceptance of the Microsoft EULA as per https://hub.docker.com/r/microsoft/mssql-server-windows-express/.
+
+Please see the [Tentacle ReadMe](./Tentacle/readme.md) for more information.
 
 ## A note on MasterKeys and passwords ##
 
@@ -32,11 +76,10 @@ You can configure that to work against a previous database by adding a line to t
 ## Support status ##
 
 Docker on Windows is still in its infancy.
-These images are just a preview and are unsupported.
 
 Here be dragons.
 
-That said, please let us know how you get along, and how we can make it better.
+Please let us know how you get along, and how we can make it better. Pull requests definitely appreciated.
 
 ## Additional Information ##
 

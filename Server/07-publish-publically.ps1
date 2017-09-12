@@ -18,15 +18,15 @@ function Set-Tag($tag) {
 
 Docker-Login
 
-Set-Tag "octopusdeploy/octopusdeploy-preview:$OctopusVersion"
-Push-Image "octopusdeploy/octopusdeploy-preview:$OctopusVersion"
+Set-Tag "octopusdeploy/octopusdeploy:$OctopusVersion"
+Push-Image "octopusdeploy/octopusdeploy:$OctopusVersion"
 
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12,[System.Net.SecurityProtocolType]::Tls11,[System.Net.SecurityProtocolType]::Tls
 $latestVersion = (Invoke-RestMethod "https://octopus.com/downloads/latest/WindowsX64/OctopusServer/version").Version
 if ($latestVersion -eq $OctopusVersion) {
   Write-Host "Tagging as latest as $latestVersion is the most recent version"
-  Set-Tag "octopusdeploy/octopusdeploy-preview:latest"
-  Push-Image "octopusdeploy/octopusdeploy-preview:latest"
+  Set-Tag "octopusdeploy/octopusdeploy:latest"
+  Push-Image "octopusdeploy/octopusdeploy:latest"
 } else {
   Write-Host "Not tagging as latest as $OctopusVersion is not the latest version ($latestVersion is the most recent version)"
 }

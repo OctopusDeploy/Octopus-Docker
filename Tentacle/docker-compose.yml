@@ -12,7 +12,7 @@ services:
       interval: 10s
       retries: 10
   octopus:
-    image: octopusdeploy/octopusdeploy-preview:${OCTOPUS_VERSION}
+    image: octopusdeploy/octopusdeploy${OCTOPUS_SERVER_REPO_SUFFIX}:${OCTOPUS_VERSION}
     environment:
       OctopusAdminUsername: "${OCTOPUS_ADMIN_USERNAME}"
       OctopusAdminPassword: "${OCTOPUS_ADMIN_PASSWORD}"
@@ -27,7 +27,7 @@ services:
       - "../tests/Import:C:/Import"
       - "../tests/Repository:C:/Repository"
   tentacle:
-    image: octopusdeploy/octopusdeploy-tentacle-prerelease:${TENTACLE_VERSION}
+    image: octopusdeploy/octopusdeploy-tentacle${OCTOPUS_TENTACLE_REPO_SUFFIX}:${TENTACLE_VERSION}
     depends_on:
       octopus:
         condition: service_healthy
