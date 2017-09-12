@@ -19,12 +19,13 @@ Check-IPAddress
 
 Write-DebugInfo @($OctopusDBContainer, $OctopusServerContainer, $OctopusTentacleContainer)
 
+Copy-FilesToDockerContainer "$PSScriptRoot/../tests/scripts/" $OctopusServerContainer
 Copy-FilesToDockerContainer "$PSScriptRoot/../tests/scripts/" $OctopusTentacleContainer
 
 write-host "-----------------------------------"
 write-host "docker exec $OctopusServerContainer powershell -file /run-tests.ps1 -testfile tentacle_spec.rb"
 if (Test-Path ENV:TEAMCITY_PROJECT_NAME) {
-  & docker exec --env tc_project_name=$ENV:TEAMCITY_PROJECT_NAME $OctopusTentacleContainer powershell -file c:\run-tests.ps1 -testfile octopus-server_spec.rb
+  & docker exec --env tc_project_name=$ENV:TEAMCITY_PROJECT_NAME $OctopusServerContainer powershell -file c:\run-tests.ps1 -testfile octopus-server_spec.rb
   & docker exec --env tc_project_name=$ENV:TEAMCITY_PROJECT_NAME $OctopusTentacleContainer powershell -file c:\run-tests.ps1 -testfile tentacle_spec.rb
 } else {
   & docker exec $OctopusServerContainer powershell -file c:\run-tests.ps1 -testfile octopus-server_spec.rb
