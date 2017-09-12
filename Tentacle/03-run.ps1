@@ -24,8 +24,10 @@ Copy-FilesToDockerContainer "$PSScriptRoot/../tests/scripts/" $OctopusTentacleCo
 write-host "-----------------------------------"
 write-host "docker exec $OctopusServerContainer powershell -file /run-tests.ps1 -testfile tentacle_spec.rb"
 if (Test-Path ENV:TEAMCITY_PROJECT_NAME) {
+  & docker exec --env tc_project_name=$ENV:TEAMCITY_PROJECT_NAME $OctopusTentacleContainer powershell -file c:\run-tests.ps1 -testfile octopus-server_spec.rb
   & docker exec --env tc_project_name=$ENV:TEAMCITY_PROJECT_NAME $OctopusTentacleContainer powershell -file c:\run-tests.ps1 -testfile tentacle_spec.rb
 } else {
+  & docker exec $OctopusTentacleContainer powershell -file c:\run-tests.ps1 -testfile octopus-server_spec.rb
   & docker exec $OctopusTentacleContainer powershell -file c:\run-tests.ps1 -testfile tentacle_spec.rb
 }
 if ($LASTEXITCODE -ne 0) {
