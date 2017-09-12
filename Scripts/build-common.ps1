@@ -195,11 +195,6 @@ function Check-IPAddress() {
 }
 
 function Confirm-RunningFromRootDirectory {
-  $currentFolderName = ($pwd | Split-Path -Leaf)
-  if ($currentFolderName -ne "Octopus-Docker") {
-    write-host "This script needs to be run from the root of the repo"
-    exit 5
-  }
   $childFolders = Get-ChildItem -Directory | split-Path -Leaf
   if ((-not ($childFolders -contains "Tentacle")) -or (-not ($childFolders -contains "Server"))) {
     write-host "This script needs to be run from the root of the repo"
