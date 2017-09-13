@@ -16,6 +16,8 @@ $ServerServiceName=$ProjectName+"_octopus_1";
 
 Confirm-RunningFromRootDirectory
 
+Start-TeamCityBlock "Start containers"
+
 if(!(Test-Path .\tests\Applications)) {
   mkdir .\tests\Applications | Out-Null
 }
@@ -38,3 +40,4 @@ $ipAddress = $docker.NetworkSettings.Networks.nat.IpAddress
 Write-Host Server available from the host at http://$($docker[0].NetworkSettings.Networks.nat.IpAddress):81
 
 $env:OCTOPUS_SERVER_REPO_SUFFIX=""
+Stop-TeamCityBlock "Start Containers"

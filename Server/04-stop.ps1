@@ -12,6 +12,8 @@ Confirm-RunningFromRootDirectory
 
 pushd Server
 
+Start-TeamCityBlock "Stop and remove compose project"
+
 $env:OCTOPUS_SERVER_REPO_SUFFIX="-prerelease"
 
 write-host "Stopping '$ProjectName' compose project"
@@ -21,5 +23,7 @@ write-host "Removing '$ProjectName' compose project"
 & docker-compose --project-name $ProjectName down
 
 $env:OCTOPUS_SERVER_REPO_SUFFIX=""
+
+Stop-TeamCityBlock "Stop and remove compose project"
 
 popd

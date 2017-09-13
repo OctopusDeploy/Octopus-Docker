@@ -11,6 +11,8 @@ param (
 
 Confirm-RunningFromRootDirectory
 
+Start-TeamCityBlock "Publish to private repo"
+
 function Set-Tag($tag) {
   Write-Host "docker tag 'octopusdeploy/octopusdeploy-prerelease:$OctopusVersion' '$tag'"
   & docker tag "octopusdeploy/octopusdeploy-prerelease:$OctopusVersion" "$tag"
@@ -19,3 +21,5 @@ function Set-Tag($tag) {
 Docker-Login
 
 Push-Image "octopusdeploy/octopusdeploy-prerelease:$OctopusVersion"
+
+Stop-TeamCityBlock "Publish to private repo"

@@ -11,6 +11,8 @@ param (
 
 Confirm-RunningFromRootDirectory
 
+Start-TeamCityBlock "Pushing to public repo"
+
 function Set-Tag($tag) {
   Write-Host "docker tag 'octopusdeploy/octopusdeploy-prerelease:$OctopusVersion' '$tag'"
   & docker tag "octopusdeploy/octopusdeploy-prerelease:$OctopusVersion" "$tag"
@@ -30,3 +32,5 @@ if ($latestVersion -eq $OctopusVersion) {
 } else {
   Write-Host "Not tagging as latest as $OctopusVersion is not the latest version ($latestVersion is the most recent version)"
 }
+
+Stop-TeamCityBlock "Pushing to public repo"

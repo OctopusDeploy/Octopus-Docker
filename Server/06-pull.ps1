@@ -11,6 +11,8 @@ param (
 
 Confirm-RunningFromRootDirectory
 
+Start-TeamCityBlock "Pull from private repo"
+
 $env:OCTOPUS_VERSION=$OctopusVersion
 
 Docker-Login
@@ -21,6 +23,8 @@ Write-Host "docker-compose --file .\server\docker-compose.yml pull"
 & docker-compose --file .\server\docker-compose.yml pull
 
 $env:OCTOPUS_SERVER_REPO_SUFFIX=""
+
+Stop-TeamCityBlock "Pull from private repo"
 
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
