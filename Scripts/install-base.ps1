@@ -45,7 +45,7 @@ function Create-InstallLocation
 
 function Stage-Installer {
   Write-Log "Stage Installer"
-  $embeddedPath=[System.IO.Path]::Combine($installersPath,$msiFileName);
+  $embeddedPath = [System.IO.Path]::Combine($installersPath, $msiFileName);
   Write-Log "Checking for $embeddedPath"
   if (Test-Path $embeddedPath) {
     Write-Log "Found correct version installer at '$embeddedPath'. Copying to '$msiPath' ..."
