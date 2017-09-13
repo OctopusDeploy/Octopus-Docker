@@ -73,7 +73,7 @@ function Start-DockerCompose($projectName, $composeFile) {
 
 function Wait-ForServiceToPassHealthCheck($serviceName) {
   $attempts = 0;
-  $sleepsecs = 5;
+  $sleepsecs = 10;
   while ($attempts -lt 60)
   {
     $attempts++
@@ -117,7 +117,7 @@ function Copy-FileToDockerContainer($sourceFile, $destFile, $container) {
     }
     $currentPosition = $currentPosition + 1000
   }
-  
+
   write-host " - decoding partial file from $destFile.b64 tp $destFile"
   $result = Execute-Command "docker" "exec $container powershell -command `$content = gc $destFile.b64; `$decoded = [System.Convert]::FromBase64String(`$content); Set-Content -Path $destFile -Value `$decoded -encoding byte"
 
