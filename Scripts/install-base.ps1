@@ -82,29 +82,30 @@ function Install-OctopusDeploy
 function Delete-InstallLocation
 {
   Write-Log "Delete $installersPath Directory"
-  if (!(Test-Path $installersPath))
+  if (-not (Test-Path $installersPath))
   {
     Write-Log "Installers directory didn't exist - skipping delete"
   }
   else
   {
+    Get-ChildItem $installersPath -Recurse | Remove-Item -Force
     Remove-Item $installersPath -Recurse -Force
   }
   Write-Log ""
 
 
   Write-Log "Delete Install Location"
-  if (!(Test-Path $installBasePath))
+  if (-not (Test-Path $installBasePath))
   {
     Write-Log "Install location didn't exist - skipping delete"
   }
   else
   {
+    Get-ChildItem $installBasePath -Recurse | Remove-Item -Force
     Remove-Item $installBasePath -Recurse -Force
   }
   Write-Log ""
 }
-
 
 try
 {

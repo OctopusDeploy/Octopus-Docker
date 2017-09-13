@@ -73,8 +73,8 @@ function Start-DockerCompose($projectName, $composeFile) {
 
 function Wait-ForServiceToPassHealthCheck($serviceName) {
   $attempts = 0;
-  $sleepsecs = 5;
-  while ($attempts -lt 60)
+  $sleepsecs = 10;
+  while ($attempts -lt 30)
   {
     $attempts++
     $health = ($(docker inspect $serviceName) | ConvertFrom-Json).State.Health.Status;
@@ -88,6 +88,7 @@ function Wait-ForServiceToPassHealthCheck($serviceName) {
     Sleep -Seconds $sleepsecs
   }
   if ((($(docker inspect $serviceName) | ConvertFrom-Json).State.Health.Status) -ne "healthy"){
+    Write-DebugInfo @($serviceName)
     Write-Error "Octopus container $serviceName failed to go healthy after $($attempts * $sleepsecs) seconds";
     exit 1;
   }
@@ -117,7 +118,7 @@ function Copy-FileToDockerContainer($sourceFile, $destFile, $container) {
     }
     $currentPosition = $currentPosition + 1000
   }
-  
+
   write-host " - decoding partial file from $destFile.b64 tp $destFile"
   $result = Execute-Command "docker" "exec $container powershell -command `$content = gc $destFile.b64; `$decoded = [System.Convert]::FromBase64String(`$content); Set-Content -Path $destFile -Value `$decoded -encoding byte"
 
@@ -128,16 +129,14 @@ function Copy-FileToDockerContainer($sourceFile, $destFile, $container) {
 
 function Copy-FilesToDockerContainer($sourcePath, $container) {
 
-  Start-TeamCityBlock "Copying test files"
-  write-host "-----------------------------------"
-  write-host "Copying test files to $container"
+  Start-TeamCityBlock "Copy test files to $container"
 
   foreach($file in gci $sourcePath -file) {
     $fileName = Split-Path $file -Leaf
     Copy-FileToDockerContainer $file.FullName "c:\$fileName" $container
   }
 
-  Stop-TeamCityBlock "Copying test files"
+  Stop-TeamCityBlock "Copy test files to $container"
 }
 
 function Test-RunningUnderTeamCity() {
@@ -147,25 +146,26 @@ function Test-RunningUnderTeamCity() {
 function Start-TeamCityBlock($name) {
   if (Test-RunningUnderTeamCity) {
     write-host "##teamcity[blockOpened name='$name']"
+  } else {
+    write-host "-----------------------------------"
+    write-host $name
+    write-host "-----------------------------------"
   }
 }
 
 function Stop-TeamCityBlock($name) {
   if (Test-RunningUnderTeamCity) {
     write-host "##teamcity[blockClosed name='$name']"
+  } else {
+    write-host "-----------------------------------"
   }
 }
 
 function Write-DebugInfo($containerNames) {
-  Start-TeamCityBlock "Debugging"
-
-  write-host "-----------------------------------"
-  write-host "Debugging:"
+  Start-TeamCityBlock "Debug Info"
 
   foreach($containerName in $containerNames) {
     Start-TeamCityBlock "docker logs $containerName"
-    write-host "-----------------------------------"
-    write-host "docker logs $containerName"
     & docker logs $containerName
     if ($LASTEXITCODE -ne 0) {
       exit $LASTEXITCODE
@@ -173,8 +173,6 @@ function Write-DebugInfo($containerNames) {
     Stop-TeamCityBlock "docker logs $containerName"
 
     Start-TeamCityBlock "docker inspect $containerName"
-    write-host "-----------------------------------"
-    write-host "docker inspect $containerName"
     & docker inspect $containerName
     if ($LASTEXITCODE -ne 0) {
       exit $LASTEXITCODE
