@@ -89,7 +89,15 @@ function Delete-InstallLocation
   else
   {
     Get-ChildItem $installersPath -Recurse | Remove-Item -Force
-    Remove-Item $installersPath -Recurse -Force
+
+    #normally we'd not want to ignore failures here, but getting an annoying error:
+    # Remove-Item : Cannot remove item C:\Installers\: There are no more files.
+    # At C:\install-base.ps1:92 char:5
+    # + Remove-Item $installersPath -Recurse -Force
+    # + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # + CategoryInfo : WriteError: (C:\Installers\:DirectoryInfo) [Remove-Item], IOException
+    # + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+    Remove-Item $installersPath -Recurse -Force -ErrorAction SilentlyContinue
   }
   Write-Log ""
 
