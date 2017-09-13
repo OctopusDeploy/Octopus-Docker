@@ -1,6 +1,7 @@
 [CmdletBinding()]
 Param()
 
+$version = New-Object System.Version $env:OctopusVersion
 $sqlDbConnectionString=$env:sqlDbConnectionString
 $masterKey=$env:masterKey
 $masterKeySupplied = ($masterKey -ne $null) -and ($masterKey -ne "")
@@ -9,6 +10,18 @@ $octopusAdminPassword=$env:OctopusAdminPassword
 $configFile = "c:\Octopus\OctopusServer.config"
 
 . ../octopus-common.ps1
+
+function Test-OctopusVersionRequiresWebAuthenticationMode {
+  return $octopusServerVersion -lt (New-Object System.Version 3, 5, 0)
+}
+
+function Test-OctopusVersionRequiresConfigureBeforeDatabaseCreate {
+  return $octopusServerVersion -lt (New-Object System.Version 3, 14, 0)
+}
+
+function Test-OctopusVersionSupportsPathCommand {
+  return $octopusServerVersion -ge (New-Object System.Version 3, 0, 21)
+}
 
 function Configure-OctopusDeploy(){
 
@@ -19,40 +32,78 @@ function Configure-OctopusDeploy(){
     Copy-item "c:\OctopusServer.config.orig" $configFile
   }
 
-  Write-Log "Creating Octopus Deploy database ..."
-  $args = @(
-    'database',
-    '--console',
-    '--instance', 'OctopusServer',
-    '--connectionString', $sqlDbConnectionString,
-    '--create'
-  )
-  if ($masterKeySupplied -and (-not ($configAlreadyExists))) {
-    $args += '--masterkey'
-    $args += $masterKey
+  if (Test-OctopusVersionRequiresConfigureBeforeDatabaseCreate) {
+    Write-Log "Configuring Octopus Deploy instance ..."
+    $args = @(
+      'configure',
+      '--console',
+      '--instance', 'OctopusServer',
+      '--home', 'C:\Octopus',
+      '--storageConnectionString', $sqlDbConnectionString
+    )
+
+    if (Test-OctopusVersionRequiresWebAuthenticationMode) {
+      $args += '--webAuthenticationMode'
+      $args += 'UsernamePassword'
+    } else {
+      $args += '--usernamePasswordIsEnabled'
+      $args += 'True'
+    }
+
+    Execute-Command $ServerExe $args
+
+    Write-Log "Creating Octopus Deploy database ..."
+    $args = @(
+      'database',
+      '--console',
+      '--instance', 'OctopusServer',
+      '--create'
+    )
+    if ($masterKeySupplied -and (-not ($configAlreadyExists))) {
+      $args += '--masterkey'
+      $args += $masterKey
+    }
+    Execute-Command $ServerExe $args
+  } else {
+    Write-Log "Creating Octopus Deploy database ..."
+    $args = @(
+      'database',
+      '--console',
+      '--instance', 'OctopusServer',
+      '--connectionString', $sqlDbConnectionString,
+      '--create'
+    )
+    if ($masterKeySupplied -and (-not ($configAlreadyExists))) {
+      $args += '--masterkey'
+      $args += $masterKey
+    }
+    Execute-Command $ServerExe $args
+
+    Write-Log "Configuring Octopus Deploy instance ..."
+    $args = @(
+      'configure',
+      '--console',
+      '--instance', 'OctopusServer',
+      '--home', 'C:\Octopus',
+      '--usernamePasswordIsEnabled', 'True' #this will only work from 3.5 and above
+    )
+    Execute-Command $ServerExe $args
   }
-  Execute-Command $ServerExe $args
 
-  Write-Log "Configuring Octopus Deploy instance ..."
-  $args = @(
-    'configure',
-    '--console',
-    '--instance', 'OctopusServer',
-    '--home', 'C:\Octopus',
-    '--usernamePasswordIsEnabled', 'True' #this will only work from 3.5 and above
-  )
-  Execute-Command $ServerExe $args
-
-   Write-Log "Configuring Paths ..."
-  $args = @(
-    'path',
-    '--console',
-    '--instance', 'OctopusServer',
-    '--nugetRepository', 'C:\Repository',
-    '--artifacts', 'C:\Artifacts',
-    '--taskLogs', 'C:\TaskLogs'
-  )
-  Execute-Command $ServerExe $args
+  Write-Log "Configuring Paths ..."
+  if (Test-OctopusVersionSupportsPathCommand) {
+    $args = @(
+      'path',
+      '--console',
+      '--instance', 'OctopusServer',
+      '--nugetRepository', 'C:\Repository',
+      '--artifacts', 'C:\Artifacts',
+      '--taskLogs', 'C:\TaskLogs'
+    )
+    Execute-Command $ServerExe $args
+  } else {
+    Write-Log "Octopus version $version does not support modifying paths (it was introduced in 3.0.21)"
+  }
 
   Write-Log "Creating Admin User for Octopus Deploy instance ..."
   $args = @(
