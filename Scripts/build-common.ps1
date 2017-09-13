@@ -74,7 +74,7 @@ function Start-DockerCompose($projectName, $composeFile) {
 function Wait-ForServiceToPassHealthCheck($serviceName) {
   $attempts = 0;
   $sleepsecs = 10;
-  while ($attempts -lt 60)
+  while ($attempts -lt 30)
   {
     $attempts++
     $health = ($(docker inspect $serviceName) | ConvertFrom-Json).State.Health.Status;
@@ -88,9 +88,8 @@ function Wait-ForServiceToPassHealthCheck($serviceName) {
     Sleep -Seconds $sleepsecs
   }
   if ((($(docker inspect $serviceName) | ConvertFrom-Json).State.Health.Status) -ne "healthy"){
-    Write-Error "Octopus service $serviceName failed to go healthy after $($attempts * $sleepsecs) seconds";
     Write-DebugInfo @($serviceName)
-    Stop-TeamCityBlock "Container logs"
+    Write-Error "Octopus container $serviceName failed to go healthy after $($attempts * $sleepsecs) seconds";
     exit 1;
   }
 }
