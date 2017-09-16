@@ -28,9 +28,9 @@ if (Test-Path ENV:TEAMCITY_PROJECT_NAME) {
 } else {
   & docker exec $OctopusServerContainer powershell -file c:\run-tests.ps1 -testfile octopus-server_spec.rb
 }
-if ($LASTEXITCODE -ne 0) {
-  exit $LASTEXITCODE
-}
 Stop-TeamCityBlock "docker exec run-tests.ps1"
 
 Stop-TeamCityBlock "Run tests"
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}

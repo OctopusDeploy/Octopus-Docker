@@ -16,6 +16,7 @@ Start-TeamCityBlock "Publish to private repo"
 function Set-Tag($tag) {
   Write-Host "docker tag 'octopusdeploy/octopusdeploy-prerelease:$OctopusVersion' '$tag'"
   & docker tag "octopusdeploy/octopusdeploy-prerelease:$OctopusVersion" "$tag"
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 Docker-Login

@@ -24,3 +24,6 @@ $env:OCTOPUS_SERVER_REPO_SUFFIX=""
 
 Stop-TeamCityBlock "Stop and remove compose project"
 
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
