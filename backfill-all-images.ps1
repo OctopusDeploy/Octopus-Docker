@@ -34,12 +34,14 @@ $releases = @('3.0.1.2063', '3.0.2.2077', '3.0.3.2084', '3.0.4.2105', '3.0.5.212
               '3.14.1592', '3.14.15926', '3.15.0', '3.15.1', '3.15.2', '3.15.3', '3.15.4', '3.15.5', '3.15.6',
               '3.15.7', '3.15.8', '3.16.0', '3.16.1', '3.16.2', '3.16.3', '3.16.4', '3.16.5', '3.16.6', '3.16.7')
 
+$rebuildList = @("$env:ImageRebuild")
+
 foreach($release in $releases) {
-  if (($privateImages -contains $release) -and ($publicImages -contains $release)) {
+  if ((($privateImages -contains $release) -and ($publicImages -contains $release)) -and (-not ($rebuildList -contains $release))) {
     write-host "Docker image for Octopus Server $release exists in both public and private repositories. Nothing to do."
-  } 
-  elseif ($privateImages -contains $release) {
-    write-host "Docker images for Octopus Server $release exists in private repositories. Publishing to public repo."
+  }
+  elseif (($privateImages -contains $release) -and (-not ($rebuildList -contains $release))) {
+    write-host "Docker images for Octopus Server $release exists in the private repository. Publishing to public repo."
     write-host "##teamcity[blockOpened name='Publishing docker image for Octopus Server $release']"
     ./Server/06-pull.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
