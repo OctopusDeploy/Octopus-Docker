@@ -10,7 +10,6 @@ $ErrorActionPreference = 'stop'
 $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $UserName, $Password)))
 $privateImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/octopusdeploy-prerelease/tags).name)
 $publicImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/octopusdeploy/tags).name)
-
 #todo: get this automatically
 $releases = @('3.0.1.2063', '3.0.2.2077', '3.0.3.2084', '3.0.4.2105', '3.0.5.2124', '3.0.6.2140', '3.0.7.2204',
               '3.0.8.2251', '3.0.9.2259', '3.0.10.2278', '3.0.11.2328', '3.0.12.2366', '3.0.13.2386', '3.0.15.2418',
@@ -34,43 +33,68 @@ $releases = @('3.0.1.2063', '3.0.2.2077', '3.0.3.2084', '3.0.4.2105', '3.0.5.212
               '3.14.1592', '3.14.15926', '3.15.0', '3.15.1', '3.15.2', '3.15.3', '3.15.4', '3.15.5', '3.15.6',
               '3.15.7', '3.15.8', '3.16.0', '3.16.1', '3.16.2', '3.16.3', '3.16.4', '3.16.5', '3.16.6', '3.16.7')
 
+function Test-ReleaseShouldBeRebuilt($release) {
+  return @("$env:ImageRebuild") -contains $release
+}
+
+function Test-ImageExistsInBothPublicAndPrivateRepos($release) {
+  return ($privateImages -contains $release) -and ($publicImages -contains $release)
+}
+
+function Test-ImageExistsInPrivateRepo($release) {
+  return ($privateImages -contains $release)
+}
+
+function Publish-PrivateImageToPublicRepo($release) {
+  write-host "Docker images for Octopus Server $release exists in the private repository. Publishing to public repo."
+  write-host "##teamcity[blockOpened name='Publishing docker image for Octopus Server $release']"
+  ./Server/06-pull.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  ./Server/07-publish-publically.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  write-host "##teamcity[blockOpened name='Deleting local docker image for Octopus Server $release']"
+  & docker rmi octopusdeploy/octopusdeploy-prerelease:$release
+  & docker rmi octopusdeploy/octopusdeploy:$release
+  write-host "##teamcity[blockClosed name='Deleting local docker image for Octopus Server $release']"
+  write-host "##teamcity[blockClosed name='Publishing docker image for Octopus Server $release']"
+}
+
+function Start-ImageBuildFromScratch($release) {
+  write-host "##teamcity[blockOpened name='Building docker image for Octopus Server $release']"
+  ./Server/01-build.ps1 -OctopusVersion $release
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  ./Server/02-start.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  ./Server/03-run.ps1
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  ./Server/04-stop.ps1 -OctopusVersion $release
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  ./Server/05-publish-privately.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  ./Server/07-publish-publically.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  write-host "##teamcity[blockOpened name='Deleting local docker image for Octopus Server $release']"
+  & docker rmi octopusdeploy/octopusdeploy-prerelease:$release
+  & docker rmi octopusdeploy/octopusdeploy:$release
+  write-host "##teamcity[blockClosed name='Deleting local docker image for Octopus Server $release']"
+  write-host "##teamcity[blockClosed name='Building docker image for Octopus Server $release']"
+}
+
+
 $rebuildList = @("$env:ImageRebuild")
 
 foreach($release in $releases) {
-  if ((($privateImages -contains $release) -and ($publicImages -contains $release)) -and (-not ($rebuildList -contains $release))) {
+  if (Test-ReleaseShouldBeRebuilt $release) {
+    write-host "Rebuild of docker image for Octopus Server $release requested."
+    Start-ImageBuildFromScratch $release
+  }
+  elseif (Test-ImageExistsInBothPublicAndPrivateRepos $release) {
     write-host "Docker image for Octopus Server $release exists in both public and private repositories. Nothing to do."
   }
-  elseif (($privateImages -contains $release) -and (-not ($rebuildList -contains $release))) {
-    write-host "Docker images for Octopus Server $release exists in the private repository. Publishing to public repo."
-    write-host "##teamcity[blockOpened name='Publishing docker image for Octopus Server $release']"
-    ./Server/06-pull.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    ./Server/07-publish-publically.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    write-host "##teamcity[blockOpened name='Deleting local docker image for Octopus Server $release']"
-    & docker rmi octopusdeploy/octopusdeploy-prerelease:$release
-    & docker rmi octopusdeploy/octopusdeploy:$release
-    write-host "##teamcity[blockClosed name='Deleting local docker image for Octopus Server $release']"
-    write-host "##teamcity[blockClosed name='Publishing docker image for Octopus Server $release']"
+  elseif (Test-ImageExistsInPrivateRepo $release) {
+    Publish-PrivateImageToPublicRepo $release
   }
   else {
-    write-host "##teamcity[blockOpened name='Building docker image for Octopus Server $release']"
-    ./Server/01-build.ps1 -OctopusVersion $release
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    ./Server/02-start.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    ./Server/03-run.ps1
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    ./Server/04-stop.ps1 -OctopusVersion $release
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    ./Server/05-publish-privately.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    ./Server/07-publish-publically.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    write-host "##teamcity[blockOpened name='Deleting local docker image for Octopus Server $release']"
-    & docker rmi octopusdeploy/octopusdeploy-prerelease:$release
-    & docker rmi octopusdeploy/octopusdeploy:$release
-    write-host "##teamcity[blockClosed name='Deleting local docker image for Octopus Server $release']"
-    write-host "##teamcity[blockClosed name='Building docker image for Octopus Server $release']"
+    Start-ImageBuildFromScratch $release
   }
 }
