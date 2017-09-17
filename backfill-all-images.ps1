@@ -47,8 +47,10 @@ foreach($release in $releases) {
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     ./Server/07-publish-publically.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    write-host "##teamcity[blockOpened name='Deleting local docker image for Octopus Server $release']"
     & docker rmi octopusdeploy/octopusdeploy-prerelease:$release
     & docker rmi octopusdeploy/octopusdeploy:$release
+    write-host "##teamcity[blockClosed name='Deleting local docker image for Octopus Server $release']"
     write-host "##teamcity[blockClosed name='Publishing docker image for Octopus Server $release']"
   }
   else {
@@ -65,8 +67,10 @@ foreach($release in $releases) {
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     ./Server/07-publish-publically.ps1 -OctopusVersion $release -UserName $UserName -Password $Password
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    write-host "##teamcity[blockOpened name='Deleting local docker image for Octopus Server $release']"
     & docker rmi octopusdeploy/octopusdeploy-prerelease:$release
     & docker rmi octopusdeploy/octopusdeploy:$release
+    write-host "##teamcity[blockClosed name='Deleting local docker image for Octopus Server $release']"
     write-host "##teamcity[blockClosed name='Building docker image for Octopus Server $release']"
   }
 }
