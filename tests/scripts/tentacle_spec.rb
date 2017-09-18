@@ -27,7 +27,7 @@ describe octopus_deploy_tentacle(ENV['OctopusServerUrl'], ENV['OctopusApiKey'], 
   it { should be_online }
   it { should be_listening_tentacle }
   it { should be_in_environment('Development') }
-  it { should have_role('bread') }
+  it { should have_role('app-server') }
   it { should have_display_name(ENV['ComputerName']) }
 end
 
