@@ -1,11 +1,11 @@
-# octopusdeploy-tentacle-prerelease
+# tentacle
 
 Due to required build context, all scirpts should be executed from the root directory. The Dockerfile requires a `Source` directory in the build context, so that it can first be checked for the `.msi` during the installation process. This directory is created if necessary by the helper scripts. If no `.msi` exists, the build will try download the file from `https://download.octopusdeploy.com/octopus/`.
 
 ## Building the container
 
 ```plaintext
-docker build --tag octopusdeploy/octopusdeploy-tentacle-prerelease:3.15.8 --build-arg OctopusVersion=latest --file Tentacle\Dockerfile .
+docker build --tag octopusdeploy/tentacle-prerelease:3.15.8 --build-arg OctopusVersion=latest --file Tentacle\Dockerfile .
 ```
 
 ## Running a Tentacle: Docker compose
@@ -60,7 +60,7 @@ docker run --publish 10931:10933 --tty --interactive --env "ListeningPort=10931"
 
 The internal Octopus build and deployment process is split into two phases.
 
-First stage builds a docker container, and publishes it to `octopusdeploy/octopusdeploy-tentacle-prerelease`. These images are only intended for internal testing. This is primarily based around pre-release (CI) packages.
+First stage builds a docker container, and publishes it to `octopusdeploy/tentacle-prerelease`. These images are only intended for internal testing. This is primarily based around pre-release (CI) packages.
 
 ```plaintext
 .\Tentacle\01-build.ps1 -TentacleVersion 3.15.8

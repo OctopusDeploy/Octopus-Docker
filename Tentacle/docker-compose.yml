@@ -27,7 +27,7 @@ services:
       - "../tests/Import:C:/Import"
       - "../tests/Repository:C:/Repository"
   tentacle:
-    image: octopusdeploy/octopusdeploy-tentacle${OCTOPUS_TENTACLE_REPO_SUFFIX}:${TENTACLE_VERSION}
+    image: octopusdeploy/tentacle${OCTOPUS_TENTACLE_REPO_SUFFIX}:${TENTACLE_VERSION}
     depends_on:
       octopus:
         condition: service_healthy

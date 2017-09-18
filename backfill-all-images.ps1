@@ -10,7 +10,7 @@ $ErrorActionPreference = 'stop'
 $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $UserName, $Password)))
 $octopusServerPrivateImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/octopusdeploy-prerelease/tags).name)
 $octopusServerPublicImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/octopusdeploy/tags).name)
-$tentaclePrivateImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/octopusdeploy-tentacle-prerelease/tags).name)
+$tentaclePrivateImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/tentacle-prerelease/tags).name)
 $tentaclePublicImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/tentacle/tags).name)
 
 #todo: get this automatically
@@ -108,7 +108,7 @@ function Publish-TentaclePrivateImageToPublicRepo($release) {
   ./Tentacle/07-publish-publically.ps1 -TentacleVersion $release -UserName $UserName -Password $Password
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
   write-host "##teamcity[blockOpened name='Deleting local docker image Tentacle $release']"
-  & docker rmi octopusdeploy/octopusdeploy-tentacle-prerelease:$release
+  & docker rmi octopusdeploy/tentacle-prerelease:$release
   & docker rmi octopusdeploy/tentacle:$release
   write-host "##teamcity[blockClosed name='Deleting local docker image Tentacle $release']"
   write-host "##teamcity[blockClosed name='Publishing docker image Tentacle $release']"
@@ -129,7 +129,7 @@ function Start-TentacleImageBuildFromScratch($release) {
   ./Tentacle/07-publish-publically.ps1 -TentacleVersion $release -UserName $UserName -Password $Password
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
   write-host "##teamcity[blockOpened name='Deleting local docker image Tentacle $release']"
-  & docker rmi octopusdeploy/octopusdeploy-tentacle-prerelease:$release
+  & docker rmi octopusdeploy/tentacle-prerelease:$release
   & docker rmi octopusdeploy/tentacle:$release
   write-host "##teamcity[blockClosed name='Deleting local docker image Tentacle $release']"
   write-host "##teamcity[blockClosed name='Building docker image Tentacle $release']"

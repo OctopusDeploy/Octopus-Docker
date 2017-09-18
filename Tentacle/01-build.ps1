@@ -30,7 +30,7 @@ $attemptNumber = 0
 while ($true) {
   $attemptNumber = $attemptNumber + 1
   write-host "Attempt #$attemptNumber to build container..."
-  $result = Execute-Command "docker" "build --tag octopusdeploy/octopusdeploy-tentacle-prerelease:$TentacleVersion --build-arg TentacleVersion=$TentacleVersion --file Tentacle\Dockerfile ."
+  $result = Execute-Command "docker" "build --tag octopusdeploy/tentacle-prerelease:$TentacleVersion --build-arg TentacleVersion=$TentacleVersion --file Tentacle\Dockerfile ."
   $result.stdout > .\Logs\tentacle.log
   $result.stderr > .\Logs\tentacle-err.log
   if ($result.stderr -like "*encountered an error during Start: failure in a Windows system call: This operation returned because the timeout period expired. (0x5b4)*") {
@@ -47,6 +47,6 @@ while ($true) {
     break;
   }
 }
-Write-Host "Created image with tag 'octopusdeploy/octopusdeploy-tentacle-prerelease:$TentacleVersion'"
+Write-Host "Created image with tag 'octopusdeploy/tentacle-prerelease:$TentacleVersion'"
 
 Stop-TeamCityBlock "Build"
