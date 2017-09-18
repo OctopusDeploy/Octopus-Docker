@@ -13,16 +13,20 @@ $env:TENTACLE_VERSION = $TentacleVersion
 . ./Scripts/build-common.ps1
 Confirm-RunningFromRootDirectory
 
-pushd Tentacle
+Start-TeamCityBlock "Stop and remove compose project"
 
 $env:OCTOPUS_TENTACLE_REPO_SUFFIX = "-prerelease"
 
 write-host "Stopping '$ProjectName' compose project"
-& docker-compose --project-name $ProjectName stop
+& docker-compose --file .\Tentacle\docker-compose.yml --project-name $ProjectName stop
 
 write-host "Removing '$ProjectName' compose project"
-& docker-compose --project-name $ProjectName down
+& docker-compose --file .\Tentacle\docker-compose.yml --project-name $ProjectName down
 
 $env:OCTOPUS_TENTACLE_REPO_SUFFIX = ""
 
-popd
+Stop-TeamCityBlock "Stop and remove compose project"
+
+if ($LASTEXITCODE -ne 0) {
+  exit $LASTEXITCODE
+}
