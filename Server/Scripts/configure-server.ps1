@@ -39,16 +39,9 @@ function Configure-OctopusDeploy(){
       '--console',
       '--instance', 'OctopusServer',
       '--home', 'C:\Octopus',
-      '--storageConnectionString', $sqlDbConnectionString
+      '--storageConnectionString', $sqlDbConnectionString,
+      '--webAuthenticationMode', 'UsernamePassword'
     )
-
-    if (Test-OctopusVersionRequiresWebAuthenticationMode) {
-      $args += '--webAuthenticationMode'
-      $args += 'UsernamePassword'
-    } else {
-      $args += '--usernamePasswordIsEnabled'
-      $args += 'True'
-    }
 
     Execute-Command $ServerExe $args
 
