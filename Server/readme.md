@@ -1,4 +1,4 @@
-# octopusdeploy-prerelease
+# octopusdeploy
 
 Due to required build context, all scirpts should be executed from the root directory. The Dockerfile requires a `Source` directory in the build context, so that it can first be checked for the `.msi` during the installation process. This directory is created if necessary by the helper scripts. If no `.msi` exists, the build will try download the file from `https://download.octopusdeploy.com/octopus/`.
 
@@ -40,7 +40,7 @@ Default values are set in the `.env` file.
 ## Running a Server - Plain ol' Docker
 
 ```plaintext
-docker run --name OctopusDeploy --publish 81:81 --env sqlDbConnectionString="Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;" octopusdeploy/octopusdeploy-prerelease:3.17.0
+docker run --name OctopusDeploy --tty --interactive --publish 81:81 --env sqlDbConnectionString="Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;" octopusdeploy/octopusdeploy:3.17.0
 ```
 
 ### Environment variables

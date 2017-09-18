@@ -14,8 +14,8 @@ Confirm-RunningFromRootDirectory
 Start-TeamCityBlock "Pushing to public repo"
 
 function Set-Tag($tag) {
-  Write-Host "docker tag 'octopusdeploy/octopusdeploy-tentacle-prerelease:$TentacleVersion' '$tag'"
-  & docker tag "octopusdeploy/octopusdeploy-tentacle-prerelease:$TentacleVersion" "$tag"
+  Write-Host "docker tag 'octopusdeploy/tentacle-prerelease:$TentacleVersion' '$tag'"
+  & docker tag "octopusdeploy/tentacle-prerelease:$TentacleVersion" "$tag"
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 

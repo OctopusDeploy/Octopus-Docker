@@ -12,15 +12,15 @@ $configFile = "c:\Octopus\OctopusServer.config"
 . ../octopus-common.ps1
 
 function Test-OctopusVersionRequiresWebAuthenticationMode {
-  return $octopusServerVersion -lt (New-Object System.Version 3, 5, 0)
+  return $version -lt (New-Object System.Version 3, 5, 0)
 }
 
 function Test-OctopusVersionRequiresConfigureBeforeDatabaseCreate {
-  return $octopusServerVersion -lt (New-Object System.Version 3, 14, 0)
+  return $version -lt (New-Object System.Version 3, 14, 0)
 }
 
 function Test-OctopusVersionSupportsPathCommand {
-  return $octopusServerVersion -ge (New-Object System.Version 3, 0, 21)
+  return $version -ge (New-Object System.Version 3, 0, 21)
 }
 
 function Configure-OctopusDeploy(){
