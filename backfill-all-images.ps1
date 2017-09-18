@@ -10,7 +10,7 @@ $ErrorActionPreference = 'stop'
 $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $UserName, $Password)))
 $octopusServerPrivateImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/octopusdeploy-prerelease/tags).name)
 $octopusServerPublicImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/octopusdeploy/tags).name)
-$tentaclePrivateImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/octopusdeploy/octopusdeploy-tentacle-prerelease/tags).name)
+$tentaclePrivateImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/octopusdeploy-tentacle-prerelease/tags).name)
 $tentaclePublicImages = @() #@((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/tentacle/tags).name)
 
 #todo: get this automatically
