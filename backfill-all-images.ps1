@@ -11,7 +11,7 @@ $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0
 $octopusServerPrivateImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/octopusdeploy-prerelease/tags).name)
 $octopusServerPublicImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/octopusdeploy/tags).name)
 $tentaclePrivateImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/octopusdeploy/octopusdeploy-tentacle-prerelease/tags).name)
-$tentaclePublicImages = @((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/tentacle/tags).name)
+$tentaclePublicImages = @() #@((Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} https://registry.hub.docker.com/v1/repositories/octopusdeploy/tentacle/tags).name)
 
 #todo: get this automatically
 $octopusServerReleases = @('3.0.1.2063', '3.0.2.2077', '3.0.3.2084', '3.0.4.2105', '3.0.5.2124', '3.0.6.2140', '3.0.7.2204',
