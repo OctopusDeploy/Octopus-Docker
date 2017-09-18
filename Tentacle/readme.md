@@ -37,7 +37,7 @@ Default values are set in the `.env` file.
 ## Running a Tentacle - Plain ol' Docker
 
 ```plaintext
-docker run --publish 10931:10933 --env "ListeningPort=10931" --env "ServerApiKey=API-L9WIFOCOWABUNGAQO6JMZIGWV6HI" --env "TargetEnvironment=Test" --env "TargetRole=bread" --env "ServerUrl=https://octopus.example.com"  --env "PublicHostNameConfiguration=PublicIp" octopusdeploy/octopusdeploy-tentacle-prerelease:3.15.8
+docker run --publish 10931:10933 --tty --interactive --env "ListeningPort=10931" --env "ServerApiKey=API-L9WIFOCOWABUNGAQO6JMZIGWV6HI" --env "TargetEnvironment=Test" --env "TargetRole=app-server" --env "ServerUrl=https://octopus.example.com"  --env "PublicHostNameConfiguration=PublicIp" octopusdeploy/tentacle:3.15.8
 ```
 
 ### Environment variables
