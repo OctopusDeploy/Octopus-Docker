@@ -103,7 +103,7 @@ function Start-OctopusServerImageBuildFromScratch($release) {
 function Publish-TentaclePrivateImageToPublicRepo($release) {
   write-host "Docker images Tentacle $release exists in the private repository. Publishing to public repo."
   write-host "##teamcity[blockOpened name='Publishing docker image Tentacle $release']"
-  ./Tentacle/06-pull.ps1 -OctopusVersion latest -TentacleVersion $release -UserName $UserName -Password $Password
+  ./Tentacle/06-pull.ps1 -OctopusVersion $release -TentacleVersion $release -UserName $UserName -Password $Password
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
   ./Tentacle/07-publish-publically.ps1 -TentacleVersion $release -UserName $UserName -Password $Password
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -118,11 +118,11 @@ function Start-TentacleImageBuildFromScratch($release) {
   write-host "##teamcity[blockOpened name='Building docker image Tentacle $release']"
   ./Tentacle/01-build.ps1 -TentacleVersion $release
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-  ./Tentacle/02-start.ps1 -OctopusVersion latest -TentacleVersion $release -UserName $UserName -Password $Password
+  ./Tentacle/02-start.ps1 -OctopusVersion $release -TentacleVersion $release -UserName $UserName -Password $Password
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
   ./Tentacle/03-run.ps1
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-  ./Tentacle/04-stop.ps1 -OctopusVersion latest -TentacleVersion $release
+  ./Tentacle/04-stop.ps1 -OctopusVersion $release -TentacleVersion $release
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
   ./Tentacle/05-publish-privately.ps1 -TentacleVersion $release -UserName $UserName -Password $Password
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
