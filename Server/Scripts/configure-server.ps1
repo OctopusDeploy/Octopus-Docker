@@ -132,17 +132,19 @@ function Configure-OctopusDeploy(){
 
 function Validate-Variables() {
   $masterKeySupplied = ($masterKey -ne $null) -and ($masterKey -ne "")
-  if ((Test-Path $configFile) -and $masterKeySupplied) {
-    Write-Log " - masterkey supplied, but server has already been configured - ignoring"
-  }
-  elseif (Test-Path $configFile) {
-    Write-Log " - using previously configured masterkey from $configFile"
+  if (Test-Path $configFile) {
+    if ($masterKeySupplied) {
+      Write-Log " - masterkey supplied, but server has already been configured - using previously configured masterkey from $configFile instead"
+
+    } else {
+      Write-Log " - using previously configured masterkey from $configFile"
+    }
   }
   elseif ($masterKeySupplied) {
     Write-Log " - masterkey '##########'"
   }
   else {
-    Write-Log " - masterkey not supplied. A new key will be generated automatically"
+    Write-Log " - masterkey not supplied. A new key will be generated automatically."
   }
 
   $maskedConnectionString = $sqlDbConnectionString -replace "password=.*?;", "password=###########;"
