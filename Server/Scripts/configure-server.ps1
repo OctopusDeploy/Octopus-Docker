@@ -147,7 +147,7 @@ function Validate-Variables() {
     Write-Log " - masterkey not supplied. A new key will be generated automatically."
   }
 
-  $maskedConnectionString = $sqlDbConnectionString -replace "password=.*?;", "password=###########;"
+  $maskedConnectionString = "$sqlDbConnectionString;" -replace "password=.*?;", "password=###########;"
   Write-Log " - using database '$maskedConnectionString'"
   Write-Log " - local admin user '$octopusAdminUsername'"
   Write-Log " - local admin password '##########'"
