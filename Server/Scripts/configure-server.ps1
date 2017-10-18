@@ -1,14 +1,6 @@
 [CmdletBinding()]
 Param()
 
-$version = New-Object System.Version $env:OctopusVersion
-$sqlDbConnectionString=$env:sqlDbConnectionString
-$masterKey=$env:masterKey
-$masterKeySupplied = ($masterKey -ne $null) -and ($masterKey -ne "")
-$octopusAdminUsername=$env:OctopusAdminUsername
-$octopusAdminPassword=$env:OctopusAdminPassword
-$configFile = "c:\Octopus\OctopusServer.config"
-
 . ../octopus-common.ps1
 
 function Test-OctopusVersionRequiresWebAuthenticationMode {
@@ -155,9 +147,18 @@ function Validate-Variables() {
 
 try
 {
+  #remove any pre-release suffixes - for our purposes, the major.minor.patch is sufficient
+  $version = New-Object System.Version ($env:OctopusVersion -split '-')[0]
+  $sqlDbConnectionString = $env:sqlDbConnectionString
+  $masterKey = $env:masterKey
+  $masterKeySupplied = ($masterKey -ne $null) -and ($masterKey -ne "")
+  $octopusAdminUsername = $env:OctopusAdminUsername
+  $octopusAdminPassword = $env:OctopusAdminPassword
+  $configFile = "c:\Octopus\OctopusServer.config"
+
   Write-Log "==============================================="
   Write-Log "Configuring Octopus Deploy"
-  if(Test-Path c:\octopus-configuration.initstate){
+  if (Test-Path c:\octopus-configuration.initstate){
     Write-Verbose "This Server has already been initialized and registered so reconfiguration will be skipped."
     Write-Verbose "If you need to change the configuration, please start a new container"
     exit 0
