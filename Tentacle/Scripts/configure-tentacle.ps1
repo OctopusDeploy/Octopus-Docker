@@ -1,4 +1,4 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 Param()
 
 $ServerApiKey = $env:ServerApiKey;
@@ -9,8 +9,8 @@ $TargetEnvironment = $env:TargetEnvironment;
 $TargetRole = $env:TargetRole;
 $TargetName=$env:TargetName;
 $ListeningPort=$env:ListeningPort;
-$PublicHostNameConfiguration=$env:PublicHostNameConfiguration
-
+$PublicHostNameConfiguration=$env:PublicHostNameConfiguration;
+$ComsStyle=$env:ComsStyle;
 $InternalListeningPort=10933;
 
 . ./octopus-common.ps1
@@ -159,8 +159,13 @@ function Register-Tentacle(){
     '--publicHostName', $publicHostName,
     '--server', $ServerUrl,
     '--force')
-
+  if($ComsStyle -ne $null -and $ComsStyle -eq "TentacleActive") {
+    Write-Verbose "Configuring Tentacle comms style: 'TentacleActive'"
+    $arg += "--comms-style";
+    $arg += "TentacleActive"
+  }
   if($ListeningPort -ne $null -and $ListeningPort -ne $InternalListeningPort) {
+    Write-Verbose "Configuring Tentacle comms port: $ListeningPort"
     $arg += "--tentacle-comms-port";
     $arg += $ListeningPort
   }
