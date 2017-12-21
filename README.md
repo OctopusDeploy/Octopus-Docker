@@ -44,7 +44,7 @@ Note that the database will be created inside the container - it will be deleted
 
 Usage of this `docker-compose.yml` file implies acceptance of the Microsoft EULA as per https://hub.docker.com/r/microsoft/mssql-server-windows-express/.
 
-Please see the [Server ReadMe](./Tentacle/readme.md) for more information.
+Please see the [Server ReadMe](./Server/readme.md) for more information.
 
 ## Tentacle
 
