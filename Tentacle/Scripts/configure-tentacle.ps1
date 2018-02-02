@@ -9,8 +9,8 @@ $TargetEnvironment = $env:TargetEnvironment;
 $TargetRole = $env:TargetRole;
 $TargetName=$env:TargetName;
 $ListeningPort=$env:ListeningPort;
-$PublicHostNameConfiguration=$env:PublicHostNameConfiguration
-
+$PublicHostNameConfiguration=$env:PublicHostNameConfiguration;
+$CustomPublicHostName=$env:CustomPublicHostName;
 $InternalListeningPort=10933;
 
 . ./octopus-common.ps1
@@ -78,8 +78,7 @@ function Get-PublicHostName
 {
   param (
     [ValidateSet("PublicIp", "FQDN", "ComputerName", "Custom")]
-    [string]$publicHostNameConfiguration = "PublicIp",
-    [string]$customPublicHostName
+    [string]$publicHostNameConfiguration = "PublicIp"
   )
   if ($publicHostNameConfiguration -eq "Custom")
   {
