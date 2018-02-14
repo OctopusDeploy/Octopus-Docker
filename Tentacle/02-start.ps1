@@ -12,7 +12,7 @@ param (
 )
 
 $env:OCTOPUS_VERSION=$OctopusVersion;
-$env:TENTACLE_VERSION=$TentacleVersion;
+$env:TENTACLE_VERSION=Get-ImageVersion $TentacleVersion;
 $ServerServiceName=$ProjectName+"_octopus_1";
 $TentacleServiceName=$ProjectName+"_tentacle_1";
 

@@ -5,7 +5,7 @@ param (
   [string]$OctopusVersion
 )
 
-$env:OCTOPUS_VERSION = $OctopusVersion
+$env:OCTOPUS_VERSION = Get-ImageVersion $OctopusVersion
 
 . ./Scripts/build-common.ps1
 Confirm-RunningFromRootDirectory

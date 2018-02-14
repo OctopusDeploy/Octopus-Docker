@@ -8,7 +8,7 @@ param (
 )
 
 $env:OCTOPUS_VERSION = $OctopusVersion
-$env:TENTACLE_VERSION = $TentacleVersion
+$env:TENTACLE_VERSION = Get-ImageVersion $TentacleVersion
 
 . ./Scripts/build-common.ps1
 Confirm-RunningFromRootDirectory

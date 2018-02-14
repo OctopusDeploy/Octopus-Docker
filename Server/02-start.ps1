@@ -9,7 +9,7 @@ param (
   [string]$ProjectName = "octopusdocker"
 )
 
-$env:OCTOPUS_VERSION=$OctopusVersion;
+$env:OCTOPUS_VERSION=Get-ImageVersion $OctopusVersion;
 $ServerServiceName=$ProjectName+"_octopus_1";
 
 . ./Scripts/build-common.ps1

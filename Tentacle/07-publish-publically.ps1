@@ -24,14 +24,19 @@ Docker-Login
 Set-Tag "octopusdeploy/tentacle:$TentacleVersion"
 Push-Image "octopusdeploy/tentacle:$TentacleVersion"
 
-[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12,[System.Net.SecurityProtocolType]::Tls11,[System.Net.SecurityProtocolType]::Tls
-$latestVersion = (Invoke-RestMethod "https://octopus.com/downloads/latest/WindowsX64/OctopusTentacle/version").Version
-if ($latestVersion -eq $TentacleVersion) {
-  Write-Host "Tagging as latest as $latestVersion is the most recent version"
-  Set-Tag "octopusdeploy/tentacle:latest"
-  Push-Image "octopusdeploy/tentacle:latest"
-} else {
-  Write-Host "Not tagging as latest as $OctopusVersion is not the latest version ($latestVersion is the most recent version)"
-}
+$gitBranch = Get-GitBranch
 
+if ($gitBranch -ne 'master') {
+    Write-Warning "Not tagging as latest as this build is not running on the master branch (current branch is $gitBranch)"
+} else {
+  [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12,[System.Net.SecurityProtocolType]::Tls11,[System.Net.SecurityProtocolType]::Tls
+  $latestVersion = (Invoke-RestMethod "https://octopus.com/downloads/latest/WindowsX64/OctopusTentacle/version").Version
+  if ($latestVersion -eq $TentacleVersion) {
+    Write-Host "Tagging as latest as $latestVersion is the most recent version"
+    Set-Tag "octopusdeploy/tentacle:latest"
+    Push-Image "octopusdeploy/tentacle:latest"
+  } else {
+    Write-Warning "Not tagging as latest as $TentacleVersion is not the latest version ($latestVersion is the most recent version)"
+  }
+}
 Stop-TeamCityBlock "Pushing to public repo"

@@ -199,3 +199,19 @@ function Confirm-RunningFromRootDirectory {
     exit 5
   }
 }
+
+function Get-GitBranch {
+  return & git rev-parse --abbrev-ref HEAD
+}
+
+function Get-ImageVersion ($version) {
+  $gitBranch = Get-GitBranch
+
+  $imageVersion = $version
+  if ($gitBranch -ne 'master') {
+    $imageVersion = "$version-$gitBranch"
+    if (Test-Path env:BUILD_NUMBER) {
+      $imageVersion = "$version-$gitBranch.$($env:BUILD_NUMBER)"
+    }
+  }
+}
