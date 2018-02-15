@@ -57,7 +57,7 @@ function Install-ServerSpec {
   echo "##teamcity[blockOpened name='Install ServerSpec']"
 
   echo "running 'C:\tools\ruby25\bin\gem.cmd install bundler --version 1.16.1 --no-ri --no-rdoc'"
-  & C:\tools\ruby25\bin\gem.cmd install bundler --version 1.16.1 --no-ri -z-no-rdoc --force
+  & C:\tools\ruby25\bin\gem.cmd install bundler --version 1.16.1 --no-ri --no-rdoc --force
   if ($LASTEXITCODE -ne 0) { exit 1 }
 
   echo "##teamcity[blockClosed name='Install ServerSpec']"
