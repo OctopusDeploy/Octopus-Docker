@@ -5,9 +5,10 @@ param (
   [string]$OctopusVersion
 )
 
-$env:OCTOPUS_VERSION = $OctopusVersion
-
 . ./Scripts/build-common.ps1
+
+$env:OCTOPUS_VERSION = Get-ImageVersion $OctopusVersion
+
 Confirm-RunningFromRootDirectory
 
 Start-TeamCityBlock "Stop and remove compose project"

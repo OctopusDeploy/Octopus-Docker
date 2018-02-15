@@ -7,10 +7,11 @@ param (
   [string]$TentacleVersion
 )
 
-$env:OCTOPUS_VERSION = $OctopusVersion
-$env:TENTACLE_VERSION = $TentacleVersion
-
 . ./Scripts/build-common.ps1
+
+$env:OCTOPUS_VERSION = $OctopusVersion
+$env:TENTACLE_VERSION = Get-ImageVersion $TentacleVersion
+
 Confirm-RunningFromRootDirectory
 
 Start-TeamCityBlock "Stop and remove compose project"

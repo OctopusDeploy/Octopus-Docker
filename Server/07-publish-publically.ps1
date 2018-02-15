@@ -24,14 +24,19 @@ Docker-Login
 Set-Tag "octopusdeploy/octopusdeploy:$OctopusVersion"
 Push-Image "octopusdeploy/octopusdeploy:$OctopusVersion"
 
-[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12,[System.Net.SecurityProtocolType]::Tls11,[System.Net.SecurityProtocolType]::Tls
-$latestVersion = (Invoke-RestMethod "https://octopus.com/downloads/latest/WindowsX64/OctopusServer/version").Version
-if ($latestVersion -eq $OctopusVersion) {
-  Write-Host "Tagging as latest as $latestVersion is the most recent version"
-  Set-Tag "octopusdeploy/octopusdeploy:latest"
-  Push-Image "octopusdeploy/octopusdeploy:latest"
+$gitBranch = Get-GitBranch
+
+if ($gitBranch -ne 'master') {
+    Write-Warning "Not tagging as latest as this build is not running on the master branch (current branch is $gitBranch)"
 } else {
-  Write-Host "Not tagging as latest as $OctopusVersion is not the latest version ($latestVersion is the most recent version)"
-}
+  [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12,[System.Net.SecurityProtocolType]::Tls11,[System.Net.SecurityProtocolType]::Tls
+  $latestVersion = (Invoke-RestMethod "https://octopus.com/downloads/latest/WindowsX64/OctopusServer/version").Version
+  if ($latestVersion -eq $OctopusVersion) {
+    Write-Host "Tagging as latest as $latestVersion is the most recent version"
+    Set-Tag "octopusdeploy/octopusdeploy:latest"
+    Push-Image "octopusdeploy/octopusdeploy:latest"
+  } else {
+    Write-Warning "Not tagging as latest as $OctopusVersion is not the latest version ($latestVersion is the most recent version)"
+  }
 
 Stop-TeamCityBlock "Pushing to public repo"

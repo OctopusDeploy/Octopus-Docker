@@ -11,15 +11,18 @@ param (
 
 Confirm-RunningFromRootDirectory
 
+$imageVersion = Get-ImageVersion $TentacleVersion
+
 Start-TeamCityBlock "Publish to private repo"
+
 function Set-Tag($tag) {
-  Write-Host "docker tag 'octopusdeploy/tentacle-prerelease:$TentacleVersion' '$tag'"
-  & docker tag "octopusdeploy/tentacle-prerelease:$TentacleVersion" "$tag"
+  Write-Host "docker tag 'octopusdeploy/tentacle-prerelease:$imageVersion' '$tag'"
+  & docker tag "octopusdeploy/tentacle-prerelease:$imageVersion" "$tag"
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 Docker-Login
 
-Push-Image "octopusdeploy/tentacle-prerelease:$TentacleVersion"
+Push-Image "octopusdeploy/tentacle-prerelease:$imageVersion"
 
 Stop-TeamCityBlock "Publish to private repo"

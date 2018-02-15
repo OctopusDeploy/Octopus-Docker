@@ -15,8 +15,10 @@ Confirm-RunningFromRootDirectory
 
 Start-TeamCityBlock "Pull from private repo"
 
+$imageVersion = Get-ImageVersion $TentacleVersion
+
 $env:OCTOPUS_VERSION=$OctopusVersion
-$env:TENTACLE_VERSION=$TentacleVersion
+$env:TENTACLE_VERSION=$imageVersion
 
 Docker-Login
 
