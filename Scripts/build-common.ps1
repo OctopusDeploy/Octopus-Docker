@@ -214,4 +214,5 @@ function Get-ImageVersion ($version) {
       $imageVersion = "$version-$gitBranch.$($env:BUILD_NUMBER)"
     }
   }
+  return $imageVersion
 }
