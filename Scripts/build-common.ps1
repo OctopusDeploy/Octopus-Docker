@@ -194,7 +194,7 @@ function Check-IPAddress() {
 
 function Confirm-RunningFromRootDirectory {
   $childFolders = Get-ChildItem -Directory | split-Path -Leaf
-  if ((-not ($childFolders -contains "Tentacle")) -or (-not ($childFolders -contains "Server"))) {
+  if ((-not ($childFolders -contains "Tentacle")) -and (-not ($childFolders -contains "Server"))) {
     write-host "This script needs to be run from the root of the repo"
     exit 5
   }
