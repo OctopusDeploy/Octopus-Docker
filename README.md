@@ -4,7 +4,7 @@ These images can be used to bring up an instance of an Octopus Server or Tentacl
 
 # Pre-Requisites
 
-Docker containers are supported on Windows Server 2016 and Windows 10. 
+Docker containers are supported on Windows Server 2016 and Windows 10.
 
 Make sure you've enabled the containers feature:
 
@@ -54,7 +54,7 @@ To launch a Database/Octopus Server/Tentacle setup, use the folowing command:
 docker-compose --file .\Tentacle\docker-compose.yml up
 ```
 
-As above, this will create a database on launch, and destroy it when the containers are removed. 
+As above, this will create a database on launch, and destroy it when the containers are removed.
 
 Run the following to open the Octopus portal:
 
@@ -86,3 +86,12 @@ Please let us know how you get along, and how we can make it better. Pull reques
 * The default admin credentials are `admin` / `Passw0rd123`. This can (and should) be overridden in the `.env` file ... or by setting environment variables, or by passing `-e OctopusAdminUsername=XXX -e OctopusAdminPassword=YYY` ...
 
 * These images are based off the [Octopus-Docker](https://github.com/OctopusDeploy/Octopus-Docker) repo on GitHub.
+
+## Development info ##
+
+If you have issues installing the nokogiri gem on macOS (ie, to update the gem file), I found the following worked well:
+
+```
+gem install nokogiri -v 1.8.2 -- --with-iconv-dir=`xcode-select -p`/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr --with-xml2-include=`xcode-select -p`/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/libxml2
+Building native extensions with: '--with-iconv-dir=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr --with-xml2-include=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/libxml2'
+```

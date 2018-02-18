@@ -1,4 +1,4 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 Param()
 
 $ServerApiKey = $env:ServerApiKey;
@@ -12,6 +12,7 @@ $ListeningPort=$env:ListeningPort;
 $PublicHostNameConfiguration=$env:PublicHostNameConfiguration;
 $CustomPublicHostName=$env:CustomPublicHostName;
 $InternalListeningPort=10933;
+$ServerPort=$env:ServerPort;
 
 . ./octopus-common.ps1
 
@@ -32,14 +33,22 @@ function Configure-Tentacle
     '--app', 'C:\Applications')
 
   Write-Log "Configuring communication type ..."
-  Execute-Command $TentacleExe @(
-    'configure',
-    '--console',
-    '--instance', 'Tentacle',
-    '--port', $InternalListeningPort,
-    '--noListen', '"False"')
+  if ($ServerPort -ne $null) {
+    Execute-Command $TentacleExe @(
+      'configure',
+      '--console',
+      '--instance', 'Tentacle',
+      '--noListen', '"True"')
+  } else {
+    Execute-Command $TentacleExe @(
+      'configure',
+      '--console',
+      '--instance', 'Tentacle',
+      '--port', $InternalListeningPort,
+      '--noListen', '"False"')
+  }
 
-    Write-Log "Updating trust ..."
+  Write-Log "Updating trust ..."
   Execute-Command $TentacleExe @(
     'configure',
     '--console',
@@ -54,7 +63,6 @@ function Configure-Tentacle
     '--if-blank'
   )
 }
-
 
 # After the Tentacle is registered with Octopus, Tentacle listens on a TCP port, and Octopus connects to it. The Octopus server
 # needs to know the public IP address to use to connect to this Tentacle instance. Is there a way in Windows Azure in which we can
@@ -130,7 +138,13 @@ function Validate-Variables() {
 
   Write-Log " - server endpoint '$ServerUrl'"
   Write-Log " - api key '##########'"
-  Write-Log " - registered port $ListeningPort"
+  if ($null -ne $ServerPort) {
+    Write-Log " - communication mode 'Polling' (Active)"
+    Write-Log " - server port $ServerPort"
+  } else {
+    Write-Log " - communication mode 'Listening' (Passive)"
+    Write-Log " - registered port $ListeningPort"
+  }
   Write-Log " - environment '$TargetEnvironment'"
   Write-Log " - role '$TargetRole'"
   Write-Log " - host '$PublicHostNameConfiguration'"
@@ -149,19 +163,29 @@ function Restore-Configuration() {
 function Register-Tentacle(){
  Write-Log "Registering with server ..."
 
-  $publicHostName=Get-PublicHostName $PublicHostNameConfiguration;
   New-Variable -Name arg -Option AllScope
   $arg = @(
     'register-with',
     '--console',
     '--instance', 'Tentacle',
-    '--publicHostName', $publicHostName,
     '--server', $ServerUrl,
     '--force')
 
-  if($ListeningPort -ne $null -and $ListeningPort -ne $InternalListeningPort) {
-    $arg += "--tentacle-comms-port";
-    $arg += $ListeningPort
+  if ($null -ne $ServerPort) {
+    $arg += "--comms-style"
+    $arg += "TentacleActive"
+    $arg += "--server-comms-port"
+    $arg += $ServerPort
+  } else {
+    $arg += "--comms-style"
+    $arg += "TentaclePassive"
+    $publicHostName = Get-PublicHostName $PublicHostNameConfiguration;
+    $arg += "--publicHostName"
+    $arg += $publicHostName
+    if ($ListeningPort -ne $InternalListeningPort) {
+      $arg += "--tentacle-comms-port"
+      $arg += $ListeningPort
+    }
   }
 
   if(!($ServerApiKey -eq $null)) {
