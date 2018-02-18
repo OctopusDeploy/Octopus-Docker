@@ -182,7 +182,7 @@ function Register-Tentacle(){
     $publicHostName = Get-PublicHostName $PublicHostNameConfiguration;
     $arg += "--publicHostName"
     $arg += $publicHostName
-    if ($ListeningPort -ne $InternalListeningPort) {
+    if (($null -ne $ListeningPort) -and ($ListeningPort -ne $InternalListeningPort)) {
       $arg += "--tentacle-comms-port"
       $arg += $ListeningPort
     }
