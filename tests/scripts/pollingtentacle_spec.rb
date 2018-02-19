@@ -18,7 +18,7 @@ describe windows_registry_key('HKEY_LOCAL_MACHINE\Software\Octopus\Tentacle') do
 end
 
 describe port(10933) do
-  it { should be_listening.with('tcp') }
+  it { should_not be_listening.with('tcp') }
 end
 
 describe octopus_deploy_tentacle(ENV['OctopusServerUrl'], ENV['OctopusApiKey'], "Tentacle") do
