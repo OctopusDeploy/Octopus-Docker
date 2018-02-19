@@ -16,7 +16,8 @@ param (
 $env:OCTOPUS_VERSION=$OctopusVersion;
 $env:TENTACLE_VERSION=Get-ImageVersion $TentacleVersion;
 $ServerServiceName=$ProjectName+"_octopus_1";
-$TentacleServiceName=$ProjectName+"_tentacle_1";
+$ListeningTentacleServiceName=$ProjectName+"_listeningtentacle_1";
+$PollingTentacleServiceName=$ProjectName+"_pollingtentacle_1";
 
 Confirm-RunningFromRootDirectory
 
@@ -31,14 +32,16 @@ Docker-Login
 $env:OCTOPUS_TENTACLE_REPO_SUFFIX = "-prerelease"
 
 Start-DockerCompose $ProjectName .\Tentacle\docker-compose.yml
-Wait-ForServiceToPassHealthCheck $TentacleServiceName
+Wait-ForServiceToPassHealthCheck $ListeningTentacleServiceName
+Wait-ForServiceToPassHealthCheck $PollingTentacleServiceName
 
 if(!(Test-Path .\tests\Logs)) {
   mkdir .\tests\Logs | Out-Null
 }
 
 & docker logs $ServerServiceName > .\tests\Logs\OctopusServer.log
-& docker logs $TentacleServiceName > .\tests\Logs\OctopusTentacle.log
+& docker logs $ListeningTentacleServiceName > .\tests\Logs\OctopusListeningTentacle.log
+& docker logs $PollingTentacleServiceName > .\tests\Logs\OctopusPollingTentacle.log
 
 $docker = (docker inspect $ServerServiceName | convertfrom-json)[0]
 $ipAddress = $docker.NetworkSettings.Networks.nat.IpAddress

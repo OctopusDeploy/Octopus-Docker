@@ -19,6 +19,7 @@ services:
       sqlDbConnectionString: "Server=db,1433;Initial Catalog=Octopus;Persist Security Info=False;User ID=sa;Password=${SA_PASSWORD};MultipleActiveResultSets=False;Connection Timeout=30;"
     ports:
      - "81"
+     - "10943"
     depends_on:
       db:
         condition: service_healthy
@@ -26,7 +27,7 @@ services:
     volumes:
       - "../tests/Import:C:/Import"
       - "../tests/Repository:C:/Repository"
-  tentacle:
+  listeningtentacle:
     image: octopusdeploy/tentacle${OCTOPUS_TENTACLE_REPO_SUFFIX}:${TENTACLE_VERSION}
     depends_on:
       octopus:
@@ -37,6 +38,21 @@ services:
       TargetEnvironment: "Development"
       TargetRole: "app-server"
       ServerUrl: "http://octopus:81"
+    stdin_open: true #Process sits and waits for ReadLine
+    volumes:
+      - "../tests/Applications:C:/Applications"
+  pollingtentacle:
+    image: octopusdeploy/tentacle${OCTOPUS_TENTACLE_REPO_SUFFIX}:${TENTACLE_VERSION}
+    depends_on:
+      octopus:
+        condition: service_healthy
+    environment:
+      ServerUsername: "${OCTOPUS_ADMIN_USERNAME}"
+      ServerPassword: "${OCTOPUS_ADMIN_PASSWORD}"
+      TargetEnvironment: "Development"
+      TargetRole: "web-server"
+      ServerUrl: "http://octopus:81"
+      ServerPort: "10943"
     stdin_open: true #Process sits and waits for ReadLine
     volumes:
       - "../tests/Applications:C:/Applications"
