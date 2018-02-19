@@ -29,19 +29,39 @@ Copy-FilesToDockerContainer "$PSScriptRoot/../tests/scripts/" $OctopusPollingTen
 
 Start-TeamCityBlock "docker exec run-tests.ps1"
 if (Test-Path ENV:TEAMCITY_PROJECT_NAME) {
+
+  Start-TeamCityBlock "Testing server"
   write-host "docker exec $OctopusServerContainer powershell -file /run-tests.ps1 -testfile octopus-server_spec.rb"
   & docker exec --env tc_project_name=$ENV:TEAMCITY_PROJECT_NAME $OctopusServerContainer powershell -file c:\run-tests.ps1 -testfile octopus-server_spec.rb
+  Stop-TeamCityBlock "Testing server"
+
+  Start-TeamCityBlock "Testing listening Tentacle"
   write-host "docker exec $OctopusListeningTentacleContainer powershell -file /run-tests.ps1 -testfile octopus-listeningtentacle_spec.rb"
   & docker exec --env tc_project_name=$ENV:TEAMCITY_PROJECT_NAME $OctopusListeningTentacleContainer powershell -file c:\run-tests.ps1 -testfile listeningtentacle_spec.rb
+  Stop-TeamCityBlock "Testing listening Tentacle"
+
+  Start-TeamCityBlock "Testing polling Tentacle"
   write-host "docker exec $OctopusPollingTentacleContainer powershell -file /run-tests.ps1 -testfile octopus-pollingtentacle_spec.rb"
   & docker exec --env tc_project_name=$ENV:TEAMCITY_PROJECT_NAME $OctopusPollingTentacleContainer powershell -file c:\run-tests.ps1 -testfile pollingtentacle_spec.rb
+  Stop-TeamCityBlock "Testing polling Tentacle"
+
 } else {
+
+  Start-TeamCityBlock "Testing server"
   write-host "docker exec $OctopusServerContainer powershell -file /run-tests.ps1 -testfile octopus-server_spec.rb"
   & docker exec $OctopusServerContainer powershell -file c:\run-tests.ps1 -testfile octopus-server_spec.rb
+  Stop-TeamCityBlock "Testing server"
+
+  Start-TeamCityBlock "Testing listening Tentacle"
   write-host "docker exec $OctopusListeningTentacleContainer powershell -file /run-tests.ps1 -testfile octopus-listeningtentacle_spec.rb"
   & docker exec $OctopusListeningTentacleContainer powershell -file c:\run-tests.ps1 -testfile listeningtentacle_spec.rb
+  Stop-TeamCityBlock "Testing listening Tentacle"
+
+  Start-TeamCityBlock "Testing polling Tentacle"
   write-host "docker exec $OctopusPollingTentacleContainer powershell -file /run-tests.ps1 -testfile octopus-pollingtentacle_spec.rb"
   & docker exec $OctopusPollingTentacleContainer powershell -file c:\run-tests.ps1 -testfile pollingtentacle_spec.rb
+  Stop-TeamCityBlock "Testing polling Tentacle"
+
 }
 Stop-TeamCityBlock "docker exec run-tests.ps1"
 
