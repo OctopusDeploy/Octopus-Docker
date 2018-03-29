@@ -12,6 +12,7 @@ function Install-Chocolatey {
   echo "##teamcity[blockOpened name='Installing Chocolatey']"
 
   write-output "Installing Chocolatey"
+  $env:chocolateyVersion = '0.10.8' # hack as 0.10.9 is broken - for https://github.com/chocolatey/choco/issues/1529
   iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
   if ($LASTEXITCODE -ne 0) { exit 1 }
 
