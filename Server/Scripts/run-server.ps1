@@ -5,6 +5,13 @@ Param()
 
 function Process-Import() {
  if(Test-Path 'C:\Import\metadata.json' ){
+
+    $importPassword = $env:ImportPassword
+    if($importPassword -eq $null) {
+       $importPassword = 'blank';
+    }
+
+
    Write-Log "Running Migrator import on C:\Import directory ..."
     $args = @(
     'import',
@@ -14,7 +21,7 @@ function Process-Import() {
     '--instance',
     'OctopusServer',
     '--password',
-    'blank'
+    $importPassword
     )
     Execute-Command $MigratorExe $args
  }

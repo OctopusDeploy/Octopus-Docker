@@ -49,6 +49,7 @@ docker run --name OctopusDeploy --tty --interactive --publish 81:81 --env sqlDbC
 - **MasterKey**: The master key to use to connect to an existing database. If not supplied, and the database does not exist, it will generate a new one. If the database does exist, this is mandatory.
 - **OctopusAdminUsername**: The admin user to create for the Octopus Server.
 - **OctopusAdminPassword**: The password for the admin user for the Octopus Server.
+- **ImportPassword**: Password used used during the import process (if the `C:\Import` volume  mount has been provided).
 
 ### Ports
 
