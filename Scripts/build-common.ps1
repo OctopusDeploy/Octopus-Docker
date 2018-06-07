@@ -74,7 +74,7 @@ function Start-DockerCompose($projectName, $composeFile) {
 function Wait-ForServiceToPassHealthCheck($serviceName) {
   $attempts = 0;
   $sleepsecs = 10;
-  while ($attempts -lt 30)
+  while ($attempts -lt 50)
   {
     $attempts++
     $health = ($(docker inspect $serviceName) | ConvertFrom-Json).State.Health.Status;
