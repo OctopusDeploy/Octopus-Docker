@@ -1,5 +1,5 @@
 $OFS = "`r`n";
-
+Write-Host "XXXXXX"
 function Execute-Command ($commandPath, $commandArguments) {
   Write-Host "Executing '$commandPath $commandArguments'"
   $pinfo = New-Object System.Diagnostics.ProcessStartInfo
@@ -186,10 +186,15 @@ function Write-DebugInfo($containerNames) {
 
 function Check-IPAddress() {
   $OctopusContainerIpAddress = ($(docker inspect $OctopusServerContainer) | ConvertFrom-Json).NetworkSettings.Networks.nat.IpAddress
-  if (($OctopusContainerIpAddress -eq $null) -or ($OctopusContainerIpAddress -eq "")) {
+  if (($OctopusContainerIpAddress -eq $null) -or ($(Get-IPAddress) -eq "")) {
     write-host " OctopusDeploy Container does not exist. Aborting."
     exit 3
   }
+}
+
+function Get-IPAddress() {
+    $docker = (docker inspect $OctopusServerContainer | convertfrom-json)[0]
+    return $docker.NetworkSettings.Networks.nat.IpAddress
 }
 
 function Confirm-RunningFromRootDirectory {
@@ -215,4 +220,28 @@ function Get-ImageVersion ($version) {
     }
   }
   return $imageVersion
+}
+
+function TeamCity-Block
+{
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $blockName,
+
+        [Parameter(Mandatory = $true)]
+        [scriptblock]
+        $ScriptBlock
+    )
+
+    try
+    {
+        Start-TeamCityBlock $blockName
+        . $ScriptBlock
+    }
+    finally
+    {
+        Stop-TeamCityBlock $blockName
+    }
 }
