@@ -6,7 +6,7 @@ function Get-DownloadUrl {
 	$version = $env:OctopusVersion
 	$downloadUrlLatest = 'https://octopus.com/downloads/latest/WindowsX64/OctopusServer'
 	$msiFileName = "Octopus.$($version)-x64.msi"
-	$downloadBaseUrl = "https://download.octopusdeploy.com/octopus/"
+	$downloadBaseUrl = "https://s3-ap-southeast-1.amazonaws.com/octopus-testing/server/" #"https://download.octopusdeploy.com/octopus/"
 
 
 	if($env:DownloadUrl -ne $null){

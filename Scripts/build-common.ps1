@@ -1,5 +1,5 @@
 $OFS = "`r`n";
-Write-Host "XXXXXX"
+
 function Execute-Command ($commandPath, $commandArguments) {
   Write-Host "Executing '$commandPath $commandArguments'"
   $pinfo = New-Object System.Diagnostics.ProcessStartInfo
