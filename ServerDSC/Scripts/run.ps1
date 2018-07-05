@@ -51,7 +51,7 @@ function Run-OctopusDeploy
 {
 
   Write-Log "Start Octopus Deploy instance ..."
-  "Run started." | Set-Content "c:\octopus-run.initstate"
+  Get-Date | Set-Content "c:\octopus-run.initstate"
 
   & $octopusServerExePath run --instance $env:OCTOPUS_INSTANCENAME --console
 
