@@ -1,6 +1,8 @@
 param (
   [Parameter(Mandatory=$false)]
-  [string]$ProjectName="octopusdocker"
+  [string]$ProjectName="octopusdocker",
+  [Parameter(Mandatory=$true)]
+  [string]$OctopusVersion
 )
 
 . ../Scripts/build-common.ps1
@@ -22,7 +24,7 @@ TeamCity-Block("Run tests") {
     TeamCity-Block("Pester testing") {
         
 		
-		$TestResult = Invoke-Pester -PassThru -Script @{ Path = './Tests/*'; Parameters = @{ IPAddress = $(Get-IPAddress); OctopusUsername="admin"; OctopusPassword="Passw0rd123" }} -OutputFile Test.xml -OutputFormat NUnitXml
+		$TestResult = Invoke-Pester -PassThru -Script @{ Path = './Tests/*'; Parameters = @{ IPAddress = $(Get-IPAddress); OctopusUsername="admin"; OctopusPassword="Passw0rd123"; OctopusVersion=$OctopusVersion }} -OutputFile Test.xml -OutputFormat NUnitXml
 
 		if($TestResult.FailedCount -ne 0) {
 			Write-Host "Failed $($TestResult.FailedCount)/$($TestResult.TotalCount) Tests"
