@@ -18,16 +18,21 @@ TeamCity-Block("Start containers") {
 
     if(!(Test-Path ..\tests\Applications)) {
       mkdir ..\tests\Applications | Out-Null
-    }
+    } else {
+		Remove-Item ..\tests\Applications\* -Recurse -Force
+	}
+	
     if(!(Test-Path ..\tests\Logs)) {
       mkdir ..\tests\Logs | Out-Null
-    }
+    } else {
+		Remove-Item ..\tests\Logs\* -Recurse -Force
+	}
 
     #Docker-Login
 
     $sw = [Diagnostics.Stopwatch]::StartNew()
     TeamCity-Block("Running Compose") {
-        Start-DockerCompose $ProjectName ..\Server\docker-compose.yml
+        Start-DockerCompose $ProjectName .\docker-compose.yml
     }
     
     TeamCity-Block("Waiting for Health") {

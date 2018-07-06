@@ -55,6 +55,9 @@ Configuration Server_Install
             Name = $env:OCTOPUS_INSTANCENAME
             DownloadUrl = $downloadUrl
             AllowCollectionOfUsageStatistics = $false
+			TaskLogsDirectory = "C:\TaskLogs"
+			ArtifactsDirectory = "C:\Artifacts"
+			PackagesDirectory = "C:\Repository"
         }
     }
 }

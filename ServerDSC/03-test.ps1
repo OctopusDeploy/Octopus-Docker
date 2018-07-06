@@ -2,7 +2,7 @@ param (
   [Parameter(Mandatory=$false)]
   [string]$ProjectName="octopusdocker",
   [Parameter(Mandatory=$true)]
-  [string]$OctopusVersion
+  [string]$OctopusVersion,
 )
 
 . ../Scripts/build-common.ps1

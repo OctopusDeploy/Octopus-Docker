@@ -64,6 +64,9 @@ Configuration Server_Install
             AllowCollectionOfUsageStatistics = $false # dont mess with stats
             LicenseKey = $licenceKey
             OctopusMasterKey = Get-MasterKey
+			TaskLogsDirectory = "C:\TaskLogs"
+			ArtifactsDirectory = "C:\Artifacts"
+			PackagesDirectory = "C:\Repository"
             
         }
         
