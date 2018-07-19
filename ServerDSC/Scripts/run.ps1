@@ -8,7 +8,7 @@ $octopusServerExePath="$($env:ProgramFiles)\Octopus Deploy\Octopus\Octopus.Serve
 . /3-DSC.ps1
 
 
-<#
+
 function Process-Import() {
  if(Test-Path 'C:\Import\metadata.json' ){
 
@@ -16,7 +16,6 @@ function Process-Import() {
     if($importPassword -eq $null) {
        $importPassword = 'blank';
     }
-
 
    Write-Log "Running Migrator import on C:\Import directory ..."
     $args = @(
@@ -31,17 +30,18 @@ function Process-Import() {
     )
     Execute-Command $MigratorExe $args
  }
-}#>
+}
 
 function Export-MasterKey {
-	#Write-Log "Writing MasterKey to C:\MasterKey\$env:OCTOPUS_INSTANCENAME"
+	Write-Log "Writing MasterKey to C:\MasterKey\$env:OCTOPUS_INSTANCENAME"
   
-	if($env:MasterKey -eq $null) {
+	if(Test-Path "C:\MasterKey") {
 		Write-Log "==============================================="
-		Write-Log "Octopus Deploy Master Key"
+		Write-Log "Writing Octopus Deploy Master Key to C:\MasterKey\$env:OCTOPUS_INSTANCENAME"
 		Write-Log "==============================================="
-	  
-		& $octopusServerExePath show-master-key --instance $env:OCTOPUS_INSTANCENAME
+    
+    
+   (& $octopusServerExePath show-master-key --instance $env:OCTOPUS_INSTANCENAME) | Out-File C:\MasterKey\$env:OCTOPUS_INSTANCENAME -NoNewline
 		Write-Log "==============================================="
 		Write-Log ""
 	}
@@ -70,7 +70,7 @@ try
 
   
   EnsureNotRunningAlready
-  #Process-Import
+  Process-Import
   Export-MasterKey
   Run-OctopusDeploy
 

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="9" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2018-07-17" time="19:04:43">
+  <environment user="rober" machine-name="COSTANZA" cwd="C:\Development\Octopus\Octopus-Docker\Tentacle" user-domain="COSTANZA" platform="Microsoft Windows 10 Pro|C:\WINDOWS|\Device\Harddisk0\Partition3" nunit-version="2.5.8.0" os-version="10.0.17134" clr-version="4.0.30319.42000" />
+  <culture-info current-culture="en-AU" current-uiculture="en-US" />
+  <test-suite type="Powershell" name="Pester" executed="True" result="Success" success="True" time="49.0881" asserts="0">
+    <results>
+      <test-suite type="TestFixture" name="Octopus Registration" executed="True" result="Success" success="True" time="17.2606" asserts="0" description="Octopus Registration">
+        <results>
+          <test-case description="should have been registered" name="Octopus Registration.should have been registered" time="17.1576" asserts="0" success="True" result="Success" executed="True" />
+          <test-case description="should be healthy" name="Octopus Registration.should be healthy" time="0.0114" asserts="0" success="True" result="Success" executed="True" />
+          <test-case description="should have the correct version installed" name="Octopus Registration.should have the correct version installed" time="0.009" asserts="0" success="True" result="Success" executed="True" />
+          <test-case description="should have been registered" name="Octopus Registration.should have been registered" time="0.0588" asserts="0" success="True" result="Success" executed="True" />
+          <test-case description="should be healthy" name="Octopus Registration.should be healthy" time="0.0114" asserts="0" success="True" result="Success" executed="True" />
+          <test-case description="should have the correct version installed" name="Octopus Registration.should have the correct version installed" time="0.0124" asserts="0" success="True" result="Success" executed="True" />
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="Port 10933" executed="True" result="Success" success="True" time="0.3986" asserts="0" description="Port 10933">
+        <results>
+          <test-case description="should be open" name="Port 10933.should be open" time="0.3986" asserts="0" success="True" result="Success" executed="True" />
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="Volume Mounts" executed="True" result="Success" success="True" time="31.4289" asserts="0" description="Volume Mounts">
+        <results>
+          <test-case description="should contain logs" name="Volume Mounts.should contain logs" time="0.281" asserts="0" success="True" result="Success" executed="True" />
+          <test-case description="should contain deployed packages" name="Volume Mounts.should contain deployed packages" time="31.1479" asserts="0" success="True" result="Success" executed="True" />
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

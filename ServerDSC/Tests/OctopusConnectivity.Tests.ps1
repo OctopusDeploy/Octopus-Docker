@@ -33,5 +33,10 @@ Describe 'Octopus API' {
 
 		$UserObj.Username | should be $OctopusUsername
 	}
+	
+	it 'should have imported the migration export' {
+		$DevEnv = $repository.Environments.FindByName("Development")
+		$DevEnv | should not be $null
+	}
 
 }

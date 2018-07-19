@@ -2,12 +2,12 @@ param (
   [Parameter(Mandatory=$false)]
   [string]$ProjectName="octopusdocker",
   [Parameter(Mandatory=$true)]
-  [string]$OctopusVersion,
+  [string]$OctopusVersion
 )
 
 . ../Scripts/build-common.ps1
 
-Add-Type -Path './Tools/Octopus.Client.dll'
+Add-Type -Path '../Tools/Octopus.Client.dll'
 
 TeamCity-Block("Run tests") {
 
@@ -21,17 +21,16 @@ TeamCity-Block("Run tests") {
 
     Write-DebugInfo @($OctopusDBContainer, $OctopusServerContainer)
 
-    TeamCity-Block("Pester testing") {
-        
+    TeamCity-Block("Pester testing") {        
 		
-		$TestResult = Invoke-Pester -PassThru -Script @{ Path = './Tests/*'; Parameters = @{ IPAddress = $(Get-IPAddress); OctopusUsername="admin"; OctopusPassword="Passw0rd123"; OctopusVersion=$OctopusVersion }} -OutputFile Test.xml -OutputFormat NUnitXml
+      $TestResult = Invoke-Pester -PassThru -Script @{ Path = './Tests/*'; Parameters = @{ IPAddress = $(Get-IPAddress); OctopusUsername="admin"; OctopusPassword="Passw0rd123"; OctopusVersion=$OctopusVersion }} -OutputFile ..\Temp\Server-Test.xml -OutputFormat NUnitXml
 
-		if($TestResult.FailedCount -ne 0) {
-			Write-Host "Failed $($TestResult.FailedCount)/$($TestResult.TotalCount) Tests"
-			Exit 1
-		} else {
-			Write-Host "All $($TestResult.TotalCount) Tests Passed";
-		}
+      if($TestResult.FailedCount -ne 0) {
+        Write-Host "Failed $($TestResult.FailedCount)/$($TestResult.TotalCount) Tests"
+        exit 1
+      } else {
+        Write-Host "All $($TestResult.TotalCount) Tests Passed";
+      }
     }
 
 }

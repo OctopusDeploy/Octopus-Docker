@@ -16,18 +16,14 @@ $env:OCTOPUS_SERVER_REPO_SUFFIX="-prerelease"
 
 TeamCity-Block("Start containers") {
 
-    if(!(Test-Path ..\tests\Applications)) {
-      mkdir ..\tests\Applications | Out-Null
+    if(!(Test-Path ..\Temp)) {
+      mkdir ..\Temp | Out-Null
     } else {
-		Remove-Item ..\tests\Applications\* -Recurse -Force
-	}
-	
-    if(!(Test-Path ..\tests\Logs)) {
-      mkdir ..\tests\Logs | Out-Null
-    } else {
-		Remove-Item ..\tests\Logs\* -Recurse -Force
-	}
-
+		  Remove-Item ..\Temp\* -Recurse -Force
+    }
+    mkdir ..\Temp\MasterKey | Out-Null
+    mkdir ..\Temp\TaskLogs | Out-Null
+  
     #Docker-Login
 
     $sw = [Diagnostics.Stopwatch]::StartNew()

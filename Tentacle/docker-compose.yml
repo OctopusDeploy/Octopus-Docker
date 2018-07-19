@@ -38,7 +38,8 @@ services:
       ServerUrl: "http://octopus:81"
     stdin_open: true #Process sits and waits for ReadLine
     volumes:
-      - "../tests/Applications:C:/Applications"
+      - "../tests/ListeningApplications:C:/Applications"
+      - "../tests/ListeningHome:C:/TentacleHome"
   pollingtentacle:
     image: octopusdeploy/tentacle${OCTOPUS_TENTACLE_REPO_SUFFIX}:${TENTACLE_VERSION}
     depends_on:
@@ -53,7 +54,8 @@ services:
       ServerPort: "10943"
     stdin_open: true #Process sits and waits for ReadLine
     volumes:
-      - "../tests/Applications:C:/Applications"
+      - "../tests/PollingApplications:C:/Applications"
+      - "../tests/PollingHome:C:/TentacleHome"
 networks:
   default:
     external:

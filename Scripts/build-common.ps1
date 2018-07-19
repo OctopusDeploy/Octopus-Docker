@@ -192,8 +192,11 @@ function Check-IPAddress() {
   }
 }
 
-function Get-IPAddress() {
-    $docker = (docker inspect $OctopusServerContainer | convertfrom-json)[0]
+function Get-IPAddress()  {
+  param (
+  [Parameter(Mandatory=$false)]
+  [string]$container=$OctopusServerContainer)
+    $docker = (docker inspect $container | convertfrom-json)[0]
     return $docker.NetworkSettings.Networks.nat.IpAddress
 }
 

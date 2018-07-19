@@ -22,7 +22,8 @@ services:
         condition: service_healthy
     stdin_open: true #Process sits and waits for ReadLine
     volumes:
-      - "../tests/TaskLogs:C:/TaskLogs"
+      - "../Temp/TaskLogs:C:/TaskLogs"
+      - "../Temp/MasterKey:C:/MasterKey"
       - "../tests/Import:C:/Import"
       - "../tests/Repository:C:/Repository"
 networks:

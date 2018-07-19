@@ -11,6 +11,7 @@ $RECYCLE.BIN/
 # Log folders generated during builds
 Logs/
 tests/Logs
+Temp/
 
 # Windows Installer files
 *.cab

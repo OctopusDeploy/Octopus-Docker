@@ -1,14 +1,14 @@
 FROM microsoft/windowsservercore:latest
 
-HEALTHCHECK --interval=20s --timeout=20s --retries=6 CMD powershell -file ./Tentacle/healthcheck-tentacle.ps1
+HEALTHCHECK --interval=20s --timeout=20s --retries=6 CMD powershell -file ./healthcheck-tentacle.ps1
 
 EXPOSE 10933
 
-VOLUME ["C:/Applications", "C:/TentacleHome"]
+#VOLUME ["C:/Applications", "C:/TentacleHome"]
 
 ADD Scripts/*.ps1 /
-ADD Tentacle/Scripts/*.ps1 /Tentacle/
-ADD source/ /Installers
+#ADD Tentacle/Scripts/*.ps1 /Tentacle/
+#ADD source/ /Installers
 
 ARG TentacleVersion
 ENV TentacleVersion ${TentacleVersion}
@@ -22,5 +22,6 @@ LABEL   org.label-schema.schema-version="1.0" \
     org.label-schema.description="Octopus Tentacle instance with auto-registration to Octopus Server" \
     org.label-schema.build-date=$BUILD_DATE
 
-RUN powershell -File ./install-base.ps1 -Msi "Octopus.Tentacle" -Verbose && powershell -File ./Tentacle/install-tentacle.ps1 -Verbose
-ENTRYPOINT powershell -File ./Tentacle/configure-tentacle.ps1 -Verbose  && powershell -File ./Tentacle/run-tentacle.ps1 -Verbose
+RUN powershell -File ./build.ps1 -Verbose
+#RUN powershell -File ./install-base.ps1 -Msi "Octopus.Tentacle" -Verbose && powershell -File ./Tentacle/install-tentacle.ps1 -Verbose
+ENTRYPOINT powershell -File ./configure-tentacle.ps1 -Verbose  && powershell -File ./run-tentacle.ps1 -Verbose

@@ -15,6 +15,10 @@ TeamCity-Block("Build") {
 
     $imageVersion = Get-ImageVersion $OctopusVersion
 
+
+    docker build --pull --tag octopusdeploy/octopusdeploy-prerelease:$imageVersion --build-arg OctopusVersion=$OctopusVersion .
+
+<#
     #Stupid retry logic due to windows/docker error https://github.com/docker/docker/issues/27588
     Write-Host "Building Octopus Server"
     $maxAttempts = 10
@@ -39,6 +43,7 @@ TeamCity-Block("Build") {
         break;
       }
     }
+    #>
     Write-Host "Created image with tag 'octopusdeploy/octopusdeploy-prerelease:$imageVersion'"
 
 }

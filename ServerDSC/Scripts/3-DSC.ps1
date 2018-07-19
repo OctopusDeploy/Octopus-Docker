@@ -40,7 +40,7 @@ $cd = @{
 Configuration Server_Install
 {
     Import-DscResource -ModuleName OctopusDSC
-    Import-DscResource –ModuleName PSDesiredStateConfiguration
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
 
     Node "localhost"
     {

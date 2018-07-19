@@ -1,3 +1,4 @@
+<#
 if (-not (Test-Path c:\octopus-install.initstate)) {
     Write-Output "Octopus install initialisation file (c:\octopus-install.initstate) does not yet exist"
     exit 1
@@ -7,6 +8,8 @@ if (-not (Test-Path c:\octopus-configuration.initstate)) {
     Write-Output "Octopus configuration initialisation file (c:\octopus-configuration.initstate) does not yet exist"
     exit 1
 }
+
+#>
 
 if (-not (Test-Path c:\octopus-run.initstate)) {
     Write-Output "Octopus run initialisation file (c:\octopus-run.initstate) does not yet exist"
