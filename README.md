@@ -85,6 +85,12 @@ Please let us know how you get along, and how we can make it better. Pull reques
 
 * The default admin credentials are `admin` / `Passw0rd123`. This can (and should) be overridden in the `.env` file ... or by setting environment variables, or by passing `-e OctopusAdminUsername=XXX -e OctopusAdminPassword=YYY` ...
 
+* The folder locations that Octopus uses can be overridden using the following environment variables (default values shown):
+  * `-e OctopusTaskLogsFolder=C:\TaskLogs`
+  * `-e OctopusArtifactsFolder=C:\Artifacts`
+  * `-e OctopusNugetRepositoryFolder=C:\Repository`
+  * `-e OctopusHomeFolder=C:\Octopus`
+
 * These images are based off the [Octopus-Docker](https://github.com/OctopusDeploy/Octopus-Docker) repo on GitHub.
 
 ## Development info ##
