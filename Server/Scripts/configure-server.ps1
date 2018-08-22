@@ -69,7 +69,7 @@ function Configure-OctopusDeploy(){
       'configure',
       '--console',
       '--instance', 'OctopusServer',
-      '--home', 'C:\Octopus',
+      '--home', $octopusHomeFolder,
       '--usernamePasswordIsEnabled', 'True' #this will only work from 3.5 and above
     )
     Execute-Command $ServerExe $args
@@ -81,9 +81,9 @@ function Configure-OctopusDeploy(){
       'path',
       '--console',
       '--instance', 'OctopusServer',
-      '--nugetRepository', 'C:\Repository',
-      '--artifacts', 'C:\Artifacts',
-      '--taskLogs', 'C:\TaskLogs'
+      '--nugetRepository', $octopusNugetRepositoryFolder,
+      '--artifacts', $octopusArtifactsFolder,
+      '--taskLogs', $octopusTaskLogsFolder
     )
     Execute-Command $ServerExe $args
   } else {
@@ -123,6 +123,27 @@ function Configure-OctopusDeploy(){
 }
 
 function Validate-Variables() {
+  
+  if ($null -eq $octopusHomeFolder -Or $octopusHomeFolder -eq "") {
+    $octopusHomeFolder = $octopusHomeFolderDefault
+  }
+  Write-Log " - using OctopusHomeFolder '$octopusHomeFolder'"
+  
+  if ($null -eq $octopusNugetRepositoryFolder -Or $octopusNugetRepositoryFolder -eq "") {
+    $octopusNugetRepositoryFolder = $octopusNugetRepositoryFolderDefault
+  }
+  Write-Log " - using OctopusNugetRepositoryFolder '$octopusNugetRepositoryFolder'"
+  
+  if ($null -eq $octopusArtifactsFolder -Or $octopusArtifactsFolder -eq "") {
+    $octopusArtifactsFolder = $octopusArtifactsFolderDefault
+  }
+  Write-Log " - using OctopusArtifactsFolder '$octopusArtifactsFolder'"
+  
+  if ($null -eq $octopusTaskLogsFolder -Or $octopusTaskLogsFolder -eq "") {
+    $octopusTaskLogsFolder = $octopusTaskLogsFolderDefault
+  }
+  Write-Log " - using OctopusTaskLogsFolder '$octopusTaskLogsFolder'"
+  
   $masterKeySupplied = ($masterKey -ne $null) -and ($masterKey -ne "")
   if (Test-Path $configFile) {
     if ($masterKeySupplied) {
@@ -155,6 +176,16 @@ try
   $octopusAdminUsername = $env:OctopusAdminUsername
   $octopusAdminPassword = $env:OctopusAdminPassword
   $configFile = "c:\Octopus\OctopusServer.config"
+  
+  $octopusTaskLogsFolder = $env:OctopusTaskLogsFolder
+  $octopusArtifactsFolder = $env:OctopusArtifactsFolder
+  $octopusNugetRepositoryFolder = $env:OctopusNugetRepositoryFolder
+  $octopusHomeFolder = $env:OctopusHomeFolder
+  
+  $octopusHomeFolderDefault = "C:\Octopus"
+  $octopusNugetRepositoryFolderDefault = "C:\Repository"
+  $octopusArtifactsFolderDefault = "C:\Artifacts"
+  $octopusTaskLogsFolderDefault = "C:\TaskLogs"
 
   Write-Log "==============================================="
   Write-Log "Configuring Octopus Deploy"
