@@ -7,6 +7,7 @@ $ServerPassword = $env:ServerPassword;
 $ServerUrl = $env:ServerUrl;
 $TargetEnvironment = $env:TargetEnvironment;
 $TargetRole = $env:TargetRole;
+$TargetWorkerPool = $env:TargetWorkerPool;
 $TargetName=$env:TargetName;
 $ListeningPort=$env:ListeningPort;
 $PublicHostNameConfiguration=$env:PublicHostNameConfiguration;
@@ -132,6 +133,17 @@ function Validate-Variables() {
     exit 1;
   }
 
+  if($TargetWorkerPool -ne $null) {
+    if($TargetEnvironment -ne $null) {
+      Write-Error "The 'TargetEnvironment' environment variable is not valid in combination with the 'TargetWorkerPool' variable"
+      exit 1;
+    }
+    if($TargetRole -ne $null) {
+      Write-Error "The 'TargetRole' environment variable is not valid in combination with the 'TargetWorkerPool' variable"
+      exit 1;
+    }
+  }
+
   if($PublicHostNameConfiguration -eq $null) {
     $script:PublicHostNameConfiguration = 'ComputerName'
   }
@@ -145,8 +157,12 @@ function Validate-Variables() {
     Write-Log " - communication mode 'Listening' (Passive)"
     Write-Log " - registered port $ListeningPort"
   }
-  Write-Log " - environment '$TargetEnvironment'"
-  Write-Log " - role '$TargetRole'"
+  if ($null -ne $TargetWorkerPool) {
+    Write-Log " - worker pool '$TargetWorkerPool'"
+  } else {
+    Write-Log " - environment '$TargetEnvironment'"
+    Write-Log " - role '$TargetRole'"
+  }
   Write-Log " - host '$PublicHostNameConfiguration'"
   if($env:TargetName -ne $null) {
     Write-Log " - name '$env:TargetName'"
@@ -205,15 +221,26 @@ function Register-Tentacle(){
     $arg += $env:TargetName;
   }
 
-  $TargetEnvironment.Split(",") | ForEach {
-    $arg += '--environment';
-    $arg += $_.Trim();
-   };
+  if($env:TargetEnvironment -ne $null) {
+    $TargetEnvironment.Split(",") | ForEach {
+      $arg += '--environment';
+      $arg += $_.Trim();
+     };
+  }
 
-   $TargetRole.Split(",") | ForEach {
-    $arg += '--role';
-    $arg += $_.Trim();
-   };
+  if($env:TargetRole -ne $null) {
+     $TargetRole.Split(",") | ForEach {
+      $arg += '--role';
+      $arg += $_.Trim();
+     };
+  }
+
+  if($env:TargetWorkerPool -ne $null) {
+    $TargetWorkerPool.Split(",") | ForEach {
+      $arg += '--workerpool';
+      $arg += $_.Trim();
+     };
+  }
 
   Execute-Command $TentacleExe $arg;
 }
