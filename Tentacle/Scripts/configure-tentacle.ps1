@@ -123,16 +123,6 @@ function Validate-Variables() {
     exit 1;
   }
 
-  if($TargetEnvironment -eq $null) {
-    Write-Error "Missing 'TargetEnvironment' environment variable"
-    exit 1;
-  }
-
-  if($TargetRole -eq $null) {
-    Write-Error "Missing 'TargetRole' environment variable"
-    exit 1;
-  }
-
   if($TargetWorkerPool -ne $null) {
     if($TargetEnvironment -ne $null) {
       Write-Error "The 'TargetEnvironment' environment variable is not valid in combination with the 'TargetWorkerPool' variable"
@@ -140,6 +130,15 @@ function Validate-Variables() {
     }
     if($TargetRole -ne $null) {
       Write-Error "The 'TargetRole' environment variable is not valid in combination with the 'TargetWorkerPool' variable"
+      exit 1;
+    }
+  } else {
+    if($TargetEnvironment -eq $null) {
+      Write-Error "Missing 'TargetEnvironment' environment variable"
+      exit 1;
+    }
+    if($TargetRole -eq $null) {
+      Write-Error "Missing 'TargetRole' environment variable"
       exit 1;
     }
   }
@@ -164,7 +163,7 @@ function Validate-Variables() {
     Write-Log " - role '$TargetRole'"
   }
   Write-Log " - host '$PublicHostNameConfiguration'"
-  if($env:TargetName -ne $null) {
+  if($TargetName -ne $null) {
     Write-Log " - name '$env:TargetName'"
   }
 }
@@ -180,12 +179,21 @@ function Register-Tentacle(){
  Write-Log "Registering with server ..."
 
   New-Variable -Name arg -Option AllScope
-  $arg = @(
-    'register-with',
-    '--console',
+  if($TargetWorkerPool -ne $null) {
+    $arg = @(
+      'register-worker',
+      '--console',
     '--instance', 'Tentacle',
     '--server', $ServerUrl,
     '--force')
+  } else {
+    $arg = @(
+      'register-with',
+      '--console',
+    '--instance', 'Tentacle',
+    '--server', $ServerUrl,
+    '--force')
+  }
 
   if ($null -ne $ServerPort) {
     $arg += "--comms-style"
@@ -216,26 +224,26 @@ function Register-Tentacle(){
     $arg += $ServerPassword
   }
 
-  if($env:TargetName -ne $null) {
+  if($TargetName -ne $null) {
     $arg += "--name";
-    $arg += $env:TargetName;
+    $arg += $TargetName;
   }
 
-  if($env:TargetEnvironment -ne $null) {
+  if($TargetEnvironment -ne $null) {
     $TargetEnvironment.Split(",") | ForEach {
       $arg += '--environment';
       $arg += $_.Trim();
      };
   }
 
-  if($env:TargetRole -ne $null) {
+  if($TargetRole -ne $null) {
      $TargetRole.Split(",") | ForEach {
       $arg += '--role';
       $arg += $_.Trim();
      };
   }
 
-  if($env:TargetWorkerPool -ne $null) {
+  if($TargetWorkerPool -ne $null) {
     $TargetWorkerPool.Split(",") | ForEach {
       $arg += '--workerpool';
       $arg += $_.Trim();
