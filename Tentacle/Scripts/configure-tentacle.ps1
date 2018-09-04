@@ -55,12 +55,19 @@ function Configure-Tentacle
     '--instance', 'Tentacle',
     '--reset-trust')
 
+    Execute-Command $TentacleExe @(
+      'configure',
+      '--console',
+      '--instance', 'Tentacle',
+      '--trust', 'B069FCFF43F0037EBE345A013911523FAF261712')
+
   Write-Log "Creating certificate ..."
   Execute-Command $TentacleExe @(
-    'new-certificate',
+    'import-certificate',
     '--console',
     '--instance', 'Tentacle',
-    '--if-blank'
+    '--from-file', './Tentacle/cert.pfx',
+    '--pfx-password', 'Password01'
   )
 }
 
@@ -228,12 +235,12 @@ try
     exit 0
   }
 
-  Validate-Variables
+  # Validate-Variables
   Write-Log "==============================================="
 
   Restore-Configuration
   Configure-Tentacle
-  Register-Tentacle
+  # Register-Tentacle
   "Configuration complete." | Set-Content "c:\octopus-configuration.initstate"
 
   Write-Log "Configuration successful."

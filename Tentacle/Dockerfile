@@ -9,6 +9,7 @@ VOLUME ["C:/Applications", "C:/TentacleHome"]
 ADD Scripts/*.ps1 /
 ADD Tentacle/Scripts/*.ps1 /Tentacle/
 ADD source/ /Installers
+ADD Tentacle/cert.pfx /Tentacle/
 
 ARG TentacleVersion
 ENV TentacleVersion ${TentacleVersion}
