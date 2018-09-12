@@ -33,7 +33,7 @@ function Run-OctopusDeploy
   Write-Log "Start Octopus Deploy instance ..."
   "Run started." | Set-Content "c:\octopus-run.initstate"
 
-  & $ServerExe run --instance 'OctopusServer' --console
+  & $ServerExe run --instance 'OctopusServer' --noninteractive
 
   Write-Log ""
 }
