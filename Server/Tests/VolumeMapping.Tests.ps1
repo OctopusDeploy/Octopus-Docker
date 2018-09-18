@@ -8,14 +8,12 @@ param(
 	[ValidateNotNullOrEmpty()]
 	[string]$OctopusVersion
 )
+
 $OctopusURI="http://$($IPAddress):81"
 
- 
 Describe 'Volume Mounts' {
-
 	$endpoint = new-object Octopus.Client.OctopusServerEndpoint $OctopusURI
 	$repository = new-object Octopus.Client.OctopusRepository $endpoint
-		
 	$LoginObj = New-Object Octopus.Client.Model.LoginCommand 
 	$LoginObj.Username = $OctopusUsername
 	$LoginObj.Password = $OctopusPassword
@@ -23,6 +21,14 @@ Describe 'Volume Mounts' {
 	
 	Context 'C:\Packages' {
 		it 'should have provided a package for the Server' {
+			$task = New-Object  Octopus.Client.Model.TaskResource
+			$task.Name = "SynchronizeBuiltInPackageRepositoryIndex"
+			$task.Description = "Re-index built-in package repository"
+			$task.State = [Octopus.Client.Model.TaskState]::Queued
+
+			$Task1 = $repository.Tasks.Create($task)
+			$repository.Tasks.WaitForCompletion($Task1);
+
 			$packages = $repository.BuiltInPackageRepository.ListPackages("Serilog.Sinks.TextWriter")
 			$packages.TotalResults | should be 1
 			$packages.Items[0].Version | should be "2.1.0"
