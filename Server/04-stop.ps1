@@ -1,15 +1,18 @@
-param ()
+param (
+  [Parameter(Mandatory=$false)]
+  [string]$ProjectName="octopusdocker"
+)
 
 . ./Scripts/build-common.ps1
 Confirm-RunningFromRootDirectory
 
 TeamCity-Block("Stop and remove compose project") {
     
-    write-host "Stopping octopusdocker compose project"
-    & docker-compose --file .\Server\docker-compose.yml --project-name octopusdocker stop
+    write-host "Stopping $ProjectName compose project"
+    & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName stop
 
-    write-host "Removing octopusdocker compose project"
-    & docker-compose --file .\Server\docker-compose.yml --project-name octopusdocker down
+    write-host "Removing $ProjectName compose project"
+    & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName down
 
     if(Test-Path .\Temp) {
       Remove-Item .\Temp -Recurse -Force

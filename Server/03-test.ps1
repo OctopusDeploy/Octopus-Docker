@@ -1,4 +1,6 @@
 param (
+  [Parameter(Mandatory=$false)]
+  [string]$ProjectName="octopusdocker",
   [Parameter(Mandatory=$true)]
   [string]$OctopusVersion
 )
@@ -10,8 +12,8 @@ Add-Type -Path './Testing/Tools/Octopus.Client.dll'
 
 TeamCity-Block("Run tests") {
 
-    $OctopusServerContainer="octopusdocker_octopus_1";
-    $OctopusDBContainer="octopusdocker_db_1";
+    $OctopusServerContainer=$ProjectName+"_octopus_1";
+    $OctopusDBContainer=$ProjectName+"_db_1";
 
     Wait-ForServiceToPassHealthCheck $OctopusDBContainer
     Wait-ForServiceToPassHealthCheck $OctopusServerContainer
