@@ -1,13 +1,12 @@
 param (
-  [Parameter(Mandatory=$false)]
-  [string]$OctopusVersion="2018.8.0"
+  [Parameter(Mandatory=$true)]
+  [string]$OctopusVersion
 )
 $VerbosePreference = "continue"
 
 . ./Scripts/build-common.ps1
 
 Confirm-RunningFromRootDirectory
-
 
 TeamCity-Block("Build") {
   $imageVersion = Get-ImageVersion $OctopusVersion

@@ -1,30 +1,20 @@
 param (
-  [Parameter(Mandatory=$false)]
-  [string]$ProjectName="octopusdocker",
   [Parameter(Mandatory=$true)]
   [string]$OctopusVersion
 )
 
 . ./Scripts/build-common.ps1
-
-$env:OCTOPUS_VERSION = Get-ImageVersion $OctopusVersion
-
 Confirm-RunningFromRootDirectory
 
-Start-TeamCityBlock "Stop and remove compose project"
+TeamCity-Block("Stop and remove compose project") {
+    
+    write-host "Stopping octopusdocker compose project"
+    & docker-compose --file .\ServerDSC\docker-compose.yml --project-name octopusdocker stop
 
-$env:OCTOPUS_SERVER_REPO_SUFFIX="-prerelease"
+    write-host "Removing octopusdocker compose project"
+    & docker-compose --file .\ServerDSC\docker-compose.yml --project-name octopusdocker down
 
-write-host "Stopping '$ProjectName' compose project"
-& docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName stop
-
-write-host "Removing '$ProjectName' compose project"
-& docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName down
-
-$env:OCTOPUS_SERVER_REPO_SUFFIX=""
-
-Stop-TeamCityBlock "Stop and remove compose project"
-
-if ($LASTEXITCODE -ne 0) {
-  exit $LASTEXITCODE
+    if(Test-Path .\Temp) {
+      Remove-Item .\Temp -Recurse -Force
+    }
 }
