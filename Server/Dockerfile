@@ -23,7 +23,6 @@ LABEL   org.label-schema.schema-version="1.0" \
     org.label-schema.build-date=$BUILD_DATE
 
 WORKDIR /Scripts
-#RUN powershell -File ./install-base.ps1 -Msi Octopus -Verbose && powershell -File ./Server/install-server.ps1 -Verbose
 RUN powershell ./Server/build.ps1 -Verbose
 #ENTRYPOINT powershell -File ./Server/configure-server.ps1 -Verbose && powershell -File ./Server/run-server.ps1 -Verbose
 ENTRYPOINT powershell -File ./Server/run.ps1 -Verbose

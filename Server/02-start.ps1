@@ -1,6 +1,6 @@
 param (
   [Parameter(Mandatory=$true)]
-  [string]$OctopusVersion,
+  [string]$OctopusVersion
 )
 
 . ./Scripts/build-common.ps1
