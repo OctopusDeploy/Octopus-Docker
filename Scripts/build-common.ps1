@@ -218,9 +218,9 @@ function Get-ImageVersion ($version, $osversion) {
     $imageVersion = "$version-$osversion"
   }
   
-  if (Test-Path env:BUILD_NUMBER) {
-    $imageVersion = "$imageVersion.$($env:BUILD_NUMBER)"
-  }
+  #if (Test-Path env:BUILD_NUMBER) {
+    #$imageVersion = "$imageVersion.$($env:BUILD_NUMBER)"
+  #}
 
   return $imageVersion
 }
