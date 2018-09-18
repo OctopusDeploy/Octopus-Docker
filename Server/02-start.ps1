@@ -1,6 +1,8 @@
 param (
   [Parameter(Mandatory=$true)]
-  [string]$OctopusVersion
+  [string]$OctopusVersion,
+  [Parameter(Mandatory=$true)]
+  [string]$OSVersion
 )
 
 . ./Scripts/build-common.ps1
@@ -8,7 +10,7 @@ param (
 Confirm-RunningFromRootDirectory
 
 $OctopusServerContainer="octopusdocker_octopus_1";
-$env:OCTOPUS_VERSION=Get-ImageVersion $OctopusVersion;
+$env:OCTOPUS_VERSION=Get-ImageVersion $OctopusVersion $OSVersion;
 $env:OCTOPUS_SERVER_REPO_SUFFIX="-prerelease"
 
 TeamCity-Block("Start containers") {
@@ -24,7 +26,7 @@ TeamCity-Block("Start containers") {
 
     $sw = [Diagnostics.Stopwatch]::StartNew()
     TeamCity-Block("Running Compose") {
-        Start-DockerCompose "octopusdocker" .\ServerDSC\docker-compose.yml
+        Start-DockerCompose "octopusdocker" .\Server\docker-compose.yml
     }
     
     TeamCity-Block("Waiting for Health") {

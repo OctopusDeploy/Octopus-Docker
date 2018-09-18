@@ -2,13 +2,13 @@ if ($Installer -eq "Octopus.Server") {
   $Exe="C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe"
   $Version=$env:OctopusVersion
   $DownloadUrlLatest='https://octopus.com/downloads/latest/WindowsX64/OctopusServer'
-  $DownloadBaseUrl="https://s3-ap-southeast-1.amazonaws.com/octopus-testing/server/"
+  $DownloadBaseUrl="http://10.0.75.1:8081/"#"https://s3-ap-southeast-1.amazonaws.com/octopus-testing/server/"
   $MsiFileName = "Octopus.$Version-x64.msi";
 } elseif ($Installer -eq "Tentacle") {
   $Exe="C:\Program Files\Octopus Deploy\Tentacle\Tentacle.exe";
   $Version=$env:TentacleVersion
   $DownloadUrlLatest='https://octopus.com/downloads/latest/WindowsX64/OctopusTentacle'
-  $DownloadBaseUrl="https://s3-ap-southeast-1.amazonaws.com/octopus-testing/tentacle/"
+  $DownloadBaseUrl="http://10.0.75.1:8081/"#"https://s3-ap-southeast-1.amazonaws.com/octopus-testing/tentacle/"
   $MsiFileName = "Octopus.Tentacle.$Version-x64.msi";
 } else {
   Write-Error "Unknown installer type"

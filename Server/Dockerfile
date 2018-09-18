@@ -1,4 +1,5 @@
-FROM microsoft/windowsservercore:latest
+ARG SERVERCORE_VERSION=1709
+FROM microsoft/windowsservercore:${SERVERCORE_VERSION}
 
 HEALTHCHECK --interval=20s --timeout=20s --retries=6 CMD powershell -file ./Server/healthcheck-server.ps1
 
@@ -7,7 +8,6 @@ EXPOSE 10943
 
 ADD Scripts/*.ps1 /Scripts/
 ADD Server/Scripts/*.ps1 /Scripts/Server/
-
 #ADD source/ /Installers
 
 ARG OctopusVersion

@@ -209,18 +209,23 @@ function Get-GitBranch {
   return & git rev-parse --abbrev-ref HEAD
 }
 
-function Get-ImageVersion ($version) {
+function Get-ImageVersion ($version, $osversion) {
   $gitBranch = Get-GitBranch
 
-  $imageVersion = $version
-  if ($gitBranch -ne 'master') {
-    $imageVersion = "$version-$gitBranch"
-    if (Test-Path env:BUILD_NUMBER) {
-      $imageVersion = "$version-$gitBranch.$($env:BUILD_NUMBER)"
-    }
+  if($version -like "*-*"){
+    $imageVersion = "$version.$osversion"
+  } else {
+    $imageVersion = "$version-$osversion"
   }
+  
+  if (Test-Path env:BUILD_NUMBER) {
+    $imageVersion = "$imageVersion.$($env:BUILD_NUMBER)"
+  }
+
   return $imageVersion
 }
+
+
 
 function TeamCity-Block
 {
