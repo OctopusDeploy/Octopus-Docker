@@ -7,40 +7,43 @@ param (
   [string]$ProjectName = "octopusdocker"
 )
 
-$OctopusVersion="2018.6.1"
+$OctopusVersion="2018.8.0-dscserver"
 $TentacleVersion="3.22.0"
-. ../Scripts/build-common.ps1
-
-
+. ./Scripts/build-common.ps1
 
 
 $env:OCTOPUS_VERSION=$OctopusVersion;
 $env:TENTACLE_VERSION=Get-ImageVersion $TentacleVersion;
+$env:OCTOPUS_TENTACLE_REPO_SUFFIX = "-prerelease"
+$env:OCTOPUS_SERVER_REPO_SUFFIX = "-prerelease"
 $OctopusServerContainer=$ProjectName+"_octopus_1";
 $ListeningTentacleServiceName=$ProjectName+"_listeningtentacle_1";
 $PollingTentacleServiceName=$ProjectName+"_pollingtentacle_1";
 
-#Confirm-RunningFromRootDirectory
+Confirm-RunningFromRootDirectory
 
 TeamCity-Block("Start containers") {
-	if(!(Test-Path ..\tests\Applications)) {
-      mkdir ..\tests\Applications | Out-Null
-    } else {
-		Remove-Item ..\tests\Applications\* -Recurse -Force
+	if(Test-Path .\Temp) {
+		Remove-Item .\Temp -Recurse -Force
+	} else {
+			mkdir .\Temp	| Out-Null
 	}
-	
-	if(!(Test-Path ..\tests\Logs)) {
-      mkdir ..\tests\Logs | Out-Null
-    } else {
-		Remove-Item ..\tests\Logs\* -Recurse -Force
-	}
+
+	mkdir .\Temp\Applications | Out-Null
+	mkdir .\Temp\Logs | Out-Null
+
+	mkdir .\Temp\PollingApplications | Out-Null
+	mkdir .\Temp\PollingHome | Out-Null
+
+	mkdir .\Temp\ListeningApplications | Out-Null
+	mkdir .\Temp\ListeningHome | Out-Null
 	
 	#Docker-Login
 
-	$env:OCTOPUS_TENTACLE_REPO_SUFFIX = "-prerelease"
+
 
 	 TeamCity-Block("Running Compose") {
-        Start-DockerCompose $ProjectName .\docker-compose.yml
+        Start-DockerCompose $ProjectName .\Tentacle\docker-compose.yml
     }
 	
 	TeamCity-Block("Waiting for Health") {
@@ -48,9 +51,9 @@ TeamCity-Block("Start containers") {
 		Wait-ForServiceToPassHealthCheck $PollingTentacleServiceName
     }
 	
-	& docker logs $OctopusServerContainer > ..\tests\Logs\OctopusServer.log
-	& docker logs $ListeningTentacleServiceName > ..\tests\Logs\OctopusListeningTentacle.log
-	& docker logs $PollingTentacleServiceName > ..\tests\Logs\OctopusPollingTentacle.log
+	& docker logs $OctopusServerContainer > .\Temp\Logs\OctopusServer.log
+	& docker logs $ListeningTentacleServiceName > .\Temp\Logs\OctopusListeningTentacle.log
+	& docker logs $PollingTentacleServiceName > .\Temp\Logs\OctopusPollingTentacle.log
 	
 	Write-Host Server available after ($sw.Elapsed) from the host at http://$(Get-IPAddress):81
 

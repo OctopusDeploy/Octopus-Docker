@@ -1,6 +1,9 @@
 [CmdletBinding()]
 Param()
 
+ $Installer="Tentacle"
+ . ./common.ps1
+
 $ServerApiKey = $env:ServerApiKey;
 $ServerUsername = $env:ServerUsername;
 $ServerPassword = $env:ServerPassword;
@@ -14,8 +17,7 @@ $CustomPublicHostName=$env:CustomPublicHostName;
 $InternalListeningPort=10933;
 $ServerPort=$env:ServerPort;
 
-. ./octopus-common.ps1
-
+$TentacleExe=$Exe
 function Configure-Tentacle
 {
   Write-Log "Configure Octopus Deploy Tentacle"
@@ -153,13 +155,6 @@ function Validate-Variables() {
   }
 }
 
-function Restore-Configuration() {
-  if (-not(Test-Path $TentacleConfig)) {
-    # work around https://github.com/docker/docker/issues/20127
-    Copy-item $TentacleConfigTemp $TentacleConfig
-  }
-}
-
 function Register-Tentacle(){
  Write-Log "Registering with server ..."
 
@@ -231,7 +226,6 @@ try
   Validate-Variables
   Write-Log "==============================================="
 
-  Restore-Configuration
   Configure-Tentacle
   Register-Tentacle
   "Configuration complete." | Set-Content "c:\octopus-configuration.initstate"

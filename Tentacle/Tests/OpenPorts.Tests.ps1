@@ -10,7 +10,7 @@ $OctopusPollingTentacleContainer=$ProjectName+"_pollingtentacle_1";
 $OctopusDBContainer=$ProjectName+"_db_1";
 
 
-. ../Scripts/build-common.ps1
+. ./Scripts/build-common.ps1
 
 Describe 'Port 10933' {
 

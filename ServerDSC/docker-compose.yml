@@ -24,8 +24,8 @@ services:
     volumes:
       - "../Temp/TaskLogs:C:/TaskLogs"
       - "../Temp/MasterKey:C:/MasterKey"
-      - "../tests/Import:C:/Import"
-      - "../tests/Repository:C:/Repository"
+      - "../Testing/Import:C:/Import"
+      - "../Testing/Repository:C:/Repository"
 networks:
   default:
     external:

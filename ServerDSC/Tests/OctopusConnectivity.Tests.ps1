@@ -38,5 +38,4 @@ Describe 'Octopus API' {
 		$DevEnv = $repository.Environments.FindByName("Development")
 		$DevEnv | should not be $null
 	}
-
 }

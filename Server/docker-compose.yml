@@ -22,8 +22,8 @@ services:
         condition: service_healthy
     stdin_open: true #Process sits and waits for ReadLine
     volumes:
-      - "../tests/Import:C:/Import"
-      - "../tests/Repository:C:/Repository"
+      - "../Testing/Import:C:/Import"
+      - "../Testing/Repository:C:/Repository"
 networks:
   default:
     external:

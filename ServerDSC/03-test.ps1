@@ -5,9 +5,10 @@ param (
   [string]$OctopusVersion
 )
 
-. ../Scripts/build-common.ps1
+. ./Scripts/build-common.ps1
+Confirm-RunningFromRootDirectory
 
-Add-Type -Path '../Tools/Octopus.Client.dll'
+Add-Type -Path './Testing/Tools/Octopus.Client.dll'
 
 TeamCity-Block("Run tests") {
 
@@ -23,7 +24,7 @@ TeamCity-Block("Run tests") {
 
     TeamCity-Block("Pester testing") {        
 		
-      $TestResult = Invoke-Pester -PassThru -Script @{ Path = './Tests/*'; Parameters = @{ IPAddress = $(Get-IPAddress); OctopusUsername="admin"; OctopusPassword="Passw0rd123"; OctopusVersion=$OctopusVersion }} -OutputFile ..\Temp\Server-Test.xml -OutputFormat NUnitXml
+      $TestResult = Invoke-Pester -PassThru -Script @{ Path = './ServerDSC/Tests/*'; Parameters = @{ IPAddress = $(Get-IPAddress); OctopusUsername="admin"; OctopusPassword="Passw0rd123"; OctopusVersion=$OctopusVersion }} -OutputFile ..\Temp\Server-Test.xml -OutputFormat NUnitXml
 
       if($TestResult.FailedCount -ne 0) {
         Write-Host "Failed $($TestResult.FailedCount)/$($TestResult.TotalCount) Tests"

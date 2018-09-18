@@ -34,7 +34,6 @@ function Docker-Login() {
     exit $LASTEXITCODE
   }
 }
-
 function Push-Image() {
   param (
     [Parameter(Mandatory=$true)]
@@ -47,7 +46,6 @@ function Push-Image() {
     exit $LASTEXITCODE
   }
 }
-
 function Start-DockerCompose($projectName, $composeFile) {
   $PrevExitCode = -1;
   $attempts=5;
@@ -70,7 +68,6 @@ function Start-DockerCompose($projectName, $composeFile) {
     }
   }
 }
-
 function Wait-ForServiceToPassHealthCheck($serviceName) {
   $attempts = 0;
   $sleepsecs = 10;

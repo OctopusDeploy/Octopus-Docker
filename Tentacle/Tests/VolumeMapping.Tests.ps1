@@ -23,8 +23,8 @@ Describe 'Volume Mounts' {
 	
 	Context 'C:\TentacleHome' {
 		it 'should contain logs' {
-			Test-Path "../tests/PollingHome/Logs/OctopusTentacle.txt" | should be $true
-			Test-Path "../tests/ListeningHome/Logs/OctopusTentacle.txt" | should be $true
+			Test-Path "./Temp/PollingHome/Logs/OctopusTentacle.txt" | should be $true
+			Test-Path "./Temp/ListeningHome/Logs/OctopusTentacle.txt" | should be $true
 		}
 	}
 
@@ -36,8 +36,8 @@ Describe 'Volume Mounts' {
 				$repository.Projects.Delete($project)
 			}
 
-			Remove-Item ..\tests\PollingApplications\* -Recurse -Force
-			Remove-Item ..\tests\ListeningApplications\* -Recurse -Force
+			Remove-Item .\Temp\PollingApplications\* -Recurse -Force
+			Remove-Item .\Temp\ListeningApplications\* -Recurse -Force
 		}
 
 		BeforeEach {
@@ -84,8 +84,8 @@ Describe 'Volume Mounts' {
 			$task = $repository.Tasks.Get($deployment.TaskId)
 			$repository.Tasks.WaitForCompletion($task, 4, 3);
 
-			Test-Path "../tests/PollingApplications/$($env.Name)/$($pkg.PackageId)" | should be $true
-			Test-Path "../tests/ListeningApplications/$($env.Name)/$($pkg.PackageId)" | should be $true
+			Test-Path "./Temp/PollingApplications/$($env.Name)/$($pkg.PackageId)" | should be $true
+			Test-Path "./Temp/ListeningApplications/$($env.Name)/$($pkg.PackageId)" | should be $true
 		}
 	}
 }

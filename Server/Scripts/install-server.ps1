@@ -2,6 +2,20 @@
 Param()
 
 $version = $env:OctopusVersion
+$msiFileName = "Octopus.Tentacle.$($version)-x64.msi"
+$downloadUrl = "https://download.octopusdeploy.com/octopus/" + $msiFileName
+$downloadUrlLatest = "https://octopusdeploy.com/downloads/latest/OctopusTentacle"
+#http://octopusdeploy.com/downloads/latest/OctopusTentacle
+
+$installBasePath = "C:\Install\"
+$msiPath = $installBasePath + $msiFileName
+$msiLogPath = $installBasePath + $msiFileName + '.log'
+$installerLogPath = $installBasePath + 'Install-OctopusDeploy.ps1.log'
+$OFS = "`r`n"
+
+
+
+$version = $env:OctopusVersion
 $msiFileName = "Octopus.$($version)-x64.msi"
 $downloadBaseUrl = "https://download.octopusdeploy.com/octopus/"
 $downloadUrl = $downloadBaseUrl + $msiFileName

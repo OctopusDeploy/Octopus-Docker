@@ -29,7 +29,6 @@ function Process-Import() {
 
 function Run-OctopusDeploy
 {
-
   Write-Log "Start Octopus Deploy instance ..."
   "Run started." | Set-Content "c:\octopus-run.initstate"
 

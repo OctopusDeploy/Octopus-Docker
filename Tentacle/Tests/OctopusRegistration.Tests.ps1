@@ -14,7 +14,7 @@ function Registration-Tests($Tentacles){
 	}
 
 	it 'should be healthy' {		
-		$Tentacles[0].HealthStatus | should be "Healthy"
+		$Tentacles[0].HealthStatus | should BeLike "Healthy*"
 	}
 
 	it 'should have the correct version installed' {

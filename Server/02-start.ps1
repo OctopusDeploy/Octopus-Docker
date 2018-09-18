@@ -8,6 +8,7 @@ param (
   [Parameter(Mandatory=$false)]
   [string]$ProjectName = "octopusdocker"
 )
+#docker run --rm --tty -e MasterKey="pxpCVJ+T6SbvJawomFWvqg==" -v C:/Temp/MasterKey:C:/MasterKey  -e sqlDbConnectionString="Server=10.0.75.1,1433;Initial Catalog=Octopus;Persist Security Info=False;User ID=sa;Password=Password01!;MultipleActiveResultSets=False;Connection Timeout=30;" octopusdeploy/octopusdeploy-prerelease:2018.8.0-dscserver
 
 . ./Scripts/build-common.ps1
 
