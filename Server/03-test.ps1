@@ -24,7 +24,7 @@ TeamCity-Block("Run tests") {
 
     TeamCity-Block("Pester testing") {        
 		
-      $TestResult = Invoke-Pester -PassThru -Script @{ Path = './Server/Tests/*'; Parameters = @{ IPAddress = $(Get-IPAddress); OctopusUsername="admin"; OctopusPassword="Passw0rd123"; OctopusVersion=$OctopusVersion }} -OutputFile ..\Temp\Server-Test.xml -OutputFormat NUnitXml
+      $TestResult = Invoke-Pester -PassThru -Script @{ Path = './Server/Tests/*'; Parameters = @{ IPAddress = $(Get-IPAddress); OctopusUsername="admin"; OctopusPassword="Passw0rd123"; OctopusVersion=$OctopusVersion }} -OutputFile ./Temp/Server-Test.xml -OutputFormat NUnitXml
 
       if($TestResult.FailedCount -ne 0) {
         Write-Host "Failed $($TestResult.FailedCount)/$($TestResult.TotalCount) Tests"
