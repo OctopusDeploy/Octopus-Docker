@@ -34,6 +34,7 @@ function Docker-Login() {
     exit $LASTEXITCODE
   }
 }
+
 function Push-Image() {
   param (
     [Parameter(Mandatory=$true)]
@@ -46,6 +47,7 @@ function Push-Image() {
     exit $LASTEXITCODE
   }
 }
+
 function Start-DockerCompose($projectName, $composeFile) {
   $PrevExitCode = -1;
   $attempts=5;
@@ -89,51 +91,6 @@ function Wait-ForServiceToPassHealthCheck($serviceName) {
     Write-Error "Octopus container $serviceName failed to go healthy after $($attempts * $sleepsecs) seconds";
     exit 1;
   }
-}
-
-function Copy-FileToDockerContainer($sourceFile, $destFile, $container) {
-  # docker cp only appears to work if you're copying from a drive thats shared (or something weird like that)
-  write-host "Copying $sourceFile"
-  $content = get-content $sourceFile -raw
-  write-host " - file is $($content.length) characters"
-  $encodedContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($content))
-  write-host " - base 64 encoded file is $($encodedContent.length) characters"
-  $currentPosition = 0
-  # kill existing file if it exists
-  write-host " - creating initial file $destFile.b64"
-  & docker exec $container powershell -command "set-content -path $destFile.b64 -value ''"
-  if ($LASTEXITCODE -ne 0) {
-    exit $LASTEXITCODE
-  }
-  while ($currentPosition -lt $encodedContent.length) {
-    $length = (1000, ($encodedContent.length - $currentPosition) | Measure -Minimum).Minimum
-    write-host " - sending partial file, $length characters starting from $currentPosition"
-    $text = $encodedContent.Substring($currentPosition, $length)
-    & docker exec $container cmd /c echo $text `>> "$destFile.b64"
-    if ($LASTEXITCODE -ne 0) {
-      exit $LASTEXITCODE
-    }
-    $currentPosition = $currentPosition + 1000
-  }
-
-  write-host " - decoding partial file from $destFile.b64 tp $destFile"
-  $result = Execute-Command "docker" "exec $container powershell -command `$content = gc $destFile.b64; `$decoded = [System.Convert]::FromBase64String(`$content); Set-Content -Path $destFile -Value `$decoded -encoding byte"
-
-  if ($result.ExitCode -ne 0) {
-    exit $result.ExitCode
-  }
-}
-
-function Copy-FilesToDockerContainer($sourcePath, $container) {
-
-  Start-TeamCityBlock "Copy test files to $container"
-
-  foreach($file in gci $sourcePath -file) {
-    $fileName = Split-Path $file -Leaf
-    Copy-FileToDockerContainer $file.FullName "c:\$fileName" $container
-  }
-
-  Stop-TeamCityBlock "Copy test files to $container"
 }
 
 function Test-RunningUnderTeamCity() {
@@ -212,7 +169,7 @@ function Get-GitBranch {
 function Get-ImageVersion ($version, $osversion) {
   $gitBranch = Get-GitBranch
 
-  if($version -like "*-*"){
+  if ($version -like "*-*") {
     $imageVersion = "$version.$osversion"
   } else {
     $imageVersion = "$version-$osversion"

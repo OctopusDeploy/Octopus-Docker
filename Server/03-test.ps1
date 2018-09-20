@@ -1,8 +1,8 @@
 param (
   [Parameter(Mandatory=$false)]
   [string]$ProjectName="octopusdocker",
-  [Parameter(Mandatory=$true)]
-  [string]$OctopusVersion
+  [Parameter(Mandatory=$false)]
+  [string]$OctopusVersion="2018.8.0"
 )
 
 . ./Scripts/build-common.ps1
@@ -24,7 +24,7 @@ TeamCity-Block("Run tests") {
 
     TeamCity-Block("Pester testing") {        
 		
-      $TestResult = Invoke-Pester -PassThru -Script @{ Path = './Server/Tests/*'; Parameters = @{ IPAddress = $(Get-IPAddress); OctopusUsername="admin"; OctopusPassword="Passw0rd123"; OctopusVersion=$OctopusVersion }} -OutputFile ./Temp/Server-Test.xml -OutputFormat NUnitXml
+      $TestResult = Invoke-Pester -PassThru -Script @{ Path = './Server/Tests/*'; Parameters = @{ OctopusUsername="admin"; OctopusPassword="Passw0rd123"; OctopusVersion=$OctopusVersion }} -OutputFile ./Temp/Server-Test.xml -OutputFormat NUnitXml
 
       if($TestResult.FailedCount -ne 0) {
         Write-Host "Failed $($TestResult.FailedCount)/$($TestResult.TotalCount) Tests"
@@ -35,3 +35,13 @@ TeamCity-Block("Run tests") {
     }
 
 }
+
+
+
+<#
+
+```plaintext
+docker run --name octopusdocker_octopus_1 --tt --interactive --publish 81:81 --env MasterKey="CxoInWkfTISVMsV9M1o1Lg==" --env sqlDbConnectionString="Server=db,1433;Initial Catalog=Octopus;Persist Security Info=False;User ID=sa;Password=N0tS3cr3t!;MultipleActiveResultSets=False;Connection Timeout=30;" octopusdeploy/octopusdeploy-prerelease:2018.8.0-1709
+```
+
+#>

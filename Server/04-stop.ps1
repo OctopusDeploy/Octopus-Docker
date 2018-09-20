@@ -14,6 +14,8 @@ TeamCity-Block("Stop and remove compose project") {
     write-host "Removing $ProjectName compose project"
     & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName down
 
+  & docker rm -f $ProjectName"_octopus_1"
+
     if(Test-Path .\Temp) {
       Remove-Item .\Temp -Recurse -Force
     }

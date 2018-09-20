@@ -12,6 +12,7 @@ $RECYCLE.BIN/
 Logs/
 tests/Logs
 Temp/
+.vscode/
 
 # Windows Installer files
 *.cab

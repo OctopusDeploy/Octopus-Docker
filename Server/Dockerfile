@@ -12,6 +12,7 @@ ADD Server/Scripts/*.ps1 /Scripts/Server/
 
 ARG OctopusVersion
 ENV OctopusVersion ${OctopusVersion}
+ENV ServerNodeName "OctopusNode1"
 
 LABEL   org.label-schema.schema-version="1.0" \
     org.label-schema.name="Octopus Deploy Server" \
@@ -23,6 +24,7 @@ LABEL   org.label-schema.schema-version="1.0" \
     org.label-schema.build-date=$BUILD_DATE
 
 WORKDIR /Scripts
-RUN powershell ./Server/build.ps1 -Verbose
-#ENTRYPOINT powershell -File ./Server/configure-server.ps1 -Verbose && powershell -File ./Server/run-server.ps1 -Verbose
-ENTRYPOINT powershell -File ./Server/run.ps1 -Verbose
+
+SHELL ["powershell", "-File"]
+RUN ./Server/build.ps1
+ENTRYPOINT ./Server/run.ps1

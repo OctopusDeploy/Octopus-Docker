@@ -12,8 +12,8 @@ $env:OCTOPUS_INSTANCENAME = "OctopusServer"
   $octopusAdminUsername = $env:OctopusAdminUsername
   $octopusAdminPassword = $env:OctopusAdminPassword
   $configFile = "c:\Octopus\OctopusServer.config"
-
-
+  $ServerNodeName = $env:ServerNodeName
+  
   $simpleVersion = New-Object System.Version ($Version -split '-')[0]
   function Test-OctopusVersionRequiresConfigureBeforeDatabaseCreate {
     return $simpleVersion -lt (New-Object System.Version 3, 14, 0)
@@ -74,6 +74,7 @@ function Validate-Variables() {
         '--console',
         '--instance', 'OctopusServer',
         '--home', 'C:\Octopus',
+        '--serverNodeName', $ServerNodeName,
         '--upgradeCheck', 'True',
         '--upgradeCheckWithStatistics', 'True',
         '--webForceSSL', 'False',

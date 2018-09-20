@@ -1,8 +1,7 @@
 param(
-  [ValidateNotNullOrEmpty()]
-  [string]$IPAddress
 )
 
+$IPAddress=$(Get-IPAddress)
 Describe 'Port 81' {
 	$result = Test-NetConnection -Port 81 -ComputerName $IPAddress -InformationLevel "Quiet"
 	it 'should be open' {

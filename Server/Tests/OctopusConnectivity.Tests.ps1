@@ -1,13 +1,13 @@
 param(
     [ValidateNotNullOrEmpty()]
-	[string]$IPAddress,
-    [ValidateNotNullOrEmpty()]
 	[string]$OctopusUsername,
     [ValidateNotNullOrEmpty()]
 	[string]$OctopusPassword,
 	[ValidateNotNullOrEmpty()]
 	[string]$OctopusVersion
 )
+
+$IPAddress=$(Get-IPAddress)
 $OctopusURI="http://$($IPAddress):81"
 
  
