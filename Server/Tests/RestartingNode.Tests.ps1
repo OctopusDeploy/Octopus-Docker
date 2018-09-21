@@ -8,10 +8,11 @@ param(
 	[ValidateNotNullOrEmpty()]
     [string]$OctopusVersion,
     [ValidateNotNullOrEmpty()]
-	[string]$OSVersion
+    [string]$OSVersion,
+    [ValidateNotNullOrEmpty()]
+	[string]$ProjectName
 )
 $DBPassword="N0tS3cr3t!"
-$ProjectName="octopusdocker"
 $OctopusServerContainer=$ProjectName+"_octopus_1";
 $ImageVersion = $(Get-ImageVersion $OctopusVersion $OSVersion);
 $MasterKey=$(Get-Content .\Temp\MasterKey\OctopusServer)

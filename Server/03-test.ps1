@@ -25,13 +25,13 @@ TeamCity-Block("Run tests") {
     Write-DebugInfo @($OctopusDBContainer, $OctopusServerContainer)
 
     TeamCity-Block("Pester testing") {        
-    
-      
-      try {
+
+    try {
       $TestResult = Invoke-Pester -PassThru -Script @{ Path = './Server/Tests/*'; Parameters = @{ `
         OctopusUsername="admin"; `
         OctopusPassword="Passw0rd123"; `
         OctopusVersion=$OctopusVersion; `
+        ProjectName=$ProjectName; `
         OSVersion=$OSVersion}} -OutputFile ./Temp/Server-Test.xml -OutputFormat NUnitXml
 
       if($TestResult.FailedCount -ne 0) {
