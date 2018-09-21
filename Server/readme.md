@@ -36,6 +36,7 @@ Default values are set in the `.env` file.
 - **C:\Repository**: Package path for the built-in package repository.
 - **C:\Artifacts**: Path where artifacts are stored.
 - **C:\TaskLogs**: Path where task logs are stored.
+- **C:\Octopus\ServerLogs**: Path where server logs are stored.
 
 ## Running a Server - Plain ol' Docker
 

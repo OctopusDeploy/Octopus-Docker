@@ -14,6 +14,7 @@ Confirm-RunningFromRootDirectory
 $OctopusServerContainer= $ProjectName+"_octopus_1";
 $env:OCTOPUS_VERSION=Get-ImageVersion $OctopusVersion $OSVersion;
 $env:OCTOPUS_SERVER_REPO_SUFFIX="-prerelease"
+$env:SERVERCORE_VERSION=$OSVersion
 
 TeamCity-Block("Start containers") {
 
@@ -25,6 +26,7 @@ TeamCity-Block("Start containers") {
     mkdir .\Temp\MasterKey | Out-Null
     mkdir .\Temp\TaskLogs | Out-Null
     mkdir .\Temp\ConsoleLogs | Out-Null
+    mkdir .\Temp\ServerLogs | Out-Null
 
     $sw = [Diagnostics.Stopwatch]::StartNew()
     TeamCity-Block("Running Compose") {
@@ -43,3 +45,4 @@ TeamCity-Block("Start containers") {
 
 $env:OCTOPUS_SERVER_REPO_SUFFIX=""
 $env:OCTOPUS_VERSION=""
+$env:SERVERCORE_VERSION=""

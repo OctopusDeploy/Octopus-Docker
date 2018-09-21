@@ -169,14 +169,25 @@ function Validate-Variables() {
         Execute-Command $Exe $args
     }
 
-    #TODO: Allow passing in licence
-    Write-Log "Configuring Octopus Deploy instance to use free license ..."
-    Execute-Command $Exe @(
+    if($env:LicenceBase64 -eq $null) {
+      if (!$masterKeySupplied) {
+        Write-Log "Configuring Octopus Deploy instance to use free license ..."
+        Execute-Command $Exe @(
+            'license',
+            '--console',
+            '--instance', 'OctopusServer',
+            '--free'
+          )
+      }
+    } else {
+      Write-Log "Configuring Octopus Deploy instance to use provided license"
+      Execute-Command $Exe @(
         'license',
         '--console',
         '--instance', 'OctopusServer',
-        '--free'
-      )   
+        '--licenseBase64', $env:LicenceBase64
+      )
+    }
 }
 
 
@@ -210,7 +221,7 @@ function Process-Import() {
   Write-Log "Start Octopus Deploy instance ..."
   "Run started." | Set-Content "c:\octopus-run.initstate"
 
-  & $Exe run --instance $env:OCTOPUS_INSTANCENAME --console
+  & $Exe run --instance $env:OCTOPUS_INSTANCENAME --noninteractive
 
   Write-Log ""
 }
