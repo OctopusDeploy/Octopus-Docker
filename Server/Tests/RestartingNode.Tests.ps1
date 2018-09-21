@@ -6,7 +6,9 @@ param(
     [ValidateNotNullOrEmpty()]
 	[string]$OctopusPassword,
 	[ValidateNotNullOrEmpty()]
-	[string]$OctopusVersion
+    [string]$OctopusVersion,
+    [ValidateNotNullOrEmpty()]
+	[string]$OSVersion
 )
 $DBPassword="N0tS3cr3t!"
 $ProjectName="octopusdocker"
