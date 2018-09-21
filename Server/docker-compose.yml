@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   db:
-    image: microsoft/mssql-server-windows-express:${SERVERCORE_VERSION}
+    image: "${SQL_IMAGE}"
     environment:
       sa_password: "${SA_PASSWORD}"
       ACCEPT_EULA: "Y"

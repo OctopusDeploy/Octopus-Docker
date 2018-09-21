@@ -15,6 +15,7 @@ $OctopusServerContainer= $ProjectName+"_octopus_1";
 $env:OCTOPUS_VERSION=Get-ImageVersion $OctopusVersion $OSVersion;
 $env:OCTOPUS_SERVER_REPO_SUFFIX="-prerelease"
 $env:SERVERCORE_VERSION=$OSVersion
+$env:SQL_IMAGE="christianacca/mssql-server-windows-express:1803"
 
 TeamCity-Block("Start containers") {
 

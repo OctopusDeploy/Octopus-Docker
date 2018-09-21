@@ -13,7 +13,7 @@ param (
 
 Confirm-RunningFromRootDirectory
 
-$imageVersion = Get-ImageVersion $OctopusVersion, $OSVersion
+$imageVersion = Get-ImageVersion $OctopusVersion $OSVersion
 
 TeamCity-Block("Publish to private repo") {
 
