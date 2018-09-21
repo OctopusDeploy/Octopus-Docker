@@ -42,19 +42,9 @@ TeamCity-Block("Run tests") {
       }
     } catch
     {
-      Write-Log $_
+      Write-Host $_
       Write-Host "Pester Testing Failed"
       exit 2
     }
   }
 }
-
-
-
-<#
-
-```plaintext
-docker run --name octopusdocker_octopus_1 --tt --interactive --publish 81:81 --env MasterKey="CxoInWkfTISVMsV9M1o1Lg==" --env sqlDbConnectionString="Server=db,1433;Initial Catalog=Octopus;Persist Security Info=False;User ID=sa;Password=N0tS3cr3t!;MultipleActiveResultSets=False;Connection Timeout=30;" octopusdeploy/octopusdeploy-prerelease:2018.8.0-1709
-```
-
-#>
