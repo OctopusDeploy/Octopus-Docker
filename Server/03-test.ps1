@@ -35,7 +35,7 @@ TeamCity-Block("Run tests") {
         OSVersion=$OSVersion}} -OutputFile ./Temp/Server-Test.xml -OutputFormat NUnitXml
 
       if($TestResult.FailedCount -ne 0) {
-        Write-Host "Failed $($TestResult.FailedCount)/$($TestResult.TotalCount) Tests"
+        Write-Error "Failed $($TestResult.FailedCount)/$($TestResult.TotalCount) Tests"
         exit 1
       } else {
         Write-Host "All $($TestResult.TotalCount) Tests Passed";
@@ -43,7 +43,7 @@ TeamCity-Block("Run tests") {
     } catch
     {
       Write-Host $_
-      Write-Host "Pester Testing Failed"
+      Write-Error "Pester Testing Failed"
       exit 2
     }
   }

@@ -3,19 +3,6 @@ $Installer="Octopus.Server"
 . ./common.ps1
 . ./installers.ps1
 
-# function Remove-MasterKey
-# {
-#   $configFile = "C:\Octopus\OctopusServer.config"
-#   [xml]$xml = Get-Content $configFile
-
-#   $node = $xml.SelectSingleNode("//octopus-settings/set[@key='Octopus.Storage.MasterKey']")
-#   if ($node -ne $null) {
-#       $node.ParentNode.RemoveChild($node) | Out-Null
-#   }
-
-#   $xml.save($configFile)
-# }
-
 try
 {
   Write-Log "==============================================="

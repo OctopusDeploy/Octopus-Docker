@@ -42,7 +42,7 @@ TeamCity-Block("Start containers") {
     }
     $sw.Stop()
 
-    & docker logs $OctopusServerContainer > .\Temp\ConsoleLogs\OctopusServer.log
+    docker logs $OctopusServerContainer > .\Temp\ConsoleLogs\OctopusServer.log
 
     Write-Host Server available after ($sw.Elapsed) from the host at http://$(Get-IPAddress):81
 }

@@ -49,41 +49,39 @@ function Push-Image() {
 }
 
 function Start-DockerCompose($projectName, $composeFile) {
-  $PrevExitCode = -1;
-  $attempts=5;
-
-  while ($true -and $PrevExitCode -ne 0) {
-    if($attempts-- -lt 0){
-      & docker-compose --project-name $projectName logs
-      write-host "Ran out of attempts to create container.";
-      exit 1
-    }
-
     write-host "docker-compose --project-name $projectName --file $composeFile up --force-recreate -d"
-    & docker-compose --project-name $projectName --file $composeFile up --force-recreate -d
+    docker-compose --project-name $projectName --file $composeFile up --force-recreate -d
 
     $PrevExitCode = $LASTEXITCODE
     if($PrevExitCode -ne 0) {
-      Write-Host $Error
-      Write-Host "docker-compose failed with exit code $PrevExitCode";
-      & docker-compose --project-name $projectName --file $composeFile logs
-    }
-  }
+       Write-Host "docker-compose failed with exit code $PrevExitCode";
+       docker-compose --project-name $projectName --file $composeFile logs
+       EXIT $PrevExitCode
+     }
 }
+
 function Wait-ForServiceToPassHealthCheck($serviceName) {
   $attempts = 0;
   $sleepsecs = 10;
   while ($attempts -lt 50)
   {
     $attempts++
-    $health = ($(docker inspect $serviceName) | ConvertFrom-Json).State.Health.Status;
+    $state = ($(docker inspect $serviceName) | ConvertFrom-Json).State
+    if ($LASTEXITCODE -ne 0) {
+      exit $LASTEXITCODE
+    }
+
+    $health = $state.Health.Status;
     Write-Host "Waiting for $serviceName to be healthy (current: $health)..."
     if ($health -eq "healthy"){
       break;
     }
-    if ($LASTEXITCODE -ne 0) {
-      exit $LASTEXITCODE
+    
+    if($state.Status -eq "exited"){
+      Write-Error "$serviceName appears to have already failed and exited."
+      exit 1
     }
+
     Sleep -Seconds $sleepsecs
   }
   if ((($(docker inspect $serviceName) | ConvertFrom-Json).State.Health.Status) -ne "healthy"){
@@ -204,6 +202,6 @@ function TeamCity-Block
     }
     finally
     {
-        Stop-TeamCityBlock $blockName
+      Stop-TeamCityBlock $blockName
     }
 }
