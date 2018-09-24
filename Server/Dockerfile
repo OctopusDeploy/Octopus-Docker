@@ -6,8 +6,8 @@ HEALTHCHECK --interval=20s --timeout=20s --retries=6 CMD powershell -file ./Serv
 EXPOSE 81
 EXPOSE 10943
 
-ADD Scripts/*.ps1 /Scripts/
-ADD Server/Scripts/*.ps1 /Scripts/Server/
+ADD Scripts/*.* /Scripts/
+ADD Server/Scripts/*.* /Scripts/Server/
 #ADD source/ /Installers
 
 ARG OctopusVersion
@@ -25,6 +25,6 @@ LABEL   org.label-schema.schema-version="1.0" \
 
 WORKDIR /Scripts
 
-SHELL ["powershell", "-File"]
-RUN ./Server/build.ps1
-ENTRYPOINT ./Server/run.ps1
+#SHELL ["powershell", "-File"]
+RUN powershell -File ./Server/build.ps1
+ENTRYPOINT ["/Scripts/Server/run.bat"]

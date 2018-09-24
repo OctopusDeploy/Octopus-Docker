@@ -251,7 +251,7 @@ try
   }
 
   Validate-Variables
-  Write-Log "==============================================="
+  Write-Log "===============================================xxx"
 
   Configure-OctopusDeploy
   "Configuration complete." | Set-Content "c:\octopus-configuration.initstate"
@@ -262,7 +262,7 @@ try
   Write-Log "Running Octopus Deploy"
   Write-Log "==============================================="
   Process-Import
-  Run-OctopusDeploy
+  #Run-OctopusDeploy
   Write-Log "Run successful."
   Write-Log ""
 
@@ -271,4 +271,4 @@ catch
 {
   Write-Log $_
   exit 2
-}
+} #2018.8.6-robsremovegcserv0176
