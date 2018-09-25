@@ -1,6 +1,6 @@
 $Installer="Octopus.Server"
-$env:OCTOPUS_INSTANCENAME = "OctopusServer"
-[System.Environment]::SetEnvironmentVariable("OCTOPUS_INSTANCENAME", $env:OCTOPUS_INSTANCENAME, [System.EnvironmentVariableTarget]::User);
+$env:OCTOPUS_INSTANCENAME=$OctopusInstanceName
+[System.Environment]::SetEnvironmentVariable("OCTOPUS_INSTANCENAME", $OctopusInstanceName, [System.EnvironmentVariableTarget]::User);
 
 . ./common.ps1
 
@@ -18,11 +18,10 @@ $env:OCTOPUS_INSTANCENAME = "OctopusServer"
   function Test-OctopusVersionRequiresConfigureBeforeDatabaseCreate {
     return $simpleVersion -lt (New-Object System.Version 3, 14, 0)
   }
-  
   function Test-OctopusVersionSupportsPathCommand {
     return $simpleVersion -ge (New-Object System.Version 3, 0, 21)
   }
-
+  
 function Validate-Variables() {
     if ($masterKeySupplied) {
       Write-Log " - masterkey '##########'"
@@ -53,6 +52,19 @@ function Validate-Variables() {
     Write-Log " - using database '$maskedConnectionString'"
   }
 
+  function Move-Logs() {
+    # Move the log files back in case it was mounted. The files were moved during the install phase
+    # Mounting windows containers requires the volumes to be empty
+    # https://github.com/docker/for-win/issues/644
+    Write-Log "Moving Octopus configuration back from temporary location"
+    if(!(Test-Path C:\Octopus\Logs)) {
+      mkdir C:\Octopus\Logs | Out-Null
+    }
+    mv C:\Octopus\LogsTemp\* C:\Octopus\Logs
+    rm C:\Octopus\LogsTemp
+    Write-Log "moved"
+  }
+
   function Configure-OctopusDeploy() {
     $port=81
     $listenPort=10943
@@ -60,19 +72,11 @@ function Validate-Variables() {
 
     Write-Log "Configure Octopus Deploy"
     
-    Write-Log "Creating Octopus Deploy instance ..."
-    Execute-Command $Exe @(
-        'create-instance',
-        '--console',
-        '--instance', 'OctopusServer',
-        '--config', 'C:\Octopus\OctopusServer.config'
-    )
-  
     Write-Log "Configuring Octopus Deploy instance with default options ..."
     Execute-Command $Exe @(
         'configure',
         '--console',
-        '--instance', 'OctopusServer',
+        '--instance', $OctopusInstanceName,
         '--home', 'C:\Octopus',
         '--serverNodeName', $ServerNodeName,
         '--upgradeCheck', 'True',
@@ -115,7 +119,7 @@ function Validate-Variables() {
       $args = @(
         'database',
         '--console',
-        '--instance', 'OctopusServer',
+        '--instance', $OctopusInstanceName,
         '--connectionString', $sqlDbConnectionString,
         '--create'
       )
@@ -130,19 +134,19 @@ function Validate-Variables() {
         Execute-Command $Exe @(
             'configure',
             '--console',
-            '--instance', 'OctopusServer',
+            '--instance', $OctopusInstanceName,
             '--usernamePasswordIsEnabled', 'True' #this will only work from 3.5 and above
         )
       }
     }
-  
+
     #TODO: Not sure this is helpful... if we cant set the path then it cant be mounted correctly...
     Write-Log "Configuring Paths ..."
     if (Test-OctopusVersionSupportsPathCommand) {
       Execute-Command $Exe @(
         'path',
         '--console',
-        '--instance', 'OctopusServer',
+        '--instance', $OctopusInstanceName,
         '--nugetRepository', 'C:\Repository',
         '--artifacts', 'C:\Artifacts',
         '--taskLogs', 'C:\TaskLogs'
@@ -150,13 +154,14 @@ function Validate-Variables() {
     } else {
       Write-Log "Octopus version $version does not support modifying paths (it was introduced in 3.0.21)"
     }
+      
   
     if ($octopusAdminPassword -ne $null -or $octopusAdminUserName -ne $null) {
         Write-Log "Creating Admin User for Octopus Deploy instance ..."
         $args = @(
             'admin',
             '--console',
-            '--instance', 'OctopusServer'
+            '--instance', $OctopusInstanceName
         )
         if ($octopusAdminUserName) {
             $args += '--username'
@@ -175,7 +180,7 @@ function Validate-Variables() {
         Execute-Command $Exe @(
             'license',
             '--console',
-            '--instance', 'OctopusServer',
+            '--instance',$OctopusInstanceName,
             '--free'
           )
       }
@@ -184,7 +189,7 @@ function Validate-Variables() {
       Execute-Command $Exe @(
         'license',
         '--console',
-        '--instance', 'OctopusServer',
+        '--instance', $OctopusInstanceName,
         '--licenseBase64', $env:LicenceBase64
       )
     }
@@ -204,12 +209,9 @@ function Process-Import() {
      $args = @(
      'import',
      '--console',
-     '--directory',
-     'C:\Import',
-     '--instance',
-     'OctopusServer',
-     '--password',
-     $importPassword
+     '--directory', 'C:\Import',
+     '--instance', $OctopusInstanceName,
+     '--password', $importPassword
      )
      Execute-Command $MigratorExe $args
   }
@@ -221,20 +223,20 @@ function Process-Import() {
   Write-Log "Start Octopus Deploy instance ..."
   "Run started." | Set-Content "c:\octopus-run.initstate"
 
-  & $Exe run --instance $env:OCTOPUS_INSTANCENAME --noninteractive
+  & $Exe run --instance $OctopusInstanceName --noninteractive
 
   Write-Log ""
 }
 
 function Export-MasterKey {
-	Write-Log "Writing MasterKey to C:\MasterKey\$env:OCTOPUS_INSTANCENAME"
+	Write-Log "Writing MasterKey to C:\MasterKey\$OctopusInstanceName"
   
 	if(Test-Path "C:\MasterKey") {
 		Write-Log "==============================================="
-		Write-Log "Writing Octopus Deploy Master Key to C:\MasterKey\$env:OCTOPUS_INSTANCENAME"
+		Write-Log "Writing Octopus Deploy Master Key to C:\MasterKey\$OctopusInstanceName"
 		Write-Log "==============================================="
      
-   (& $Exe show-master-key --instance $env:OCTOPUS_INSTANCENAME) | Out-File C:\MasterKey\$env:OCTOPUS_INSTANCENAME -NoNewline
+   (& $Exe show-master-key --instance $OctopusInstanceName) | Out-File C:\MasterKey\$OctopusInstanceName -NoNewline
 		Write-Log "==============================================="
 		Write-Log ""
 	}
@@ -253,6 +255,7 @@ try
   Validate-Variables
   Write-Log "===============================================xxx"
 
+  Move-Logs
   Configure-OctopusDeploy
   "Configuration complete." | Set-Content "c:\octopus-configuration.initstate"
   Export-MasterKey

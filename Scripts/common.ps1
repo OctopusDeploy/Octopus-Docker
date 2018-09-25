@@ -16,8 +16,8 @@ if ($Installer -eq "Octopus.Server") {
 }
 $InstallBasePath = "C:\Install\"
 $MsiPath = $InstallBasePath + $MsiFileName
-$MigratorExe="C:\Program Files\Octopus Deploy\Octopus\Octopus.Migrator.exe";
-
+$MigratorExe="C:\Program Files\Octopus Deploy\Octopus\Octopus.Migrator.exe"
+$OctopusInstanceName="OctopusServer"
 function Write-Log
 {
   param (
