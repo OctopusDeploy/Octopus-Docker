@@ -26,7 +26,14 @@ TeamCity-Block("Run tests") {
   Write-Host "Server Hosted at $(Get-IPAddress)"
 	Check-IPAddress	
 	TeamCity-Block("Pester testing") {
-		$TestResult = Invoke-Pester -PassThru -Script @{ Path = './Tentacle/Tests/*.Tests.ps1'; Parameters = @{ IPAddress = $(Get-IPAddress); OctopusUsername="admin"; OctopusPassword="Passw0rd123"; OctopusVersion=$OctopusVersion; ProjectName=$ProjectName }} -OutputFile Test.xml -OutputFormat NUnitXml
+		$TestResult = Invoke-Pester -PassThru -Script @{ Path = './Tentacle/Tests/*.Tests.ps1'; Parameters = @{ `
+			IPAddress = $(Get-IPAddress); `
+			OctopusUsername="admin"; `
+			OctopusPassword="Passw0rd123"; `
+			OctopusVersion=$OctopusVersion; `
+			ProjectName=$ProjectName }} `
+			-OutputFile ./Temp/Tentacle-Test.xml `
+			-OutputFormat NUnitXml
 
 		if($TestResult.FailedCount -ne 0) {
 			Write-Host "Failed $($TestResult.FailedCount)/$($TestResult.TotalCount) Tests"

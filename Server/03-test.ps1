@@ -32,7 +32,9 @@ TeamCity-Block("Run tests") {
         OctopusPassword="Passw0rd123"; `
         OctopusVersion=$OctopusVersion; `
         ProjectName=$ProjectName; `
-        OSVersion=$OSVersion}} -OutputFile ./Temp/Server-Test.xml -OutputFormat NUnitXml
+        OSVersion=$OSVersion}} `
+        -OutputFile ./Temp/Server-Test.xml `
+        -OutputFormat NUnitXml
 
       if($TestResult.FailedCount -ne 0) {
         Write-Error "Failed $($TestResult.FailedCount)/$($TestResult.TotalCount) Tests"
