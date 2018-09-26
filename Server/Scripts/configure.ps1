@@ -229,9 +229,9 @@ function Process-Import() {
 }
 
 function Export-MasterKey {
-	Write-Log "Writing MasterKey to C:\MasterKey\$OctopusInstanceName"
+  if(Test-Path "C:\MasterKey") {
+    Write-Log "Writing MasterKey to C:\MasterKey\$OctopusInstanceName"
   
-	if(Test-Path "C:\MasterKey") {
 		Write-Log "==============================================="
 		Write-Log "Writing Octopus Deploy Master Key to C:\MasterKey\$OctopusInstanceName"
 		Write-Log "==============================================="

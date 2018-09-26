@@ -27,4 +27,4 @@ WORKDIR /Scripts
 
 #SHELL ["powershell", "-File"]
 RUN powershell -File ./Server/build.ps1
-ENTRYPOINT ["/Scripts/Server/run.bat"]
+ENTRYPOINT ["/Scripts/Server/entrypoint.bat"]
