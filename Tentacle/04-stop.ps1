@@ -1,33 +1,34 @@
 param (
   [Parameter(Mandatory=$false)]
   [string]$ProjectName="octopusdocker",
-  [Parameter(Mandatory=$true)]
+  [Parameter(Mandatory=$false)]
   [string]$OctopusVersion,
-  [Parameter(Mandatory=$true)]
+  [Parameter(Mandatory=$false)]
   [string]$TentacleVersion
 )
 
+$OctopusVersion="2018.8.0-dscserver"
+$TentacleVersion="3.22.0"
+
 . ./Scripts/build-common.ps1
+Confirm-RunningFromRootDirectory
 
 $env:OCTOPUS_VERSION = $OctopusVersion
 $env:TENTACLE_VERSION = Get-ImageVersion $TentacleVersion
-
-Confirm-RunningFromRootDirectory
-
-Start-TeamCityBlock "Stop and remove compose project"
-
 $env:OCTOPUS_TENTACLE_REPO_SUFFIX = "-prerelease"
+$env:OCTOPUS_SERVER_REPO_SUFFIX = "-prerelease"
 
-write-host "Stopping '$ProjectName' compose project"
-& docker-compose --file .\Tentacle\docker-compose.yml --project-name $ProjectName stop
+TeamCity-Block("Stop and remove compose project") {
 
-write-host "Removing '$ProjectName' compose project"
-& docker-compose --file .\Tentacle\docker-compose.yml --project-name $ProjectName down
+	write-host "Stopping '$ProjectName' compose project"
+	& docker-compose --file .\Tentacle\docker-compose.yml --project-name $ProjectName stop
 
-$env:OCTOPUS_TENTACLE_REPO_SUFFIX = ""
+	write-host "Removing '$ProjectName' compose project"
+	& docker-compose --file .\Tentacle\docker-compose.yml --project-name $ProjectName down
 
-Stop-TeamCityBlock "Stop and remove compose project"
-
-if ($LASTEXITCODE -ne 0) {
-  exit $LASTEXITCODE
+  $env:OCTOPUS_TENTACLE_REPO_SUFFIX = ""
+  
+  if(Test-Path .\Temp) {
+    Remove-Item .\Temp -Recurse -Force
+  }
 }

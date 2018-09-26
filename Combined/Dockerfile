@@ -1,13 +1,14 @@
-ARG SERVERCORE_VERSION=1709
-FROM microsoft/windowsservercore:${SERVERCORE_VERSION}
+FROM microsoft/mssql-server-windows-express:1709
 
 HEALTHCHECK --interval=20s --timeout=20s --retries=6 CMD powershell -file ./Server/healthcheck-server.ps1
 
 EXPOSE 81
 EXPOSE 10943
+#EXPOSE 1433
 
 ADD Scripts/*.* /Scripts/
 ADD Server/Scripts/*.* /Scripts/Server/
+ADD Combined/Scripts/*.* /Scripts/Combined/
 #ADD source/ /Installers
 
 ARG OctopusVersion
@@ -26,5 +27,6 @@ LABEL   org.label-schema.schema-version="1.0" \
 WORKDIR /Scripts
 
 #SHELL ["powershell", "-File"]
-RUN powershell -File ./Server/build.ps1
-ENTRYPOINT ["/Scripts/Server/entrypoint.bat"]
+RUN powershell -File ./Combined/build.ps1
+
+CMD ["/Scripts/Combined/entrypoint.bat"]

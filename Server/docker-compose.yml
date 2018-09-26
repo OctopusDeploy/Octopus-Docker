@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   db:
-    image: microsoft/mssql-server-windows-express
+    image: "${SQL_IMAGE}"
     environment:
       sa_password: "${SA_PASSWORD}"
       ACCEPT_EULA: "Y"
@@ -20,10 +20,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    stdin_open: true #Process sits and waits for ReadLine
     volumes:
-      - "../tests/Import:C:/Import"
-      - "../tests/Repository:C:/Repository"
+      - "../Temp/TaskLogs:C:/TaskLogs"
+      - "../Temp/MasterKey:C:/MasterKey"
+      - "../Temp/ServerLogs:C:/Octopus/Logs"
+      - "../Testing/Import:C:/Import"
+      - "../Testing/Repository:C:/Repository"
 networks:
   default:
     external:

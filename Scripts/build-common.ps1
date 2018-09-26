@@ -49,42 +49,39 @@ function Push-Image() {
 }
 
 function Start-DockerCompose($projectName, $composeFile) {
-  $PrevExitCode = -1;
-  $attempts=5;
-
-  while ($true -and $PrevExitCode -ne 0) {
-    if($attempts-- -lt 0){
-      & docker-compose --project-name $projectName logs
-      write-host "Ran out of attempts to create container.";
-      exit 1
-    }
-
     write-host "docker-compose --project-name $projectName --file $composeFile up --force-recreate -d"
-    & docker-compose --project-name $projectName --file $composeFile up --force-recreate -d
+    docker-compose --project-name $projectName --file $composeFile up --force-recreate -d
 
     $PrevExitCode = $LASTEXITCODE
     if($PrevExitCode -ne 0) {
-      Write-Host $Error
-      Write-Host "docker-compose failed with exit code $PrevExitCode";
-      & docker-compose --project-name $projectName --file $composeFile logs
-    }
-  }
+       Write-Host "docker-compose failed with exit code $PrevExitCode";
+       docker-compose --project-name $projectName --file $composeFile logs
+       EXIT $PrevExitCode
+     }
 }
 
 function Wait-ForServiceToPassHealthCheck($serviceName) {
   $attempts = 0;
   $sleepsecs = 10;
-  while ($attempts -lt 30)
+  while ($attempts -lt 50)
   {
     $attempts++
-    $health = ($(docker inspect $serviceName) | ConvertFrom-Json).State.Health.Status;
+    $state = ($(docker inspect $serviceName) | ConvertFrom-Json).State
+    if ($LASTEXITCODE -ne 0) {
+      exit $LASTEXITCODE
+    }
+
+    $health = $state.Health.Status;
     Write-Host "Waiting for $serviceName to be healthy (current: $health)..."
     if ($health -eq "healthy"){
       break;
     }
-    if ($LASTEXITCODE -ne 0) {
-      exit $LASTEXITCODE
+    
+    if($state.Status -eq "exited"){
+      Write-Error "$serviceName appears to have already failed and exited."
+      exit 1
     }
+
     Sleep -Seconds $sleepsecs
   }
   if ((($(docker inspect $serviceName) | ConvertFrom-Json).State.Health.Status) -ne "healthy"){
@@ -92,51 +89,6 @@ function Wait-ForServiceToPassHealthCheck($serviceName) {
     Write-Error "Octopus container $serviceName failed to go healthy after $($attempts * $sleepsecs) seconds";
     exit 1;
   }
-}
-
-function Copy-FileToDockerContainer($sourceFile, $destFile, $container) {
-  # docker cp only appears to work if you're copying from a drive thats shared (or something weird like that)
-  write-host "Copying $sourceFile"
-  $content = get-content $sourceFile -raw
-  write-host " - file is $($content.length) characters"
-  $encodedContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($content))
-  write-host " - base 64 encoded file is $($encodedContent.length) characters"
-  $currentPosition = 0
-  # kill existing file if it exists
-  write-host " - creating initial file $destFile.b64"
-  & docker exec $container powershell -command "set-content -path $destFile.b64 -value ''"
-  if ($LASTEXITCODE -ne 0) {
-    exit $LASTEXITCODE
-  }
-  while ($currentPosition -lt $encodedContent.length) {
-    $length = (1000, ($encodedContent.length - $currentPosition) | Measure -Minimum).Minimum
-    write-host " - sending partial file, $length characters starting from $currentPosition"
-    $text = $encodedContent.Substring($currentPosition, $length)
-    & docker exec $container cmd /c echo $text `>> "$destFile.b64"
-    if ($LASTEXITCODE -ne 0) {
-      exit $LASTEXITCODE
-    }
-    $currentPosition = $currentPosition + 1000
-  }
-
-  write-host " - decoding partial file from $destFile.b64 tp $destFile"
-  $result = Execute-Command "docker" "exec $container powershell -command `$content = gc $destFile.b64; `$decoded = [System.Convert]::FromBase64String(`$content); Set-Content -Path $destFile -Value `$decoded -encoding byte"
-
-  if ($result.ExitCode -ne 0) {
-    exit $result.ExitCode
-  }
-}
-
-function Copy-FilesToDockerContainer($sourcePath, $container) {
-
-  Start-TeamCityBlock "Copy test files to $container"
-
-  foreach($file in gci $sourcePath -file) {
-    $fileName = Split-Path $file -Leaf
-    Copy-FileToDockerContainer $file.FullName "c:\$fileName" $container
-  }
-
-  Stop-TeamCityBlock "Copy test files to $container"
 }
 
 function Test-RunningUnderTeamCity() {
@@ -186,10 +138,18 @@ function Write-DebugInfo($containerNames) {
 
 function Check-IPAddress() {
   $OctopusContainerIpAddress = ($(docker inspect $OctopusServerContainer) | ConvertFrom-Json).NetworkSettings.Networks.nat.IpAddress
-  if (($OctopusContainerIpAddress -eq $null) -or ($OctopusContainerIpAddress -eq "")) {
+  if (($OctopusContainerIpAddress -eq $null) -or ($(Get-IPAddress) -eq "")) {
     write-host " OctopusDeploy Container does not exist. Aborting."
     exit 3
   }
+}
+
+function Get-IPAddress()  {
+  param (
+  [Parameter(Mandatory=$false)]
+  [string]$container=$OctopusServerContainer)
+    $docker = (docker inspect $container | convertfrom-json)[0]
+    return $docker.NetworkSettings.Networks.nat.IpAddress
 }
 
 function Confirm-RunningFromRootDirectory {
@@ -204,15 +164,44 @@ function Get-GitBranch {
   return & git rev-parse --abbrev-ref HEAD
 }
 
-function Get-ImageVersion ($version) {
+function Get-ImageVersion ($version, $osversion) {
   $gitBranch = Get-GitBranch
 
-  $imageVersion = $version
-  if ($gitBranch -ne 'master') {
-    $imageVersion = "$version-$gitBranch"
-    if (Test-Path env:BUILD_NUMBER) {
-      $imageVersion = "$version-$gitBranch.$($env:BUILD_NUMBER)"
-    }
+  if ($version -like "*-*") {
+    $imageVersion = "$version.$osversion"
+  } else {
+    $imageVersion = "$version-$osversion"
   }
+  
+  #if (Test-Path env:BUILD_NUMBER) {
+    #$imageVersion = "$imageVersion.$($env:BUILD_NUMBER)"
+  #}
+
   return $imageVersion
+}
+
+
+
+function TeamCity-Block
+{
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $blockName,
+
+        [Parameter(Mandatory = $true)]
+        [scriptblock]
+        $ScriptBlock
+    )
+
+    try
+    {
+        Start-TeamCityBlock $blockName
+        . $ScriptBlock
+    }
+    finally
+    {
+      Stop-TeamCityBlock $blockName
+    }
 }

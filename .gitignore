@@ -11,6 +11,8 @@ $RECYCLE.BIN/
 # Log folders generated during builds
 Logs/
 tests/Logs
+Temp/
+.vscode/
 
 # Windows Installer files
 *.cab
