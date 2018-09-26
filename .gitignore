@@ -18,6 +18,7 @@ tests/Logs
 *.msm
 *.msp
 
+.vscode
 # Windows shortcuts
 *.lnk
 
