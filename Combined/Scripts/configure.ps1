@@ -64,6 +64,7 @@ function Copy-Default() {
     }
 }
 
+./Combined/sql-express.ps1 -ACCEPT_EULA "Y" -sa_password $env:SA_PASSWORD -Verbose
 
 #Attach-DB
 #Update-SA

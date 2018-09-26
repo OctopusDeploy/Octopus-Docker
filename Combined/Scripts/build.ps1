@@ -9,11 +9,6 @@ if($LastExitCode -ne 0) {
     exit $last
 }
 
-# Write-Verbose "Starting SQL Server"
-# start-service MSSQL`$SQLEXPRESS
-# $sqlcmd = "ALTER LOGIN sa with password=" +"'" + $env:SA_PASSWORD + "'" + ";ALTER LOGIN sa ENABLE;"
-# & sqlcmd -Q $sqlcmd
-
 ./Combined/sql-express.ps1 -ACCEPT_EULA "Y" -sa_password $env:SA_PASSWORD -Verbose
 if($LastExitCode -ne 0) {
     exit $last

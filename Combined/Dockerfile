@@ -29,4 +29,4 @@ WORKDIR /Scripts
 #SHELL ["powershell", "-File"]
 RUN powershell -File ./Combined/build.ps1
 
-ENTRYPOINT ["/Scripts/Combined/entrypoint.bat"]
+CMD ["/Scripts/Combined/entrypoint.bat"]
