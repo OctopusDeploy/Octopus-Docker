@@ -17,6 +17,7 @@ TeamCity-Block("Stop and remove compose project") {
     & docker rm -f $ProjectName"_octopus_1"
 
     if(!Test-RunningUnderTeamCity -and (Test-Path .\Temp)) {
+      Write-Host "Cleaning up Temp"
       Remove-Item .\Temp -Recurse -Force
     }
 }
