@@ -79,6 +79,7 @@ function Wait-ForServiceToPassHealthCheck($serviceName) {
     
     if($state.Status -eq "exited"){
       Write-Error "$serviceName appears to have already failed and exited."
+      docker logs $serviceName > .\Temp\ConsoleLogs\$($serviceName).log
       exit 1
     }
 
@@ -87,6 +88,7 @@ function Wait-ForServiceToPassHealthCheck($serviceName) {
   if ((($(docker inspect $serviceName) | ConvertFrom-Json).State.Health.Status) -ne "healthy"){
     Write-DebugInfo @($serviceName)
     Write-Error "Octopus container $serviceName failed to go healthy after $($attempts * $sleepsecs) seconds";
+    docker logs $serviceName > .\Temp\ConsoleLogs\$($serviceName).log
     exit 1;
   }
 }
