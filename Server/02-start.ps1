@@ -18,6 +18,8 @@ $env:SERVERCORE_VERSION=$OSVersion
 
 if($OSVersion -eq "1803") { #Currently no 1803 version of the official microsoft/mssql-server-windows-express repo
     $env:SQL_IMAGE="christianacca/mssql-server-windows-express:1803"
+} elseif($OSVersion -eq "ltsc2016") {
+    $env:SQL_IMAGE="latest"
 }
 
 TeamCity-Block("Start containers") {
