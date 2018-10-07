@@ -61,7 +61,7 @@ function Validate-Variables() {
       mkdir C:\Octopus\Logs | Out-Null
     }
     mv C:\Octopus\LogsTemp\* C:\Octopus\Logs
-    rm C:\Octopus\LogsTemp
+    Remove-Item C:\Octopus\LogsTemp -Recurse -Force
     Write-Log "moved"
   }
 
