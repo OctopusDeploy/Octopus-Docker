@@ -1,26 +1,32 @@
 param (
   [Parameter(Mandatory=$false)]
-  [string]$OctopusVersion,
+  [string]$OctopusVersion="2018.8.9",
   [Parameter(Mandatory=$false)]
-  [string]$TentacleVersion,
+  [string]$TentacleVersion="3.22.0",
   [Parameter(Mandatory=$false)]
-  [string]$ProjectName = "octopusdocker"
+  [string]$ProjectName = "octopusdocker",
+  [Parameter(Mandatory=$true)]
+  [string]$OSVersion
 )
 
-$OctopusVersion="2018.8.0-dscserver"
-$TentacleVersion="3.22.0"
 . ./Scripts/build-common.ps1
 
 
 $env:OCTOPUS_VERSION=$OctopusVersion;
-$env:TENTACLE_VERSION=Get-ImageVersion $TentacleVersion;
+$env:TENTACLE_VERSION=Get-ImageVersion $TentacleVersion $OSVersion; 
 $env:OCTOPUS_TENTACLE_REPO_SUFFIX = "-prerelease"
-$env:OCTOPUS_SERVER_REPO_SUFFIX = "-prerelease"
 $OctopusServerContainer=$ProjectName+"_octopus_1";
 $ListeningTentacleServiceName=$ProjectName+"_listeningtentacle_1";
 $PollingTentacleServiceName=$ProjectName+"_pollingtentacle_1";
 
 Confirm-RunningFromRootDirectory
+
+
+if($OSVersion -eq "1803") { #Currently no 1803 version of the official microsoft/mssql-server-windows-express repo
+    $env:SQL_IMAGE="christianacca/mssql-server-windows-express:1803"
+} elseif($OSVersion -eq "ltsc2016") {
+    $env:SQL_IMAGE="microsoft/mssql-server-windows-express"
+}
 
 TeamCity-Block("Start containers") {
 	if(Test-Path .\Temp) {
