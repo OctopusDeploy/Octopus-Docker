@@ -1,6 +1,6 @@
 # octopusdeploy
 
-Due to required build context, all scirpts should be executed from the root directory. The Dockerfile requires a `Source` directory in the build context, so that it can first be checked for the `.msi` during the installation process. This directory is created if necessary by the helper scripts. If no `.msi` exists, the build will try download the file from `https://download.octopusdeploy.com/octopus/`.
+Due to required build context, all scirpts should be executed from the root directory. 
 
 ## Building the container
 
@@ -69,11 +69,4 @@ First stage builds a docker container, and publishes it to `octopusdeploy/octopu
 .\server\03-run.ps1
 .\server\04-stop.ps1 -OctopusVersion 3.17.0
 .\server\05-publish-privately.ps1 -OctopusVersion 3.17.0 -username <user> -password <password>
-```
-
-Once all tests have completed, it gets published to the world. This _usually_ only happens for released builds.
-
-```plaintext
-.\server\06-pull.ps1 -OctopusVersion 3.17.0 -username -username <user> -password <password>
-.\server\07-publish-publically.ps1 -OctopusVersion 3.17.0 -username -username <user> -password <password>
 ```

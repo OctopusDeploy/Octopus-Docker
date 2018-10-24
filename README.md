@@ -4,7 +4,7 @@ These images can be used to bring up an instance of an Octopus Server or Tentacl
 
 # Pre-Requisites
 
-Docker containers are supported on Windows Server 2016 and Windows 10.
+Docker containers are supported on Windows from Windows Server 2016 and Windows 10 onwards.
 
 Make sure you've enabled the containers feature:
 
@@ -76,13 +76,15 @@ You can configure that to work against a previous database by adding a line to t
 ## Tag naming strategy and versioning ##
 
 There are two versioning considerations at play that contribute to the tag naming.
- - The base image: The `windows\servernanocore` image can itself be builtargeting different OS platforms (e.g `1709` or `1803`). [Windows container requirements](https://docs.microsoft.com/en-us/virtualization/windowscontainers/deploy-containers/version-compatibility) dictate that the container base image OS version must match the host OS version. For this reason Octopus must provide a container for each supported host.
+ - The base image: The `microsoft\windowsservercore` image can itself be built targeting different OS platforms (e.g `1709` or `1803`). [Windows container requirements](https://docs.microsoft.com/en-us/virtualization/windowscontainers/deploy-containers/version-compatibility) dictate that the container base image OS version must match the host OS version. For this reason Octopus must provide a container for each supported host.
  - The Octopus Server binaries
 
 To deal with the multiple versioning requirements we currently use the following version rules.
 - `octopusdeploy\octopus:<BinariesVersion>-<OSVersion>` This fully identifies the binaries and the base OS
 - `octopusdeploy\octopus:<BinariesVersion>` When the base is missing this will assume the latest "base OS" version. i.e. `octopusdeploy\octopus:2018.8.0` == `octopusdeploy\octopus:2018.8.0-1803`. _Eventually_ This will be a manifest that provides both os versions.
 - `octopusdeploy\octopus:latest` The latest image will refer to the  `BinariesVersion` image that maps to the latest Octopus Server ta has been released.
+
+Some older versions of docker engine do not support the manifest files and so you may need to use the specifically tagged platform version as appropriate.
 
 ## Support status ##
 
@@ -97,12 +99,3 @@ Please let us know how you get along, and how we can make it better. Pull reques
 * The default admin credentials are `admin` / `Passw0rd123`. This can (and should) be overridden in the `.env` file ... or by setting environment variables, or by passing `-e OctopusAdminUsername=XXX -e OctopusAdminPassword=YYY` ...
 
 * These images are based off the [Octopus-Docker](https://github.com/OctopusDeploy/Octopus-Docker) repo on GitHub.
-
-## Development info ##
-
-If you have issues installing the nokogiri gem on macOS (ie, to update the gem file), I found the following worked well:
-
-```
-gem install nokogiri -v 1.8.2 -- --with-iconv-dir=`xcode-select -p`/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr --with-xml2-include=`xcode-select -p`/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/libxml2
-Building native extensions with: '--with-iconv-dir=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr --with-xml2-include=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/libxml2'
-```
