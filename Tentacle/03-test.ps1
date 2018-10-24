@@ -13,10 +13,10 @@ Add-Type -Path './Testing/Tools/Octopus.Client.dll'
 
 TeamCity-Block("Run tests") {
 
-	Wait-ForServiceToPassHealthCheck $ProjectName+"_db_1"
-	Wait-ForServiceToPassHealthCheck $ProjectName+"_octopus_1"
-	Wait-ForServiceToPassHealthCheck $ProjectName+"_listeningtentacle_1"
-  Wait-ForServiceToPassHealthCheck $ProjectName+"_pollingtentacle_1"
+	Wait-ForServiceToPassHealthCheck $ProjectName"_db_1"
+	Wait-ForServiceToPassHealthCheck $ProjectName"_octopus_1"
+	Wait-ForServiceToPassHealthCheck $ProjectName"_listeningtentacle_1"
+  Wait-ForServiceToPassHealthCheck $ProjectName"_pollingtentacle_1"
    
   Write-Host "Server Hosted at $(Get-IPAddress)"
 	Check-IPAddress	
