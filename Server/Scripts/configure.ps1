@@ -26,8 +26,9 @@ function Validate-Variables() {
     if ($masterKeySupplied) {
       Write-Log " - masterkey '##########'"
         if($octopusAdminUsername -ne $null -or $octopusAdminPassword -ne $null) {
-            Write-Error "To change the administrator passwords login details for an existing installation, run this image passing in arguments for the admin command."
-            Write-Error "See https://octopus.com/docs/administration/managing-users-and-teams/resetting-passwords#Resettingpasswords-Resettingadministratorpasswords for details"
+            Write-Error "Modifying the user credentials for a pre-installed instance is not currently supported."
+            #Write-Error "To change the administrator passwords login details for an existing installation, run this image passing in arguments for the admin command."
+            #Write-Error "See https://octopus.com/docs/administration/managing-users-and-teams/resetting-passwords#Resettingpasswords-Resettingadministratorpasswords for details"
             Exit 2
         }
     }
