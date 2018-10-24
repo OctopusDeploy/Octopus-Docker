@@ -27,6 +27,7 @@ TeamCity-Block("Run tests") {
 			OctopusUsername="admin"; `
 			OctopusPassword="Passw0rd123"; `
 			OctopusVersion=$OctopusVersion; `
+			TentacleVersion=$TentacleVersion; `
 			ProjectName=$ProjectName }} `
 			-OutputFile ./Temp/Tentacle-Test.xml `
 			-OutputFormat NUnitXml

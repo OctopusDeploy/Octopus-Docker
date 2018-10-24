@@ -4,7 +4,9 @@ param(
     [ValidateNotNullOrEmpty()]
 	[string]$OctopusUsername,
     [ValidateNotNullOrEmpty()]
-	[string]$OctopusPassword
+	[string]$OctopusPassword,
+	[ValidateNotNullOrEmpty()]
+	[string]$TentacleVersion
 )
 $OctopusURI="http://$($IPAddress):81"
 
@@ -19,7 +21,7 @@ function Registration-Tests($Tentacles){
 	}
 
 	it 'should have the correct version installed' {
-		$Tentacles[0].Endpoint.TentacleVersionDetails.Version | should be "3.22.0"
+		$Tentacles[0].Endpoint.TentacleVersionDetails.Version | should be $TentacleVersion
 	}
 }
 
