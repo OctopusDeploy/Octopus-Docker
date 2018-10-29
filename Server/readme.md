@@ -1,6 +1,6 @@
 # octopusdeploy
 
-Due to required build context, all scirpts should be executed from the root directory. 
+Due to required build context, all scirpts should be executed from the root directory.
 
 ## Building the container
 
@@ -41,7 +41,7 @@ Default values are set in the `.env` file.
 ## Running a Server - Plain ol' Docker
 
 ```plaintext
-docker run --name OctopusDeploy --tty --interactive --publish 81:81 --env sqlDbConnectionString="Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;" octopusdeploy/octopusdeploy:3.17.0
+docker run --name OctopusDeploy --tty --interactive --publish 81:81 --env sqlDbConnectionString="Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;" octopusdeploy/octopusdeploy:2018.8.8-1803
 ```
 
 ### Environment variables
@@ -64,9 +64,9 @@ The internal Octopus build and deployment process is split into two phases.
 First stage builds a docker container, and publishes it to `octopusdeploy/octopusdeploy-prerelease`. These images are only intended for internal testing. This is primarily based around pre-release (CI) packages.
 
 ```plaintext
-.\Server\01-build.ps1 3.17.0
-.\server\02-start.ps1 -OctopusVersion 3.17.0 -username -username <user> -password <password>
-.\server\03-run.ps1
-.\server\04-stop.ps1 -OctopusVersion 3.17.0
-.\server\05-publish-privately.ps1 -OctopusVersion 3.17.0 -username <user> -password <password>
+.\Server\01-build.ps1 -OctopusVersion 2018.8.8 -OSVersion 1803
+.\Server\02-start.ps1 -OctopusVersion 2018.8.8 -OSVersion 1803
+.\Server\03-test.ps1 -OctopusVersion 2018.8.8 -OSVersion 1803
+.\Server\04-stop.ps1
+.\Server\05-publish-privately.ps1 -OctopusVersion 2018.8.8 -OSVersion 1803 -UserName <user> -Password <password>
 ```
