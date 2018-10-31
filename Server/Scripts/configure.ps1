@@ -23,28 +23,15 @@ $env:OCTOPUS_INSTANCENAME=$OctopusInstanceName
   }
   
 function Validate-Variables() {
-    if ($masterKeySupplied) {
-      Write-Log " - masterkey '##########'"
-        if($octopusAdminUsername -ne $null -or $octopusAdminPassword -ne $null) {
-            Write-Error "Modifying the user credentials for a pre-installed instance is not currently supported."
-            #Write-Error "To change the administrator passwords login details for an existing installation, run this image passing in arguments for the admin command."
-            #Write-Error "See https://octopus.com/docs/administration/managing-users-and-teams/resetting-passwords#Resettingpasswords-Resettingadministratorpasswords for details"
-            Exit 2
-        }
+    if($octopusAdminUsername -eq $null){
+        $octopusAdminUsername = "admin"
     }
-    else {
-      Write-Log " - masterkey not supplied. A new key will be generated automatically."
+    if($octopusAdminPassword -eq $null){
+        $octopusAdminPassword = "Passw0rd123"
+    }
+    Write-Log " - local admin user '$octopusAdminUsername'"
+    Write-Log " - local admin password '##########'"
 
-        if($octopusAdminUsername -eq $null){
-            $octopusAdminUsername = "admin"
-        }
-        if($octopusAdminPassword -eq $null){
-            $octopusAdminPassword = "Passw0rd123"
-        }
-        Write-Log " - local admin user '$octopusAdminUsername'"
-        Write-Log " - local admin password '##########'"
-    }
-  
     if($sqlDbConnectionString -eq $null){
         Write-Error "Environment variable sqlDbConnectionString required"
         Exit 2
