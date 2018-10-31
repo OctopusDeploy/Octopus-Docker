@@ -23,14 +23,20 @@ $env:OCTOPUS_INSTANCENAME=$OctopusInstanceName
   }
   
 function Validate-Variables() {
-    if($octopusAdminUsername -eq $null){
+    # If no master key has been defined, we will create some default credentials
+    if (-not $masterKeySupplied)
+    {
+      if ($octopusAdminUsername -eq $null)
+      {
         $octopusAdminUsername = "admin"
-    }
-    if($octopusAdminPassword -eq $null){
+      }
+      if ($octopusAdminPassword -eq $null)
+      {
         $octopusAdminPassword = "Passw0rd123"
+      }
+      Write-Log " - local admin user '$octopusAdminUsername'"
+      Write-Log " - local admin password '##########'"
     }
-    Write-Log " - local admin user '$octopusAdminUsername'"
-    Write-Log " - local admin password '##########'"
 
     if($sqlDbConnectionString -eq $null){
         Write-Error "Environment variable sqlDbConnectionString required"
