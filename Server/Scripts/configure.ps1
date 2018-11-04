@@ -107,7 +107,7 @@ function Validate-Variables() {
         $args += '--masterkey'
         $args += $masterKey
       }
-      Execute-Command $Exe $args
+      Execute-Command $Exe $args $masterKey
     } else {
       Write-Log "Creating Octopus Deploy database ..."
       $args = @(
@@ -121,7 +121,7 @@ function Validate-Variables() {
         $args += '--masterkey'
         $args += $masterKey
       }
-      Execute-Command $Exe $args
+      Execute-Command $Exe $args $masterKey
   
       if (!$masterKeySupplied) { #only set usernamePasswordIsEnabled the first time
         Write-Log "Configuring Octopus Deploy instance ..."
@@ -165,7 +165,7 @@ function Validate-Variables() {
             $args += '--password'
             $args += $octopusAdminPassword
         }
-        Execute-Command $Exe $args
+        Execute-Command $Exe $args $octopusAdminPassword
     }
 
     if($env:LicenceBase64 -eq $null) {
@@ -207,7 +207,7 @@ function Process-Import() {
      '--instance', $OctopusInstanceName,
      '--password', $importPassword
      )
-     Execute-Command $MigratorExe $args
+     Execute-Command $MigratorExe $args $importPassword
   }
  }
 
