@@ -16,9 +16,13 @@ function Write-Log
   Write-Verbose "[$timestamp] $message"
 }
 
-function Execute-Command ($exe, $arguments)
+function Execute-Command ($exe, $arguments, $mask)
 {
-  Write-Log "Executing command '$exe $($arguments -join ' ')'"
+  $maskedArgs = $($arguments -join ' ')
+  if ($mask -ne $null) {
+    [Regex]::Escape($mask) | % { $maskedArgs = $maskedArgs -replace $_, "*****"}
+  }
+  Write-Log "Executing command '$exe $($maskedArgs -join ' ')'"
   $output = .$exe $arguments
 
   Write-CommandOutput $output
