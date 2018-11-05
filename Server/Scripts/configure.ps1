@@ -121,7 +121,7 @@ function Validate-Variables() {
         $args += '--masterkey'
         $args += $masterKey
       }
-      Execute-Command $Exe $args $masterKey
+      Execute-Command $Exe $args @($masterKey, $sqlDbConnectionString)
   
       if (!$masterKeySupplied) { #only set usernamePasswordIsEnabled the first time
         Write-Log "Configuring Octopus Deploy instance ..."
