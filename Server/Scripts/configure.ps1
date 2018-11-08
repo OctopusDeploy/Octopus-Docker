@@ -122,16 +122,6 @@ function Validate-Variables() {
         $args += $masterKey
       }
       Execute-Command $Exe $args @($masterKey, $sqlDbConnectionString)
-  
-      if (!$masterKeySupplied) { #only set usernamePasswordIsEnabled the first time
-        Write-Log "Configuring Octopus Deploy instance ..."
-        Execute-Command $Exe @(
-            'configure',
-            '--console',
-            '--instance', $OctopusInstanceName,
-            '--usernamePasswordIsEnabled', 'True' #this will only work from 3.5 and above
-        )
-      }
     }
 
     #TODO: Not sure this is helpful... if we cant set the path then it cant be mounted correctly...
@@ -166,6 +156,14 @@ function Validate-Variables() {
             $args += $octopusAdminPassword
         }
         Execute-Command $Exe $args $octopusAdminPassword
+
+        Write-Log "Enabling Username and Password Auth ..."
+        Execute-Command $Exe @(
+          'configure',
+          '--console',
+          '--instance', $OctopusInstanceName,
+          '--usernamePasswordIsEnabled', 'True' #this will only work from 3.5 and above
+        )
     }
 
     if($env:LicenceBase64 -eq $null) {
