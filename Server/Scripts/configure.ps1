@@ -166,7 +166,8 @@ function Validate-Variables() {
         )
     }
 
-    if($env:LicenceBase64 -eq $null) {
+    $LicenceBase64 = $env:LicenceBase64
+    if($LicenceBase64 -eq $null) {
       if (!$masterKeySupplied) {
         Write-Log "Configuring Octopus Deploy instance to use free license ..."
         Execute-Command $Exe @(
@@ -182,7 +183,7 @@ function Validate-Variables() {
         'license',
         '--console',
         '--instance', $OctopusInstanceName,
-        '--licenseBase64', $env:LicenceBase64
+        '--licenseBase64', $LicenceBase64
       )
     }
 }
