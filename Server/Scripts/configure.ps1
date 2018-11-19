@@ -23,8 +23,9 @@ $env:OCTOPUS_INSTANCENAME=$OctopusInstanceName
   }
   
 function Validate-Variables() {
-    # If no master key has been defined, we will create some default credentials
-    if (-not $masterKeySupplied)
+    # If either a username or password has been set, the other is set to a default. We also set
+    # default creds if no master key is supplied.
+    if ($octopusAdminPassword -ne $null -or $octopusAdminUserName -ne $null -or !$masterKeySupplied)
     {
       if ($octopusAdminUsername -eq $null)
       {
@@ -138,7 +139,18 @@ function Validate-Variables() {
     } else {
       Write-Log "Octopus version $version does not support modifying paths (it was introduced in 3.0.21)"
     }
-      
+
+    # If you do not set the master key or supply the username and/or password, the user/pass
+    # auth plugin is enabled.
+    if ($octopusAdminPassword -ne $null -or $octopusAdminUserName -ne $null -or !$masterKeySupplied) {
+      Write-Log "Enabling Username and Password Auth ..."
+      Execute-Command $Exe @(
+      'configure',
+      '--console',
+      '--instance', $OctopusInstanceName,
+      '--usernamePasswordIsEnabled', 'True' #this will only work from 3.5 and above
+      )
+    }
   
     if ($octopusAdminPassword -ne $null -or $octopusAdminUserName -ne $null) {
         Write-Log "Creating Admin User for Octopus Deploy instance ..."
@@ -147,23 +159,12 @@ function Validate-Variables() {
             '--console',
             '--instance', $OctopusInstanceName
         )
-        if ($octopusAdminUserName) {
-            $args += '--username'
-            $args += $octopusAdminUserName
-        }
-        if ($octopusAdminPassword) {
-            $args += '--password'
-            $args += $octopusAdminPassword
-        }
-        Execute-Command $Exe $args $octopusAdminPassword
 
-        Write-Log "Enabling Username and Password Auth ..."
-        Execute-Command $Exe @(
-          'configure',
-          '--console',
-          '--instance', $OctopusInstanceName,
-          '--usernamePasswordIsEnabled', 'True' #this will only work from 3.5 and above
-        )
+        $args += '--username'
+        $args += $octopusAdminUserName
+        $args += '--password'
+        $args += $octopusAdminPassword
+        Execute-Command $Exe $args $octopusAdminPassword
     }
 
     if($env:LicenceBase64 -eq $null) {
