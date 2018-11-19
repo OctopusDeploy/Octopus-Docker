@@ -23,7 +23,8 @@ $env:OCTOPUS_INSTANCENAME=$OctopusInstanceName
   }
   
 function Validate-Variables() {
-    # If either a username or password has been set, the other is set to a default
+    # If either a username or password has been set, the other is set to a default. We also set
+    # default creds if no master key is supplied.
     if ($octopusAdminPassword -ne $null -or $octopusAdminUserName -ne $null -or !$masterKeySupplied)
     {
       if ($octopusAdminUsername -eq $null)
