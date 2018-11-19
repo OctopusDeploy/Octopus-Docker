@@ -185,6 +185,16 @@ function Validate-Variables() {
         '--licenseBase64', $env:LicenceBase64
       )
     }
+
+  if($env:EnableMetrics -eq "true") {
+        Execute-Command $Exe @(
+          'metrics',
+          '--console',
+          '--instance', $OctopusInstanceName,
+          '--enable',
+          '--tasks', 'true',
+          '--webapi', 'true')
+  }
 }
 
 
