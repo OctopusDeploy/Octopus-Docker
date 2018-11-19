@@ -138,7 +138,18 @@ function Validate-Variables() {
     } else {
       Write-Log "Octopus version $version does not support modifying paths (it was introduced in 3.0.21)"
     }
-      
+
+    # If you do not set the master key or supply the username and/or password, the user/pass
+    # auth plugin is enabled.
+    if ($octopusAdminPassword -ne $null -or $octopusAdminUserName -ne $null -or !$masterKeySupplied) {
+      Write-Log "Enabling Username and Password Auth ..."
+      Execute-Command $Exe @(
+      'configure',
+      '--console',
+      '--instance', $OctopusInstanceName,
+      '--usernamePasswordIsEnabled', 'True' #this will only work from 3.5 and above
+      )
+    }
   
     if ($octopusAdminPassword -ne $null -or $octopusAdminUserName -ne $null) {
         Write-Log "Creating Admin User for Octopus Deploy instance ..."
@@ -149,21 +160,14 @@ function Validate-Variables() {
         )
         if ($octopusAdminUserName) {
             $args += '--username'
-            $args += $octopusAdminUserName
         }
         if ($octopusAdminPassword) {
             $args += '--password'
-            $args += $octopusAdminPassword
         }
-        Execute-Command $Exe $args $octopusAdminPassword
 
-        Write-Log "Enabling Username and Password Auth ..."
-        Execute-Command $Exe @(
-          'configure',
-          '--console',
-          '--instance', $OctopusInstanceName,
-          '--usernamePasswordIsEnabled', 'True' #this will only work from 3.5 and above
-        )
+        $args += $octopusAdminUserName
+        $args += $octopusAdminPassword
+        Execute-Command $Exe $args $octopusAdminPassword
     }
 
     if($env:LicenceBase64 -eq $null) {
