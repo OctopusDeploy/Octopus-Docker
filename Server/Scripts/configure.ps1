@@ -188,6 +188,7 @@ function Validate-Variables() {
     }
 
   if($env:EnableMetrics -eq "true") {
+        Write-Log "Enabling metrics logging"
         Execute-Command $Exe @(
           'metrics',
           '--console',
