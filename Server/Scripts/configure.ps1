@@ -23,8 +23,8 @@ $env:OCTOPUS_INSTANCENAME=$OctopusInstanceName
   }
   
 function Validate-Variables() {
-    # If no master key has been defined, we will create some default credentials
-    if (-not $masterKeySupplied)
+    # If either a username or password has been set, the other is set to a default
+    if ($octopusAdminPassword -ne $null -or $octopusAdminUserName -ne $null)
     {
       if ($octopusAdminUsername -eq $null)
       {
@@ -158,14 +158,10 @@ function Validate-Variables() {
             '--console',
             '--instance', $OctopusInstanceName
         )
-        if ($octopusAdminUserName) {
-            $args += '--username'
-        }
-        if ($octopusAdminPassword) {
-            $args += '--password'
-        }
 
+        $args += '--username'
         $args += $octopusAdminUserName
+        $args += '--password'
         $args += $octopusAdminPassword
         Execute-Command $Exe $args $octopusAdminPassword
     }
