@@ -167,7 +167,7 @@ function Validate-Variables() {
         Execute-Command $Exe $args $octopusAdminPassword
     }
 
-    if($env:LicenceBase64 -eq $null) {
+    if($null -eq $env:LicenceBase64) {
       if (!$masterKeySupplied) {
         Write-Log "Configuring Octopus Deploy instance to use free license ..."
         Execute-Command $Exe @(
