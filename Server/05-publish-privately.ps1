@@ -17,7 +17,5 @@ $imageVersion = Get-ImageVersion $OctopusVersion $OSVersion
 
 TeamCity-Block("Publish to private repo") {
 
-  Docker-Login
-
   Push-Image "octopusdeploy/octopusdeploy-prerelease:$imageVersion"
 }
