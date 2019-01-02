@@ -49,15 +49,26 @@ function Push-Image() {
 }
 
 function Start-DockerCompose($projectName, $composeFile) {
+  $PrevExitCode = -1;
+  $attempts=5;
+
+  while ($true -and $PrevExitCode -ne 0) {
+    if($attempts-- -lt 0){
+      & docker-compose --project-name $projectName logs
+      write-host "Ran out of attempts to create container.";
+      exit 1
+    }
+
     write-host "docker-compose --project-name $projectName --file $composeFile up --force-recreate -d"
-    docker-compose --project-name $projectName --file $composeFile up --force-recreate -d
+    & docker-compose --project-name $projectName --file $composeFile up --force-recreate -d
 
     $PrevExitCode = $LASTEXITCODE
     if($PrevExitCode -ne 0) {
-       Write-Host "docker-compose failed with exit code $PrevExitCode";
-       docker-compose --project-name $projectName --file $composeFile logs
-       EXIT $PrevExitCode
-     }
+      Write-Host $Error
+      Write-Host "docker-compose failed with exit code $PrevExitCode";
+      & docker-compose --project-name $projectName --file $composeFile logs
+    }
+  }
 }
 
 function Wait-ForServiceToPassHealthCheck($serviceName) {
