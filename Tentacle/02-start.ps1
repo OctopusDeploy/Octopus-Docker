@@ -21,11 +21,10 @@ $PollingTentacleServiceName=$ProjectName+"_pollingtentacle_1";
 
 Confirm-RunningFromRootDirectory
 
-
-if ($OSVersion -ge 1803) { #Currently no 1803/1809 version of the official microsoft/mssql-server-windows-express repo
-    $env:SQL_IMAGE="christianacca/mssql-server-windows-express:2017-latest"
-} elseif($OSVersion -eq "ltsc2016") {
+if ($OSVersion -eq "ltsc2016") {
     $env:SQL_IMAGE="microsoft/mssql-server-windows-express"
+} else { #Currently no 1803/1809 version of the official microsoft/mssql-server-windows-express repo
+    $env:SQL_IMAGE="christianacca/mssql-server-windows-express:2017-latest"
 }
 
 TeamCity-Block("Start containers") {
