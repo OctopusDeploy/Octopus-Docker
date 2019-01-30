@@ -23,6 +23,8 @@ Confirm-RunningFromRootDirectory
 
 if ($OSVersion -eq "ltsc2016") {
     $env:SQL_IMAGE="microsoft/mssql-server-windows-express"
+} elseif ($OSVersion -eq "1709") {
+    $env:SQL_IMAGE="microsoft/mssql-server-windows-express:1709"
 } else { #Currently no 1803/1809 version of the official microsoft/mssql-server-windows-express repo
     $env:SQL_IMAGE="christianacca/mssql-server-windows-express:2017-latest"
 }

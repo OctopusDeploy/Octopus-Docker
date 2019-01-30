@@ -16,8 +16,10 @@ $env:OCTOPUS_VERSION=Get-ImageVersion $OctopusVersion $OSVersion;
 $env:OCTOPUS_SERVER_REPO_SUFFIX="-prerelease"
 $env:SERVERCORE_VERSION=$OSVersion
 
-if (($OSVersion -eq "ltsc2016") -or ($OSVersion -eq "1709")) {
+if ($OSVersion -eq "ltsc2016") {
     $env:SQL_IMAGE="microsoft/mssql-server-windows-express"
+} elseif ($OSVersion -eq "1709") {
+    $env:SQL_IMAGE="microsoft/mssql-server-windows-express:1709"
 } else { #Currently no 1803/1809 version of the official microsoft/mssql-server-windows-express repo
     $env:SQL_IMAGE="christianacca/mssql-server-windows-express:2017-latest"
 }
