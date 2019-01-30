@@ -1,5 +1,6 @@
 ARG SERVERCORE_VERSION=1709
-FROM microsoft/windowsservercore:${SERVERCORE_VERSION}
+ARG BASE_IMAGE=microsoft/windowsservercore
+FROM ${BASE_IMAGE}:${SERVERCORE_VERSION}
 
 HEALTHCHECK --interval=20s --timeout=20s --retries=6 CMD powershell -file ./Tentacle/healthcheck-tentacle.ps1
 
