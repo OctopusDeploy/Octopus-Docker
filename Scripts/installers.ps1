@@ -14,7 +14,7 @@ function Stage-Installer {
     }
 
 	Write-Log "Downloading installer '$downloadUrl' to '$MsiPath' ..."
-  [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+  [Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
 	(New-Object Net.WebClient).DownloadFile($downloadUrl, $MsiPath)
     Write-Log "done."
 }
