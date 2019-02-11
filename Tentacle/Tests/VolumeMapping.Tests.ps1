@@ -55,6 +55,15 @@ Describe 'Volume Mounts' {
 		}
 
 		it 'should contain deployed packages' {
+			# Reindex built in library
+			$task = New-Object  Octopus.Client.Model.TaskResource
+      $task.Name = "SynchronizeBuiltInPackageRepositoryIndex"
+      $task.Description = "Re-index built-in package repository"
+      $task.State = [Octopus.Client.Model.TaskState]::Queued
+
+      $Task1 = $repository.Tasks.Create($task)
+      $repository.Tasks.WaitForCompletion($Task1);
+
 			# Create Project
 			$pg = $repository.ProjectGroups.FindAll()[0]
 			$lc = $repository.Lifecycles.FindAll()[0]
@@ -70,10 +79,10 @@ Describe 'Volume Mounts' {
 			$release = new-object Octopus.Client.Model.ReleaseResource
 			$release.Version = "1.0.1"
 			$release.ProjectId = $p.Instance.Id
-				$selectedPackage = New-Object Octopus.Client.Model.SelectedPackage
-				$selectedPackage.ActionName = "DeploySeriLog"
-				$selectedPackage.StepName = "DeploySeriLog"
-				$selectedPackage.Version = "2.1.0"
+			$selectedPackage = New-Object Octopus.Client.Model.SelectedPackage
+			$selectedPackage.ActionName = "DeploySeriLog"
+			$selectedPackage.StepName = "DeploySeriLog"
+			$selectedPackage.Version = "2.1.0"
 			$release.SelectedPackages.Add($selectedPackage)
 			$release = $repository.Releases.Create($release,  $true)
 
