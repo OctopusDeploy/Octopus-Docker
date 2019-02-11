@@ -15,7 +15,7 @@ function Run-OctopusDeployTentacle
 
   "Run started." | Set-Content "c:\octopus-run.initstate"
 
-  & $TentacleExe run --instance 'Tentacle' --console
+  & $TentacleExe run --noninteractive --instance 'Tentacle' --console
 
   Write-Log ""
 }
