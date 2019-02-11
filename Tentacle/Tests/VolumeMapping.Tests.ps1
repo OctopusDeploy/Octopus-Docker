@@ -84,6 +84,12 @@ Describe 'Volume Mounts' {
 			$task = $repository.Tasks.Get($deployment.TaskId)
 			$repository.Tasks.WaitForCompletion($task, 4, 3);
 
+			# List the directory files
+			Write-Host "Listing of ./Temp/PollingApplications/$($env.Name)"
+			Get-ChildItem "./Temp/PollingApplications/$($env.Name)"
+			Write-Host "Listing of ./Temp/ListeningApplications/$($env.Name)"
+			Get-ChildItem "./Temp/ListeningApplications/$($env.Name)"
+
 			Test-Path "./Temp/PollingApplications/$($env.Name)/$($pkg.PackageId)" | should be $true
 			Test-Path "./Temp/ListeningApplications/$($env.Name)/$($pkg.PackageId)" | should be $true
 		}
