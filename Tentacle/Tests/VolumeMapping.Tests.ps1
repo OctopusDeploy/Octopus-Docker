@@ -65,7 +65,7 @@ Describe 'Volume Mounts' {
       $Task1 = $repository.Tasks.Create($task)
       $repository.Tasks.WaitForCompletion($Task1)
 
-      # Write the logs from the deployment to debug any issues
+      # Write the logs from the reindex task to debug any issues
       $details = $repository.Tasks.GetDetails($Task1)
       $details.ActivityLogs | % { Write-DeploymentLogs $_}
 
