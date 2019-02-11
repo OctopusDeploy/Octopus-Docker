@@ -84,6 +84,9 @@ Describe 'Volume Mounts' {
 			$task = $repository.Tasks.Get($deployment.TaskId)
 			$repository.Tasks.WaitForCompletion($task, 4, 3);
 
+			$details = $repository.Tasks.GetDetails($task)
+			$details.ActivityLogs | % { $_.LogElements} | % {Write_Host $_.MessageText}
+
 			# List the directory files
 			Write-Host "Listing of ./Temp/PollingApplications"
       Get-ChildItem "./Temp/PollingApplications"
