@@ -100,7 +100,11 @@ Describe 'Volume Mounts' {
 
 			# Wait For Deployment
 			$task = $repository.Tasks.Get($deployment.TaskId)
-			$repository.Tasks.WaitForCompletion($task, 4, 3);
+			$repository.Tasks.WaitForCompletion($task, 4, 10);
+
+      # Write the logs from the deployment to debug any issues
+			$details = $repository.Tasks.GetDetails($task)
+			$details.ActivityLogs | % { Write-DeploymentLogs $_}
 
       # Write the logs from the deployment to debug any issues
 			$details = $repository.Tasks.GetDetails($task)
