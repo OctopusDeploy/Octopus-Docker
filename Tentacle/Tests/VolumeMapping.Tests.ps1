@@ -63,11 +63,14 @@ Describe 'Volume Mounts' {
       $task.State = [Octopus.Client.Model.TaskState]::Queued
 
       $Task1 = $repository.Tasks.Create($task)
-      $repository.Tasks.WaitForCompletion($Task1)
 
-      # Write the logs from the reindex task to debug any issues
-      $details = $repository.Tasks.GetDetails($Task1)
-      $details.ActivityLogs | % { Write-DeploymentLogs $_}
+      try {
+        $repository.Tasks.WaitForCompletion($Task1)
+      } finally {
+        # Write the logs from the reindex task to debug any issues
+        $details = $repository.Tasks.GetDetails($Task1)
+        $details.ActivityLogs | % { Write-DeploymentLogs $_}
+      }
 
 			# Create Project
 			$pg = $repository.ProjectGroups.FindAll()[0]
@@ -100,15 +103,14 @@ Describe 'Volume Mounts' {
 
 			# Wait For Deployment
 			$task = $repository.Tasks.Get($deployment.TaskId)
-			$repository.Tasks.WaitForCompletion($task, 4, 10);
 
-      # Write the logs from the deployment to debug any issues
-			$details = $repository.Tasks.GetDetails($task)
-			$details.ActivityLogs | % { Write-DeploymentLogs $_}
-
-      # Write the logs from the deployment to debug any issues
-			$details = $repository.Tasks.GetDetails($task)
-			$details.ActivityLogs | % { Write-DeploymentLogs $_}
+			try {
+			  $repository.Tasks.WaitForCompletion($task, 4, 3)
+      } finally {
+        # Write the logs from the deployment to debug any issues
+        $details = $repository.Tasks.GetDetails($task)
+        $details.ActivityLogs | % { Write-DeploymentLogs $_}
+      }
 
 			Test-Path "./Temp/PollingApplications/$($env.Name)/$($pkg.PackageId)" | should be $true
 			Test-Path "./Temp/ListeningApplications/$($env.Name)/$($pkg.PackageId)" | should be $true
