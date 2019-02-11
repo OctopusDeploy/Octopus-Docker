@@ -8,6 +8,12 @@ param(
 	[ValidateNotNullOrEmpty()]
 	[string]$OctopusVersion
 )
+
+function Write-DeploymentLogs($logs) {
+  % { $logs.LogElements} | % {Write-Host $_.MessageText}
+  % { $logs.Children } | % {Write-DeploymentLogs $_}
+}
+
 $OctopusURI="http://$($IPAddress):81"
 
  
@@ -85,7 +91,7 @@ Describe 'Volume Mounts' {
 			$repository.Tasks.WaitForCompletion($task, 4, 3);
 
 			$details = $repository.Tasks.GetDetails($task)
-			$details.ActivityLogs | % { $_.LogElements} | % {Write-Host $_.MessageText}
+			$details.ActivityLogs | % { Write-DeploymentLogs $_}
 
 			# List the directory files
 			Write-Host "Listing of ./Temp/PollingApplications"
