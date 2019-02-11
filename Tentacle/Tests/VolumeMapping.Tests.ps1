@@ -106,16 +106,6 @@ Describe 'Volume Mounts' {
 			$details = $repository.Tasks.GetDetails($task)
 			$details.ActivityLogs | % { Write-DeploymentLogs $_}
 
-			# List the directory files
-			Write-Host "Listing of ./Temp/PollingApplications"
-      Get-ChildItem "./Temp/PollingApplications"
-			Write-Host "Listing of ./Temp/PollingApplications/$($env.Name)"
-			Get-ChildItem "./Temp/PollingApplications/$($env.Name)"
-			Write-Host "Listing of ./Temp/ListeningApplications"
-      Get-ChildItem "./Temp/ListeningApplications"
-			Write-Host "Listing of ./Temp/ListeningApplications/$($env.Name)"
-			Get-ChildItem "./Temp/ListeningApplications/$($env.Name)"
-
 			Test-Path "./Temp/PollingApplications/$($env.Name)/$($pkg.PackageId)" | should be $true
 			Test-Path "./Temp/ListeningApplications/$($env.Name)/$($pkg.PackageId)" | should be $true
 		}
