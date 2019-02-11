@@ -85,8 +85,12 @@ Describe 'Volume Mounts' {
 			$repository.Tasks.WaitForCompletion($task, 4, 3);
 
 			# List the directory files
+			Write-Host "Listing of ./Temp/PollingApplications"
+      Get-ChildItem "./Temp/PollingApplications"
 			Write-Host "Listing of ./Temp/PollingApplications/$($env.Name)"
 			Get-ChildItem "./Temp/PollingApplications/$($env.Name)"
+			Write-Host "Listing of ./Temp/ListeningApplications"
+      Get-ChildItem "./Temp/ListeningApplications"
 			Write-Host "Listing of ./Temp/ListeningApplications/$($env.Name)"
 			Get-ChildItem "./Temp/ListeningApplications/$($env.Name)"
 
