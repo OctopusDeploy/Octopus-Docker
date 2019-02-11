@@ -14,7 +14,12 @@ function Stage-Installer {
     }
 
 	Write-Log "Downloading installer '$downloadUrl' to '$MsiPath' ..."
-  [Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
+	try {
+    [Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
+  } catch {
+    Write-Host "Failed to add Tls12 to the list of security protocols"
+    Write-Host $_.Exception
+  }
 	(New-Object Net.WebClient).DownloadFile($downloadUrl, $MsiPath)
     Write-Log "done."
 }
