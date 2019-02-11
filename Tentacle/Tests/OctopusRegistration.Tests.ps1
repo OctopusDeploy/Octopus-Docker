@@ -35,7 +35,7 @@ Describe 'Octopus Registration' {
 	$repository.Users.SignIn($LoginObj)
 
 	$machines = $repository.Machines.FindAll()
-	$machineIds = ,$machines.Id
+	$machineIds = $machines | %{$_.Id}
 
 	$task = $repository.Tasks.ExecuteCalamariUpdate($null, $machineIds);
 	$repository.Tasks.WaitForCompletion($task, 4, 3);

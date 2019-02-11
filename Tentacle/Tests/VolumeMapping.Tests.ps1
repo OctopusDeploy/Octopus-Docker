@@ -8,6 +8,12 @@ param(
 	[ValidateNotNullOrEmpty()]
 	[string]$OctopusVersion
 )
+
+function Write-DeploymentLogs($logs) {
+  % { $logs.LogElements} | % {Write-Host $_.MessageText}
+  % { $logs.Children } | % {Write-DeploymentLogs $_}
+}
+
 $OctopusURI="http://$($IPAddress):81"
 
  
@@ -49,6 +55,20 @@ Describe 'Volume Mounts' {
 		}
 
 		it 'should contain deployed packages' {
+			# Reindex built in library. This ensures that Octopus is aware of the
+			# nupkg file sitting in C:\Repository
+			$task = New-Object Octopus.Client.Model.TaskResource
+      $task.Name = "SynchronizeBuiltInPackageRepositoryIndex"
+      $task.Description = "Re-index built-in package repository"
+      $task.State = [Octopus.Client.Model.TaskState]::Queued
+
+      $Task1 = $repository.Tasks.Create($task)
+      $repository.Tasks.WaitForCompletion($Task1)
+
+      # Write the logs from the reindex task to debug any issues
+      $details = $repository.Tasks.GetDetails($Task1)
+      $details.ActivityLogs | % { Write-DeploymentLogs $_}
+
 			# Create Project
 			$pg = $repository.ProjectGroups.FindAll()[0]
 			$lc = $repository.Lifecycles.FindAll()[0]
@@ -64,13 +84,12 @@ Describe 'Volume Mounts' {
 			$release = new-object Octopus.Client.Model.ReleaseResource
 			$release.Version = "1.0.1"
 			$release.ProjectId = $p.Instance.Id
-				$selectedPackage = New-Object Octopus.Client.Model.SelectedPackage
-				$selectedPackage.ActionName = "DeploySeriLog"
-				$selectedPackage.StepName = "DeploySeriLog"
-				$selectedPackage.Version = "2.1.0"
+			$selectedPackage = New-Object Octopus.Client.Model.SelectedPackage
+			$selectedPackage.ActionName = "DeploySeriLog"
+			$selectedPackage.StepName = "DeploySeriLog"
+			$selectedPackage.Version = "2.1.0"
 			$release.SelectedPackages.Add($selectedPackage)
 			$release = $repository.Releases.Create($release,  $true)
-
 
 			# Create Deployment
 			$deployment = New-Object Octopus.Client.Model.DeploymentResource
@@ -79,10 +98,13 @@ Describe 'Volume Mounts' {
 			$deployment.EnvironmentId = $env.Id
 			$deployment = $repository.Deployments.Create($deployment)
 
-
 			# Wait For Deployment
 			$task = $repository.Tasks.Get($deployment.TaskId)
 			$repository.Tasks.WaitForCompletion($task, 4, 3);
+
+      # Write the logs from the deployment to debug any issues
+			$details = $repository.Tasks.GetDetails($task)
+			$details.ActivityLogs | % { Write-DeploymentLogs $_}
 
 			Test-Path "./Temp/PollingApplications/$($env.Name)/$($pkg.PackageId)" | should be $true
 			Test-Path "./Temp/ListeningApplications/$($env.Name)/$($pkg.PackageId)" | should be $true
