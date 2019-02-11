@@ -55,14 +55,19 @@ Describe 'Volume Mounts' {
 		}
 
 		it 'should contain deployed packages' {
-			# Reindex built in library
-			$task = New-Object  Octopus.Client.Model.TaskResource
+			# Reindex built in library. This ensures that Octopus is aware of the
+			# nupkg file sitting in C:\Repository
+			$task = New-Object Octopus.Client.Model.TaskResource
       $task.Name = "SynchronizeBuiltInPackageRepositoryIndex"
       $task.Description = "Re-index built-in package repository"
       $task.State = [Octopus.Client.Model.TaskState]::Queued
 
       $Task1 = $repository.Tasks.Create($task)
-      $repository.Tasks.WaitForCompletion($Task1);
+      $repository.Tasks.WaitForCompletion($Task1)
+
+      # Write the logs from the deployment to debug any issues
+      $details = $repository.Tasks.GetDetails($Task1)
+      $details.ActivityLogs | % { Write-DeploymentLogs $_}
 
 			# Create Project
 			$pg = $repository.ProjectGroups.FindAll()[0]
@@ -86,7 +91,6 @@ Describe 'Volume Mounts' {
 			$release.SelectedPackages.Add($selectedPackage)
 			$release = $repository.Releases.Create($release,  $true)
 
-
 			# Create Deployment
 			$deployment = New-Object Octopus.Client.Model.DeploymentResource
 			$deployment.ReleaseId = $release.Id
@@ -94,11 +98,11 @@ Describe 'Volume Mounts' {
 			$deployment.EnvironmentId = $env.Id
 			$deployment = $repository.Deployments.Create($deployment)
 
-
 			# Wait For Deployment
 			$task = $repository.Tasks.Get($deployment.TaskId)
 			$repository.Tasks.WaitForCompletion($task, 4, 3);
 
+      # Write the logs from the deployment to debug any issues
 			$details = $repository.Tasks.GetDetails($task)
 			$details.ActivityLogs | % { Write-DeploymentLogs $_}
 
