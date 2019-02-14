@@ -37,6 +37,7 @@ Default values are set in the `.env` file.
 - **C:\Artifacts**: Path where artifacts are stored.
 - **C:\TaskLogs**: Path where task logs are stored.
 - **C:\Octopus\ServerLogs**: Path where server logs are stored.
+- **C:\MasterKey**: Location that the master key is written to _if the database is being created for the first time_.
 
 ## Running a Server - Plain ol' Docker
 
