@@ -1,10 +1,10 @@
 param (
   [Parameter(Mandatory=$false)]
   [string]$ProjectName="octopusdocker",
-  [Parameter(Mandatory=$true)]
-  [string]$OctopusVersion,
-  [Parameter(Mandatory=$true)]
-  [string]$OSVersion
+  [Parameter(Mandatory=$false)]
+  [string]$OctopusVersion="2019.1.6",
+  [Parameter(Mandatory=$false)]
+  [string]$OSVersion="ltsc2016"
 )
 
 . ./Scripts/build-common.ps1
@@ -17,12 +17,12 @@ TeamCity-Block("Run tests") {
     $OctopusServerContainer=$ProjectName+"_octopus_1";
     $OctopusDBContainer=$ProjectName+"_db_1";
 
-    Wait-ForServiceToPassHealthCheck $OctopusDBContainer
-    Wait-ForServiceToPassHealthCheck $OctopusServerContainer
+    #Wait-ForServiceToPassHealthCheck $OctopusDBContainer
+    #Wait-ForServiceToPassHealthCheck $OctopusServerContainer
 
-    Check-IPAddress
+    #Check-IPAddress
 
-    Write-DebugInfo @($OctopusDBContainer, $OctopusServerContainer)
+    #Write-DebugInfo @($OctopusDBContainer, $OctopusServerContainer)
 
     TeamCity-Block("Pester testing") {        
 
