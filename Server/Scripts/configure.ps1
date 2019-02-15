@@ -11,6 +11,7 @@ $env:OCTOPUS_INSTANCENAME=$OctopusInstanceName
   $masterKeySupplied = ($masterKey -ne $null) -and ($masterKey -ne "")
   $octopusAdminUsername = $env:OctopusAdminUsername
   $octopusAdminPassword = $env:OctopusAdminPassword
+  $credentialsSupplied=($octopusAdminPassword -ne $null -or $octopusAdminUserName -ne $null)
   $configFile = "c:\Octopus\OctopusServer.config"
   $ServerNodeName = $env:ServerNodeName
   
@@ -25,15 +26,15 @@ $env:OCTOPUS_INSTANCENAME=$OctopusInstanceName
 function Validate-Variables() {
     # If either a username or password has been set, the other is set to a default. We also set
     # default creds if no master key is supplied.
-    if ($octopusAdminPassword -ne $null -or $octopusAdminUserName -ne $null -or !$masterKeySupplied)
+    if ($credentialsSupplied -or !$masterKeySupplied)
     {
       if ($octopusAdminUsername -eq $null)
       {
-        $octopusAdminUsername = "admin"
+        $script:octopusAdminUsername = "admin"
       }
       if ($octopusAdminPassword -eq $null)
       {
-        $octopusAdminPassword = "Passw0rd123"
+        $script:octopusAdminPassword = "Passw0rd123"
       }
       Write-Log " - local admin user '$octopusAdminUsername'"
       Write-Log " - local admin password '##########'"
@@ -142,7 +143,7 @@ function Validate-Variables() {
 
     # If you do not set the master key or supply the username and/or password, the user/pass
     # auth plugin is enabled.
-    if ($octopusAdminPassword -ne $null -or $octopusAdminUserName -ne $null -or !$masterKeySupplied) {
+    if ($credentialsSupplied -or !$masterKeySupplied) {
       Write-Log "Enabling Username and Password Auth ..."
       Execute-Command $Exe @(
       'configure',
@@ -157,13 +158,10 @@ function Validate-Variables() {
         $args = @(
             'admin',
             '--console',
-            '--instance', $OctopusInstanceName
+            '--instance', $OctopusInstanceName,
+            '--username', $octopusAdminUserName,
+            '--password', $octopusAdminPassword
         )
-
-        $args += '--username'
-        $args += $octopusAdminUserName
-        $args += '--password'
-        $args += $octopusAdminPassword
         Execute-Command $Exe $args $octopusAdminPassword
     }
 
@@ -257,7 +255,7 @@ try
   }
 
   Validate-Variables
-  Write-Log "===============================================xxx"
+  Write-Log "==============================================="
 
   Move-Logs
   Configure-OctopusDeploy

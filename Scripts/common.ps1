@@ -28,9 +28,13 @@ function Write-Log
   Write-Host "[$timestamp] $message"
 }
 
-function Execute-Command ($exe, $arguments)
+function Execute-Command ($exe, $arguments, $mask)
 {
-  Write-Log "Executing command '$exe $($arguments -join ' ')'"
+  $maskedArgs = $($arguments -join ' ')
+  if ($mask -ne $null) {
+    $mask | % { $maskedArgs = $maskedArgs -replace [Regex]::Escape($_), "*****"}
+  }
+  Write-Log "Executing command '$exe $($maskedArgs -join ' ')'"
   $output = .$exe $arguments
 
   Write-CommandOutput $output
