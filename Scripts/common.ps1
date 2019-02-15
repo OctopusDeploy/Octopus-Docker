@@ -32,7 +32,11 @@ function Execute-Command ($exe, $arguments, $mask)
 {
   $maskedArgs = $($arguments -join ' ')
   if ($mask -ne $null) {
-    $mask | % { $maskedArgs = $maskedArgs -replace [Regex]::Escape($_), "*****"}
+    $mask | % { 
+        if($_ -ne $null) {
+            $maskedArgs = $maskedArgs -replace [Regex]::Escape($_), "*****"
+        }
+    }
   }
   Write-Log "Executing command '$exe $($maskedArgs -join ' ')'"
   $output = .$exe $arguments
