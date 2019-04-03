@@ -15,14 +15,6 @@ $env:OCTOPUS_INSTANCENAME=$OctopusInstanceName
   $configFile = "c:\Octopus\OctopusServer.config"
   $ServerNodeName = $env:ServerNodeName
   
-  $simpleVersion = New-Object System.Version ($Version -split '-')[0]
-  function Test-OctopusVersionRequiresConfigureBeforeDatabaseCreate {
-    return $simpleVersion -lt (New-Object System.Version 3, 14, 0)
-  }
-  function Test-OctopusVersionSupportsPathCommand {
-    return $simpleVersion -ge (New-Object System.Version 3, 0, 21)
-  }
-  
 function Validate-Variables() {
     # If either a username or password has been set, the other is set to a default. We also set
     # default creds if no master key is supplied.
@@ -67,7 +59,21 @@ function Validate-Variables() {
     $webListenPrefixes = "http://localhost:$port"
 
     Write-Log "Configure Octopus Deploy"
-    
+
+    Write-Log "Creating Octopus Deploy database ..."
+    $args = @(
+      'database',
+      '--console',
+      '--instance', $OctopusInstanceName,
+      '--connectionString', $sqlDbConnectionString,
+      '--create'
+    )
+    if ($masterKeySupplied) {
+      $args += '--masterkey'
+      $args += $masterKey
+    }
+    Execute-Command $Exe $args @($masterKey, $sqlDbConnectionString)
+
     Write-Log "Configuring Octopus Deploy instance with default options ..."
     Execute-Command $Exe @(
         'configure',
@@ -82,64 +88,15 @@ function Validate-Variables() {
         '--commsListenPort', $listenPort
       )
 
-    if (Test-OctopusVersionRequiresConfigureBeforeDatabaseCreate) {
-      Write-Log "Configuring Octopus Deploy instance ..."
-
-      $args = @(
-        'configure',
-        '--console',
-        '--instance', 'OctopusServer',
-        '--storageConnectionString', $sqlDbConnectionString,
-        '--webAuthenticationMode', 'UsernamePassword'
-      )
-      if (!$masterKeySupplied) {
-        $args += '--webAuthenticationMode'
-        $args += 'UsernamePassword'
-      }
-      Execute-Command $Exe $args
-  
-      Write-Log "Creating Octopus Deploy database ..."
-      $args = @(
-        'database',
-        '--console',
-        '--instance', 'OctopusServer',
-        '--create'
-      )
-      if ($masterKeySupplied) {
-        $args += '--masterkey'
-        $args += $masterKey
-      }
-      Execute-Command $Exe $args $masterKey
-    } else {
-      Write-Log "Creating Octopus Deploy database ..."
-      $args = @(
-        'database',
-        '--console',
-        '--instance', $OctopusInstanceName,
-        '--connectionString', $sqlDbConnectionString,
-        '--create'
-      )
-      if ($masterKeySupplied) {
-        $args += '--masterkey'
-        $args += $masterKey
-      }
-      Execute-Command $Exe $args @($masterKey, $sqlDbConnectionString)
-    }
-
-    #TODO: Not sure this is helpful... if we cant set the path then it cant be mounted correctly...
     Write-Log "Configuring Paths ..."
-    if (Test-OctopusVersionSupportsPathCommand) {
-      Execute-Command $Exe @(
-        'path',
-        '--console',
-        '--instance', $OctopusInstanceName,
-        '--nugetRepository', 'C:\Repository',
-        '--artifacts', 'C:\Artifacts',
-        '--taskLogs', 'C:\TaskLogs'
-      )
-    } else {
-      Write-Log "Octopus version $version does not support modifying paths (it was introduced in 3.0.21)"
-    }
+    Execute-Command $Exe @(
+      'path',
+      '--console',
+      '--instance', $OctopusInstanceName,
+      '--nugetRepository', 'C:\Repository',
+      '--artifacts', 'C:\Artifacts',
+      '--taskLogs', 'C:\TaskLogs'
+    )
 
     # If you do not set the master key or supply the username and/or password, the user/pass
     # auth plugin is enabled.
@@ -153,7 +110,7 @@ function Validate-Variables() {
       )
     }
   
-    if ($octopusAdminPassword -ne $null -or $octopusAdminUserName -ne $null) {
+    if ($null -ne $octopusAdminPassword -or $null -ne $octopusAdminUserName) {
         Write-Log "Creating Admin User for Octopus Deploy instance ..."
         $args = @(
             'admin',
