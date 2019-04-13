@@ -7,7 +7,7 @@ HEALTHCHECK --interval=20s --timeout=20s --retries=6 CMD powershell -file ./Serv
 EXPOSE 81
 EXPOSE 10943
 
-ADD Binaries/* /Binaries/
+#ADD Binaries/* /Binaries/
 ADD Scripts/*.* /Scripts/
 ADD Server/Scripts/*.* /Scripts/Server/
 
