@@ -1,6 +1,5 @@
-ARG SERVERCORE_VERSION=1709
-ARG BASE_IMAGE=microsoft/windowsservercore
-FROM ${BASE_IMAGE}:${SERVERCORE_VERSION}
+ARG BASE_IMAGE=microsoft/windowsservercore:1709
+FROM ${BASE_IMAGE}
 
 HEALTHCHECK --interval=20s --timeout=20s --retries=6 CMD powershell -file ./Server/healthcheck-server.ps1
 
