@@ -15,7 +15,7 @@ TeamCity-Block("Build") {
   Write-Host "Creating image with tag 'octopusdeploy/octopusdeploy-prerelease:$imageVersion'"
   if($OSVersion -eq "ltsc2016") {
 	$baseImage = "mcr.microsoft.com/dotnet/framework/runtime:4.7.2-windowsservercore-ltsc2016"
-  } if ($OSVersion -lt "1809") {
+  } else if ($OSVersion -lt "1809") {
     $baseImage = "microsoft/windowsservercore:$OSVersion"
   } else {
     $baseImage = "mcr.microsoft.com/windows/servercore:$OSVersion"
