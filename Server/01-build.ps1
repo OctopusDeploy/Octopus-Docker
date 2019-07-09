@@ -13,15 +13,13 @@ Confirm-RunningFromRootDirectory
 TeamCity-Block("Build") {
   $imageVersion = Get-ImageVersion $OctopusVersion $OSVersion
   Write-Host "Creating image with tag 'octopusdeploy/octopusdeploy-prerelease:$imageVersion'"
-  if($OSVersion -eq "ltsc2016") {
-	$baseImage = "mcr.microsoft.com/dotnet/framework/runtime:4.7.2-windowsservercore-ltsc2016"
-  } elseif ($OSVersion -lt "1809") {
-    $baseImage = "microsoft/windowsservercore:$OSVersion"
+  if ($OSVersion -eq "1809") {
+	$baseImage = "mcr.microsoft.com/windows/servercore:$OSVersion"
   } else {
-    $baseImage = "mcr.microsoft.com/windows/servercore:$OSVersion"
+	$baseImage = "mcr.microsoft.com/dotnet/framework/runtime:4.7.2-windowsservercore-$OSVersion"  
   }
 
-  docker build --pull --tag octopusdeploy/octopusdeploy-prerelease:$imageVersion --build-arg SERVERCORE_VERSION=$OSVersion --build-arg BASE_IMAGE=$baseImage --build-arg OctopusVersion=$OctopusVersion --file Server\Dockerfile .
+  docker build --pull --tag octopusdeploy/octopusdeploy-prerelease:$imageVersion --build-arg --build-arg BASE_IMAGE=$baseImage --build-arg OctopusVersion=$OctopusVersion --file Server\Dockerfile .
 
   if($LastExitCode -ne 0) {
     $last = $LastExitCode
