@@ -19,7 +19,7 @@ TeamCity-Block("Build") {
 	$baseImage = "mcr.microsoft.com/dotnet/framework/runtime:4.7.2-windowsservercore-$OSVersion"  
   }
 
-  docker build --pull --tag octopusdeploy/octopusdeploy-prerelease:$imageVersion --build-arg --build-arg BASE_IMAGE=$baseImage --build-arg OctopusVersion=$OctopusVersion --file Server\Dockerfile .
+  docker build --pull --tag octopusdeploy/octopusdeploy-prerelease:$imageVersion --build-arg BASE_IMAGE=$baseImage --build-arg OctopusVersion=$OctopusVersion --file Server\Dockerfile .
 
   if($LastExitCode -ne 0) {
     $last = $LastExitCode
