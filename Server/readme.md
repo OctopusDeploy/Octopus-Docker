@@ -42,7 +42,7 @@ Default values are set in the `.env` file.
 ## Running a Server - Plain ol' Docker
 
 ```plaintext
-docker run --name OctopusDeploy --tty --interactive --publish 81:81 --env sqlDbConnectionString="Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;" octopusdeploy/octopusdeploy:2018.8.8-1803
+docker run --name OctopusDeploy --publish 81:81 --env sqlDbConnectionString="Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;" octopusdeploy/octopusdeploy:2018.8.8-1803
 ```
 
 ### Environment variables
