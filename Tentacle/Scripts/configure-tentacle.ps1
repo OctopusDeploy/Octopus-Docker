@@ -10,6 +10,7 @@ $ServerPassword = $env:ServerPassword;
 $ServerUrl = $env:ServerUrl;
 $TargetEnvironment = $env:TargetEnvironment;
 $TargetRole = $env:TargetRole;
+$TargetWorkerPool = $env:TargetWorkerPool;
 $TargetName=$env:TargetName;
 $ListeningPort=$env:ListeningPort;
 $PublicHostNameConfiguration=$env:PublicHostNameConfiguration;
@@ -124,14 +125,24 @@ function Validate-Variables() {
     exit 1;
   }
 
-  if($TargetEnvironment -eq $null) {
-    Write-Error "Missing 'TargetEnvironment' environment variable"
-    exit 1;
-  }
-
-  if($TargetRole -eq $null) {
-    Write-Error "Missing 'TargetRole' environment variable"
-    exit 1;
+  if($TargetWorkerPool -ne $null) {
+    if($TargetEnvironment -ne $null) {
+      Write-Error "The 'TargetEnvironment' environment variable is not valid in combination with the 'TargetWorkerPool' variable"
+      exit 1;
+    }
+    if($TargetRole -ne $null) {
+      Write-Error "The 'TargetRole' environment variable is not valid in combination with the 'TargetWorkerPool' variable"
+      exit 1;
+    }
+  } else {
+    if($TargetEnvironment -eq $null) {
+      Write-Error "Missing 'TargetEnvironment' environment variable"
+      exit 1;
+    }
+    if($TargetRole -eq $null) {
+      Write-Error "Missing 'TargetRole' environment variable"
+      exit 1;
+    }
   }
 
   if($PublicHostNameConfiguration -eq $null) {
@@ -147,10 +158,14 @@ function Validate-Variables() {
     Write-Log " - communication mode 'Listening' (Passive)"
     Write-Log " - registered port $ListeningPort"
   }
-  Write-Log " - environment '$TargetEnvironment'"
-  Write-Log " - role '$TargetRole'"
+  if ($null -ne $TargetWorkerPool) {
+    Write-Log " - worker pool '$TargetWorkerPool'"
+  } else {
+    Write-Log " - environment '$TargetEnvironment'"
+    Write-Log " - role '$TargetRole'"
+  }
   Write-Log " - host '$PublicHostNameConfiguration'"
-  if($env:TargetName -ne $null) {
+  if($TargetName -ne $null) {
     Write-Log " - name '$env:TargetName'"
   }
 }
@@ -159,12 +174,21 @@ function Register-Tentacle(){
  Write-Log "Registering with server ..."
 
   New-Variable -Name arg -Option AllScope
-  $arg = @(
-    'register-with',
-    '--console',
+  if($TargetWorkerPool -ne $null) {
+    $arg = @(
+      'register-worker',
+      '--console',
     '--instance', 'Tentacle',
     '--server', $ServerUrl,
     '--force')
+  } else {
+    $arg = @(
+      'register-with',
+      '--console',
+    '--instance', 'Tentacle',
+    '--server', $ServerUrl,
+    '--force')
+  }
 
   if ($null -ne $ServerPort) {
     $arg += "--comms-style"
@@ -195,20 +219,31 @@ function Register-Tentacle(){
     $arg += $ServerPassword
   }
 
-  if($env:TargetName -ne $null) {
+  if($TargetName -ne $null) {
     $arg += "--name";
-    $arg += $env:TargetName;
+    $arg += $TargetName;
   }
 
-  $TargetEnvironment.Split(",") | ForEach {
-    $arg += '--environment';
-    $arg += $_.Trim();
-   };
+  if($TargetEnvironment -ne $null) {
+    $TargetEnvironment.Split(",") | ForEach {
+      $arg += '--environment';
+      $arg += $_.Trim();
+     };
+  }
 
-   $TargetRole.Split(",") | ForEach {
-    $arg += '--role';
-    $arg += $_.Trim();
-   };
+  if($TargetRole -ne $null) {
+     $TargetRole.Split(",") | ForEach {
+      $arg += '--role';
+      $arg += $_.Trim();
+     };
+  }
+
+  if($TargetWorkerPool -ne $null) {
+    $TargetWorkerPool.Split(",") | ForEach {
+      $arg += '--workerpool';
+      $arg += $_.Trim();
+     };
+  }
 
   Execute-Command $TentacleExe $arg;
 }
