@@ -7,8 +7,11 @@ param (
 
 Confirm-RunningFromRootDirectory
 
-TeamCity-Block("Setting metadata version to current") {
-    $filePath = './Testing/Import/metadata.json'
+$delimiters = '-', '+'
+$currentVersion = $OctopusVersion.Split($delimiters)[0]
 
-    ((Get-Content -path $filePath -Raw) -replace '"DatabaseVersion": "0.0.0"', ('"DatabaseVersion": "'+$OctopusVersion+'"')) | Set-Content -Path $filePath   
+TeamCity-Block("Setting metadata version to " + $currentVersion) {
+    $filePath = './Testing/Import/metadata.json'    
+    
+    ((Get-Content -path $filePath -Raw) -replace '"DatabaseVersion": "0.0.0"', ('"DatabaseVersion": "'+$currentVersion+'"')) | Set-Content -Path $filePath   
 }
