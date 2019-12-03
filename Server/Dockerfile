@@ -8,7 +8,6 @@ EXPOSE 10943
 
 ADD Scripts/*.* /Scripts/
 ADD Server/Scripts/*.* /Scripts/Server/
-#ADD source/ /Installers
 
 ARG OctopusVersion
 ENV OctopusVersion ${OctopusVersion}
@@ -25,6 +24,5 @@ LABEL   org.label-schema.schema-version="1.0" \
 
 WORKDIR /Scripts
 
-#SHELL ["powershell", "-File"]
 RUN powershell -File ./Server/build.ps1
 ENTRYPOINT ["/Scripts/Server/entrypoint.bat"]
