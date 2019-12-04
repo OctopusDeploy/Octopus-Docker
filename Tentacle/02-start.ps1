@@ -11,9 +11,8 @@ param (
 
 . ./Scripts/build-common.ps1
 
-
 $env:OCTOPUS_VERSION=$OctopusVersion;
-$env:TENTACLE_VERSION=Get-ImageVersion $TentacleVersion $OSVersion; 
+$env:TENTACLE_VERSION=Get-ImageVersion $TentacleVersion $OSVersion;
 $env:OCTOPUS_TENTACLE_REPO_SUFFIX = "-prerelease"
 $OctopusServerContainer=$ProjectName+"_octopus_1";
 $ListeningTentacleServiceName=$ProjectName+"_listeningtentacle_1";
@@ -45,26 +44,22 @@ TeamCity-Block("Start containers") {
 
 	mkdir .\Temp\ListeningApplications | Out-Null
 	mkdir .\Temp\ListeningHome | Out-Null
-	
-	#Docker-Login
 
-
-
-	 TeamCity-Block("Running Compose") {
+	TeamCity-Block("Running Compose") {
         Start-DockerCompose $ProjectName .\Tentacle\docker-compose.yml
     }
-	
+
 	TeamCity-Block("Waiting for Health") {
         Wait-ForServiceToPassHealthCheck $ListeningTentacleServiceName
 		Wait-ForServiceToPassHealthCheck $PollingTentacleServiceName
     }
-	
+
 	& docker logs $OctopusServerContainer > .\Temp\Logs\OctopusServer.log
 	& docker logs $ListeningTentacleServiceName > .\Temp\Logs\OctopusListeningTentacle.log
 	& docker logs $PollingTentacleServiceName > .\Temp\Logs\OctopusPollingTentacle.log
-	
+
 	Write-Host Server available after ($sw.Elapsed) from the host at http://$(Get-IPAddress):81
 
-	$env:OCTOPUS_TENTACLE_REPO_SUFFIX = ""
+	$env:OCTOPUS_TENTACLE_REPO_SUFFIX=""
     $env:OCTOPUS_SKIP_IMPORT_VERSION_CHECK=""
 }

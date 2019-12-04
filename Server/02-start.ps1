@@ -41,7 +41,7 @@ TeamCity-Block("Start containers") {
     TeamCity-Block("Running Compose") {
         Start-DockerCompose $ProjectName .\Server\docker-compose.yml
     }
-    
+
     TeamCity-Block("Waiting for Health") {
         Wait-ForServiceToPassHealthCheck $OctopusServerContainer
     }
