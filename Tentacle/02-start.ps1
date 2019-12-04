@@ -18,6 +18,7 @@ $env:OCTOPUS_TENTACLE_REPO_SUFFIX = "-prerelease"
 $OctopusServerContainer=$ProjectName+"_octopus_1";
 $ListeningTentacleServiceName=$ProjectName+"_listeningtentacle_1";
 $PollingTentacleServiceName=$ProjectName+"_pollingtentacle_1";
+$env:OCTOPUS_SKIP_IMPORT_VERSION_CHECK="true"
 
 Confirm-RunningFromRootDirectory
 
@@ -65,4 +66,5 @@ TeamCity-Block("Start containers") {
 	Write-Host Server available after ($sw.Elapsed) from the host at http://$(Get-IPAddress):81
 
 	$env:OCTOPUS_TENTACLE_REPO_SUFFIX = ""
+    $env:OCTOPUS_SKIP_IMPORT_VERSION_CHECK=""
 }

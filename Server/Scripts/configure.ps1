@@ -163,8 +163,7 @@ function Process-Import() {
         $importPassword = 'blank';
      }
  
- 
-    Write-Log "Running Migrator import on C:\Import directory ..."
+    Write-Log "Running Migrator import on C:\Import directory (OctopusSkipImportVersionCheck: $($env:OctopusSkipImportVersionCheck))..."
      $args = @(
      'import',
      '--console',
@@ -172,7 +171,7 @@ function Process-Import() {
      '--instance', $OctopusInstanceName,
      '--password', $importPassword
      )
-     if ($env:OctopusVersion -eq 'latest') {
+     if ($env:OctopusSkipImportVersionCheck -eq 'true') {
        $args += ('--ignore-version-check')
      }
      Execute-Command $MigratorExe $args $importPassword

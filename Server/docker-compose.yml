@@ -15,6 +15,7 @@ services:
       OctopusAdminUsername: "${OCTOPUS_ADMIN_USERNAME}"
       OctopusAdminPassword: "${OCTOPUS_ADMIN_PASSWORD}"
       sqlDbConnectionString: "Server=db,1433;Initial Catalog=Octopus;Persist Security Info=False;User ID=sa;Password=${SA_PASSWORD};MultipleActiveResultSets=False;Connection Timeout=30;"
+      OctopusSkipImportVersionCheck: "${OCTOPUS_SKIP_IMPORT_VERSION_CHECK}"
     ports:
      - "81"
     depends_on:

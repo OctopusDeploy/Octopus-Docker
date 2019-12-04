@@ -15,6 +15,7 @@ $OctopusServerContainer= $ProjectName+"_octopus_1";
 $env:OCTOPUS_VERSION=Get-ImageVersion $OctopusVersion $OSVersion;
 $env:OCTOPUS_SERVER_REPO_SUFFIX="-prerelease"
 $env:SERVERCORE_VERSION=$OSVersion
+$env:OCTOPUS_SKIP_IMPORT_VERSION_CHECK="true"
 
 if ($OSVersion -eq "ltsc2016") {
     $env:SQL_IMAGE="microsoft/mssql-server-windows-express"
@@ -54,3 +55,4 @@ TeamCity-Block("Start containers") {
 $env:OCTOPUS_SERVER_REPO_SUFFIX=""
 $env:OCTOPUS_VERSION=""
 $env:SERVERCORE_VERSION=""
+$env:OCTOPUS_SKIP_IMPORT_VERSION_CHECK=""
