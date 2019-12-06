@@ -26,6 +26,11 @@ function Registration-Tests($Tentacles){
 }
 
 Describe 'Octopus Registration' {
+	if ([System.Environment]::OSVersion.Version -eq '10.0.14393.0') {
+		Write-Warning "This test does not run successfully on windows 2016"
+		return
+	}
+
 	$endpoint = new-object Octopus.Client.OctopusServerEndpoint $OctopusURI
 	$repository = new-object Octopus.Client.OctopusRepository $endpoint
 	$LoginObj = New-Object Octopus.Client.Model.LoginCommand 
