@@ -8,6 +8,9 @@ Confirm-RunningFromRootDirectory
 
 TeamCity-Block("Stop and remove compose project") {
     
+    write-host "Stopping $ProjectName compose project"
+    & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName stop
+    
     write-host "Removing $ProjectName compose project"
     & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName down
 
