@@ -23,6 +23,11 @@ if ($OSVersion -eq "ltsc2016") {
     $env:SQL_IMAGE="octopusdeploy/mssql-server-windows-express:$OSVersion"
 }
 
+TeamCity-Block("Ensure containers are stopped") {
+    write-host "Running docker-compose down"
+    & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName down -v
+}
+
 TeamCity-Block("Start containers") {
 
     if(!(Test-Path .\Temp)) {
