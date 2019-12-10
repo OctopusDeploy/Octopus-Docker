@@ -171,10 +171,12 @@ function Process-Import() {
      '--instance', $OctopusInstanceName,
      '--password', $importPassword
      )
+     
      if ($env:OctopusSkipImportVersionCheck -eq 'true') {
        $args += ('--ignore-version-check')
      }
-     Execute-Command $MigratorExe $args $importPassword
+
+     Execute-Command $MigratorExe $args
   }
  }
 
