@@ -25,7 +25,7 @@ if ($OSVersion -eq "ltsc2016") {
 
 TeamCity-Block("Ensure containers are stopped") {
     write-host "Running docker-compose down"
-    & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName down -v
+    & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName down -v --rmi all --remove-orphans
 }
 
 TeamCity-Block("Start containers") {
