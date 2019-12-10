@@ -15,12 +15,16 @@ $OctopusServerContainer= $ProjectName+"_octopus_1";
 $env:OCTOPUS_VERSION=Get-ImageVersion $OctopusVersion $OSVersion;
 $env:OCTOPUS_SERVER_REPO_SUFFIX="-prerelease"
 $env:SERVERCORE_VERSION=$OSVersion
-$env:OCTOPUS_SKIP_IMPORT_VERSION_CHECK="true"
+$env:OCTOPUS_SKIP_IMPORT_VERSION_CHECK="false"
 
 if ($OSVersion -eq "ltsc2016") {
     $env:SQL_IMAGE="microsoft/mssql-server-windows-express"
 } else { #Microsoft is being rather lax in keeping the official microsoft/mssql-server-windows-express repo up to date
     $env:SQL_IMAGE="octopusdeploy/mssql-server-windows-express:$OSVersion"
+}
+
+TeamCity-Block("Ensure containers are stopped") {
+    Stop-DockerCompose($ProjectName)
 }
 
 TeamCity-Block("Start containers") {

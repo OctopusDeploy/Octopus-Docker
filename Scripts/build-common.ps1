@@ -71,6 +71,24 @@ function Start-DockerCompose($projectName, $composeFile) {
   }
 }
 
+function Stop-DockerCompose($projectName) {
+  write-host "Stopping $projectName compose project"
+  & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName stop
+
+  write-host "Removing $projectName compose project"
+  & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName down
+
+  # docker-compose down doesn't always clean up properly.
+  # Make sure the containers are removed.
+  & docker rm -f $projectName"_octopus_1"
+  & docker rm -f $projectName"_db_1"
+  
+  if(!$(Test-RunningUnderTeamCity) -and (Test-Path .\Temp)) {
+    Write-Host "Cleaning up Temp"
+    Remove-Item .\Temp -Recurse -Force
+  }
+}
+
 function Wait-ForServiceToPassHealthCheck($serviceName) {
   $attempts = 0;
   $sleepsecs = 10;
