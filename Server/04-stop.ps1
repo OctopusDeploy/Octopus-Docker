@@ -9,7 +9,7 @@ Confirm-RunningFromRootDirectory
 TeamCity-Block("Stop and remove compose project") {
     
     write-host "Removing $ProjectName compose project"
-    & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName down -v --rmi all --remove-orphans
+    & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName down
 
     if(!$(Test-RunningUnderTeamCity) -and (Test-Path .\Temp)) {
       Write-Host "Cleaning up Temp"
