@@ -7,13 +7,13 @@ param (
 
 function DetermineActualServerVersion($version){
 
-	$dockerImage = "octopusdeploy/octopusdeploy:$version"
-	$searchFor = "OctopusVersion=";
+    $dockerImage = "octopusdeploy/octopusdeploy:$version"
+    $searchFor = "OctopusVersion=";
 
 	if ("latest" -eq $version){
         & docker image pull -q $dockerImage > $null
         $json = (& docker image inspect octopusdeploy/octopusdeploy:$version | convertfrom-json)
-		$envVarString = $json[0].ContainerConfig.Env | Where-Object { $_ -like "$searchFor*" } | Select-Object -First 1
+        $envVarString = $json[0].ContainerConfig.Env | Where-Object { $_ -like "$searchFor*" } | Select-Object -First 1
 
 		if ($null -eq $envVarString){
 			return $null
@@ -22,8 +22,8 @@ function DetermineActualServerVersion($version){
         return $envVarString.Substring($searchFor.Length)
 
 	} else {
-		return $version;
-	}
+        return $version;
+    }
 }
 
 TeamCity-Block("Setting metadata version") {
