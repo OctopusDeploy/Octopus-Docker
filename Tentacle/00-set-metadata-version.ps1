@@ -1,6 +1,6 @@
 param (
-  [Parameter(Mandatory=$false)]
-  [string]$OctopusVersion="latest"
+    [Parameter(Mandatory=$false)]
+    [string]$OctopusVersion="latest"
 )
 
 . ./Scripts/build-common.ps1
@@ -10,18 +10,18 @@ function DetermineActualServerVersion($version){
     $dockerImage = "octopusdeploy/octopusdeploy:$version"
     $searchFor = "OctopusVersion=";
 
-	if ("latest" -eq $version){
+    if ("latest" -eq $version){
         & docker image pull -q $dockerImage > $null
         $json = (& docker image inspect octopusdeploy/octopusdeploy:$version | convertfrom-json)
         $envVarString = $json[0].ContainerConfig.Env | Where-Object { $_ -like "$searchFor*" } | Select-Object -First 1
 
-		if ($null -eq $envVarString){
-			return $null
-		}
+    if ($null -eq $envVarString){
+        return $null
+    }
 
         return $envVarString.Substring($searchFor.Length)
 
-	} else {
+    } else {
         return $version;
     }
 }
