@@ -71,18 +71,22 @@ function Start-DockerCompose($projectName, $composeFile) {
   }
 }
 
-function Stop-DockerCompose($projectName) {
+function Stop-DockerCompose($projectName, $composeFile) {
   write-host "Stopping $projectName compose project"
-  & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName stop
+  & docker-compose --file $composeFile --project-name $ProjectName stop
 
   write-host "Removing $projectName compose project"
-  & docker-compose --file .\Server\docker-compose.yml --project-name $ProjectName down
+  & docker-compose --file $composeFile --project-name $ProjectName down --remove-orphans
 
   # docker-compose down doesn't always clean up properly.
   # Make sure the containers are removed.
-  & docker rm -f $projectName"_octopus_1"
-  & docker rm -f $projectName"_db_1"
-  
+  write-host "Removing any remaining containers"
+  $dockerContainers = $(docker ps -a -q)
+  if ($null -ne $dockerContainers) { 
+    docker kill -f $dockerContainers
+    docker rm -f $dockerContainers
+  }
+
   if(!$(Test-RunningUnderTeamCity) -and (Test-Path .\Temp)) {
     Write-Host "Cleaning up Temp"
     Remove-Item .\Temp -Recurse -Force

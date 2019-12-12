@@ -7,5 +7,5 @@ param (
 Confirm-RunningFromRootDirectory
 
 TeamCity-Block("Stop and remove compose project") {
-  Stop-DockerCompose($ProjectName)
+  Stop-DockerCompose $ProjectName .\Server\docker-compose.yml
 }

@@ -24,7 +24,7 @@ if ($OSVersion -eq "ltsc2016") {
 }
 
 TeamCity-Block("Ensure containers are stopped") {
-    Stop-DockerCompose($ProjectName)
+    Stop-DockerCompose $ProjectName .\Server\docker-compose.yml
 }
 
 TeamCity-Block("Start containers") {
