@@ -17,7 +17,7 @@ $env:OCTOPUS_TENTACLE_REPO_SUFFIX = "-prerelease"
 $OctopusServerContainer=$ProjectName+"_octopus_1";
 $ListeningTentacleServiceName=$ProjectName+"_listeningtentacle_1";
 $PollingTentacleServiceName=$ProjectName+"_pollingtentacle_1";
-$env:OCTOPUS_SKIP_IMPORT_VERSION_CHECK="true"
+$env:OCTOPUS_SKIP_IMPORT_VERSION_CHECK="false"
 
 Confirm-RunningFromRootDirectory
 
@@ -25,6 +25,10 @@ if ($OSVersion -eq "ltsc2016") {
     $env:SQL_IMAGE="microsoft/mssql-server-windows-express"
 } else { #Microsoft is being rather lax in keeping the official microsoft/mssql-server-windows-express repo up to date
     $env:SQL_IMAGE="octopusdeploy/mssql-server-windows-express:$OSVersion"
+}
+
+TeamCity-Block("Ensure containers are stopped") {
+    Stop-DockerCompose $ProjectName .\Tentacle\docker-compose.yml
 }
 
 TeamCity-Block("Start containers") {
