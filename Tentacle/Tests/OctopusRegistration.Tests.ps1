@@ -15,7 +15,7 @@ function Registration-Tests($Tentacles){
 		$Tentacles.Count | should be 1
 	}
 
-	it 'should be healthy' {		
+	it 'should be healthy' {
 		$isHealthy = $Tentacles[0].HealthStatus -eq "Healthy" -or $Tentacles[0].HealthStatus -eq "HasWarnings"
 		$isHealthy | Should Be $true
 	}
@@ -33,7 +33,7 @@ Describe 'Octopus Registration' {
 
 	$endpoint = new-object Octopus.Client.OctopusServerEndpoint $OctopusURI
 	$repository = new-object Octopus.Client.OctopusRepository $endpoint
-	$LoginObj = New-Object Octopus.Client.Model.LoginCommand 
+	$LoginObj = New-Object Octopus.Client.Model.LoginCommand
 	$LoginObj.Username = $OctopusUsername
 	$LoginObj.Password = $OctopusPassword
 
@@ -58,12 +58,10 @@ Describe 'Octopus Registration' {
 	Context 'Listening Tentacle' {
 		$ListeningTentacles = $($Machines | where {$_.Endpoint.CommunicationStyle -eq [Octopus.Client.Model.CommunicationStyle]::TentaclePassive})
 		Registration-Tests $ListeningTentacles
-		
 	}
-	
+
 	# it 'should have imported the migration export' {
 	# 	$DevEnv = $repository.Environments.FindByName("Development")
 	# 	$DevEnv | should not be $null
 	# }
-
 }

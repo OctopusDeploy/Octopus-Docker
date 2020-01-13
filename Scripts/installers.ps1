@@ -1,5 +1,5 @@
 
-function Stage-Installer {	
+function Stage-Installer {
     Write-Log "Creating installation folder at '$installBasePath' ..."
     New-Item -ItemType Directory -Path $installBasePath | Out-Null
 
@@ -8,20 +8,22 @@ function Stage-Installer {
 		Write-Log "Explicit download url provided"
 	} elseif($Version -eq $null) {
         $DownloadUrl = $DownloadUrlLatest
-		Write-Log "No version specified for install. Using location of latest.";    
+		Write-Log "No version specified for install. Using location of latest.";
 	} else {
 		$DownloadUrl = $DownloadBaseUrl + $MsiFileName
     }
 
-	Write-Log "Downloading installer '$downloadUrl' to '$MsiPath' ..."
+	Write-Log "Enabling Tls1.2 support..."
 	try {
-    [Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::Tls12
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
   } catch {
-    Write-Host "Failed to add Tls12 to the list of security protocols"
-    Write-Host $_.Exception
+    Write-Log "Failed to add Tls12 to the list of security protocols"
+    Write-Log $_.Exception
+    Write-Log "Marching on regardless..."
   }
+  Write-Log "Downloading installer '$downloadUrl' to '$MsiPath' ..."
 	(New-Object Net.WebClient).DownloadFile($downloadUrl, $MsiPath)
-    Write-Log "done."
+  Write-Log "done."
 }
 
 function Install-OctopusDeploy

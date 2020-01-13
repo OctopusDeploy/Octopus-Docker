@@ -16,17 +16,15 @@ function Write-DeploymentLogs($logs) {
 
 $OctopusURI="http://$($IPAddress):81"
 
- 
 Describe 'Volume Mounts' {
-
 	$endpoint = new-object Octopus.Client.OctopusServerEndpoint $OctopusURI
 	$repository = new-object Octopus.Client.OctopusRepository $endpoint
-		
-	$LoginObj = New-Object Octopus.Client.Model.LoginCommand 
+
+	$LoginObj = New-Object Octopus.Client.Model.LoginCommand
 	$LoginObj.Username = $OctopusUsername
 	$LoginObj.Password = $OctopusPassword
 	$repository.Users.SignIn($LoginObj)
-	
+
 	Context 'C:\TentacleHome' {
 		it 'should contain logs' {
 			Test-Path "./Temp/PollingHome/Logs/OctopusTentacle.txt" | should be $true
@@ -38,7 +36,7 @@ Describe 'Volume Mounts' {
 
 		function Clean {
 			$project = $repository.Projects.FindByName("MyFirstProject")
-			if($project -ne $null) {
+			if ($null -ne $project) {
 				$repository.Projects.Delete($project)
 			}
 
@@ -49,7 +47,7 @@ Describe 'Volume Mounts' {
 		BeforeEach {
 			Clean
 		}
-	
+
 		AfterEach {
 			Clean
 		}
