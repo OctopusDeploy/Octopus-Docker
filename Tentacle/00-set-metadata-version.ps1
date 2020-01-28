@@ -10,7 +10,7 @@ function Get-OctopusServerVersion($version){
   $searchFor = "OctopusVersion=";
 
   if ("latest" -eq $version){
-    & docker pull --quiet $dockerImage > $null
+    & docker pull $dockerImage | out-null
     $json = (& docker image inspect octopusdeploy/octopusdeploy:$version | convertfrom-json)
     $envVarString = $json[0].ContainerConfig.Env | Where-Object { $_ -like "$searchFor*" } | Select-Object -First 1
 
