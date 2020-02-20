@@ -1,3 +1,5 @@
+**Please Note: As of 20/02/2020, the docker file for Octopus Server is no longer being used from this repository. Please refer to the [Octopus Deploy Docker Hub](https://hub.docker.com/repository/docker/octopusdeploy/octopusdeploy) page for creating a Windows or Linux container. In future, we will be removing the docker files and related scripts for Octopus Server from this repositiory.**
+
 These images can be used to bring up an instance of an Octopus Server or Tentacle in a container.
 
 **Docker on windows is still relatively new, and should be used with caution.**
