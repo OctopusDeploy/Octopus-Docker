@@ -12,7 +12,7 @@ function Get-OctopusServerVersion($version){
   if ("latest" -eq $version){
     & docker pull $dockerImage | out-null
     $json = (& docker image inspect octopusdeploy/octopusdeploy:$version | convertfrom-json)
-    $envVarString = $json[0].ContainerConfig.Env | Where-Object { $_ -like "$searchFor*" } | Select-Object -First 1
+    $envVarString = $json[0].ContainerConfig.Labels.'org.label-schema.version'
 
     if ($null -eq $envVarString){
       return $null
@@ -29,7 +29,7 @@ TeamCity-Block("Setting metadata version") {
   $actualVersion = Get-OctopusServerVersion($OctopusVersion)
 
   if ($null -eq $actualVersion){
-    write-host "Could not determine the actual version of Octopus Server."
+    throw "Could not determine the actual version of Octopus Server."
   } else {
     write-host "Determined version of Octopus Server to be: $actualVersion"
 
