@@ -7,19 +7,11 @@ param (
 
 function Get-OctopusServerVersion($version){
   $dockerImage = "octopusdeploy/octopusdeploy:$version"
-  $searchFor = "OctopusVersion=";
 
   if ("latest" -eq $version){
     & docker pull $dockerImage | out-null
     $json = (& docker image inspect octopusdeploy/octopusdeploy:$version | convertfrom-json)
-    $envVarString = $json[0].ContainerConfig.Labels.'org.label-schema.version'
-
-    if ($null -eq $envVarString){
-      return $null
-    }
-
-    return $envVarString.Substring($searchFor.Length)
-
+    return $json[0].ContainerConfig.Labels.'org.label-schema.version'
   } else {
     return $version;
   }
