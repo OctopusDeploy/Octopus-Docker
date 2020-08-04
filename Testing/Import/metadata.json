@@ -1,5 +1,5 @@
 {
-  "$type": "Octopus.Migrator.ExportProcess.ServerMetadata, Octopus.Migrator",
+  "$type": "Octopus.Migrator.Core.ExportProcess.ServerMetadata, Octopus.Migrator.Core",
   "Id": "SKYNET",
   "Name": "SKYNET",
   "Created": "2017-03-10T19:34:16.8844884+10:00",
