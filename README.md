@@ -2,7 +2,10 @@
 
 These images can be used to bring up an instance of an Octopus Server or Tentacle in a container.
 
-**Docker on windows is still relatively new, and should be used with caution.**
+---
+
+
+These images can be used to bring up an instance of an Octopus Server or Tentacle in a container.
 
 # Pre-Requisites
 
